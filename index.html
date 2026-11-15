@@ -561,7 +561,7 @@ html[data-theme="light"] .project:hover .project-art { box-shadow: 0 26px 46px -
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: clamp(600px, calc(100svh - 140px), 820px);
+  min-height: max(640px, calc(100svh - 94px));
   padding: 0;
   overflow: hidden;
   isolation: isolate;
@@ -630,10 +630,7 @@ html[data-theme="light"] .hp-img-light { opacity: 1; }
   flex: 1;
   display: flex;
   align-items: flex-end;
-  padding: 32px 0 clamp(116px, 14vh, 152px);
-}
-.hero .scroll-cue {
-  bottom: 34px;
+  padding: 40px 0 76px;
 }
 .hero-copy {
   width: 64%;
@@ -680,10 +677,12 @@ html[data-theme="light"] .hp-img-light { opacity: 1; }
   right: max(48px, calc((100% - 1380px) / 2));
   pointer-events: none;
 }
-.hp-tog {
+.hp-tog, .hp-hint {
   position: absolute;
   margin: 0;
   font-family: var(--mono);
+}
+.hp-tog {
   pointer-events: auto;
   top: 24px;
   right: 0;
@@ -715,7 +714,14 @@ html[data-theme="light"] .hp-img-light { opacity: 1; }
 }
 .hp-tog:hover, .hp-tog[aria-pressed="true"] { border-color: var(--acid); }
 .hp-tog:focus-visible { outline: 2px solid var(--acid); outline-offset: 4px; }
-.hp.is-static ~ .hp-hud .hp-tog { display: none; }
+.hp-hint {
+  left: 14%;
+  bottom: 64px;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.hp.is-static ~ .hp-hud .hp-tog, .hp.is-static ~ .hp-hud .hp-hint { display: none; }
 
 /* the green mouse-tracking point (hero only, fine pointers) */
 .hero.is-fine, .hero.is-fine * { cursor: none !important; }
@@ -728,14 +734,14 @@ html[data-theme="light"] .hp-img-light { opacity: 1; }
 
 /* Tablet adaptation (matches reference .shh.is-tb < 1100px) */
 @media (max-width: 1099px) {
-  .hero { min-height: clamp(580px, calc(100svh - 190px), 760px); padding: 0; }
+  .hero { min-height: max(640px, calc(100svh - 94px)); padding: 0; }
   .hp, .hp-hud { left: 44%; }
   .hp-hud { right: 40px; }
   .hero-wrap { width: 100%; padding: 0 40px; }
-  .hero-body { padding: 32px 0 clamp(104px, 12vh, 136px); }
   .hero-copy { width: 74%; }
   .hero h1 { font-size: clamp(44px, 7.4vw, 66px); }
   .hero-row { flex-direction: column; align-items: flex-start; gap: 26px; }
+  .hp-hint { display: none; }
   .hp-fade {
     background:
       linear-gradient(to right, var(--bg) 0, color-mix(in srgb, var(--bg) 80%, transparent) 22%, color-mix(in srgb, var(--bg) 20%, transparent) 60%, transparent 80%),
@@ -746,15 +752,15 @@ html[data-theme="light"] .hp-img-light { opacity: 1; }
 /* Mobile adaptation (matches reference .shh.is-ph < 810px) */
 @media (max-width: 809px) {
   .hero { min-height: 0; padding: 0; }
-  .hp { left: 0; right: 0; top: 0; bottom: auto; height: min(114vw, 530px); }
-  .hp-hud { left: 20px; right: 20px; top: 0; bottom: auto; height: min(114vw, 530px); }
+  .hp { left: 0; right: 0; top: 0; bottom: auto; height: min(118vw, 560px); }
+  .hp-hud { left: 20px; right: 20px; top: 0; bottom: auto; height: min(118vw, 560px); }
   .hp-fade {
     background:
-      linear-gradient(to top, var(--bg) 0, color-mix(in srgb, var(--bg) 68%, transparent) 28%, transparent 56%),
+      linear-gradient(to top, var(--bg) 0, color-mix(in srgb, var(--bg) 55%, transparent) 22%, transparent 48%),
       linear-gradient(to bottom, color-mix(in srgb, var(--bg) 82%, transparent) 0, transparent 22%);
   }
   .hero-wrap { width: 100%; padding: 0 20px; }
-  .hero-body { padding: calc(min(114vw, 530px) - 185px) 0 72px; align-items: flex-start; }
+  .hero-body { padding: calc(min(118vw, 560px) - 150px) 0 44px; align-items: flex-start; }
   .hero-copy, .hero-copy.reveal { width: 100%; margin-top: 0; }
   .hero .eyebrow { display: flex; font-size: 11px; margin-bottom: 18px; }
   .hero h1 { font-size: min(9.4vw, 52px); line-height: 1; }
@@ -857,8 +863,8 @@ html[data-theme="light"] .hp-img-light { opacity: 1; }
       <section class="hero">
         <div class="hp" data-hero-portrait data-cur="read source">
           <div class="hp-stage">
-            <img class="hp-img hp-img-dark" src="Light.png" alt="Portrait of Jay Lampara" width="1024" height="1024" decoding="async" fetchpriority="high" draggable="false" />
-            <img class="hp-img hp-img-light" src="Dark.png" alt="" aria-hidden="true" width="1024" height="1024" decoding="async" draggable="false" />
+            <img class="hp-img hp-img-dark" src="Dark.png" alt="Portrait of Jay Lampara" width="1024" height="1024" decoding="async" fetchpriority="high" draggable="false" />
+            <img class="hp-img hp-img-light" src="Light.png" alt="" aria-hidden="true" width="1024" height="1024" decoding="async" draggable="false" />
             <canvas class="hp-cv" aria-hidden="true"></canvas>
             <div class="hp-fade" aria-hidden="true"></div>
           </div>
@@ -881,6 +887,7 @@ html[data-theme="light"] .hp-img-light { opacity: 1; }
         </div>
         <div class="hp-hud">
           <button type="button" class="hp-tog" aria-pressed="false" data-cur="decompile"><i aria-hidden="true">{ }</i><span>View source</span></button>
+          <p class="hp-hint" aria-hidden="true">Move over the picture to read the source</p>
         </div>
       </section>
 
