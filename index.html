@@ -3556,13 +3556,28 @@ if (!reducedMotion) {
     </script>
 
 <script>
-/* Download CV: reuse the résumé PDF that already powers the résumé modal */
+/* Download CV: decode embedded PDF into a Blob URL so Safari & all browsers download reliably */
 (() => {
   const source = document.querySelector('.resume-actions a[download]');
+  if (!source) return;
+  const rawHref = source.getAttribute('href') || '';
+  const match = rawHref.match(/^data:application\/pdf;base64,(.+)$/);
+  let downloadHref = rawHref;
+  if (match) {
+    try {
+      const binary = atob(match[1]);
+      const cvFileBuffer = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i += 1) cvFileBuffer[i] = binary.charCodeAt(i);
+      const blob = new Blob([cvFileBuffer], { type: 'application/pdf' });
+      downloadHref = URL.createObjectURL(blob);
+      source.href = downloadHref;
+    } catch (e) { /* fall back to data URI */ }
+  }
+  const filename = 'JayLampara_CV.pdf';
+  source.setAttribute('download', filename);
   document.querySelectorAll('[data-cv-download]').forEach((link) => {
-    if (!source) return;
-    link.href = source.getAttribute('href');
-    link.setAttribute('download', source.getAttribute('download') || 'Jay-Lampara-Resume.pdf');
+    link.href = downloadHref;
+    link.setAttribute('download', filename);
   });
 })();
 
