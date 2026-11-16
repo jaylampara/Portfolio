@@ -112,7 +112,8 @@ h1 em, h2 em { color: var(--acid); font-style: normal; }
 .orbit-two::after { border-color: var(--acid); left: 84%; top: 23%; }
 .orbit-three { inset: 25% 0; transform: rotate(68deg); border-color: rgba(255,255,255,.12); animation: orbit 22s linear infinite; }
 .orbit-three::after { display: none; }
-.core { width: 124px; height: 124px; display: grid; place-items: center; border-radius: 50%; border: 1px solid rgba(200,255,52,.76); background: radial-gradient(circle at 37% 35%, #254f39, #0c1917 55%, #07100d); box-shadow: inset 0 0 35px rgba(102,255,200,.22), 0 0 35px rgba(190,255,35,.12); position: relative; color: var(--acid); font: 500 36px var(--display); letter-spacing: -.08em; }
+.core { width: 124px; height: 124px; display: grid; place-items: center; border-radius: 50%; border: 1px solid rgba(200,255,52,.76); background: radial-gradient(circle at 37% 35%, #254f39, #0c1917 55%, #07100d); box-shadow: inset 0 0 35px rgba(102,255,200,.22), 0 0 35px rgba(190,255,35,.12); position: relative; color: var(--acid); font: 600 36px var(--mono); letter-spacing: -.1em; }
+.core span { display: inline-block; transform: skew(-9deg); }
 .core i { position: absolute; width: 142px; height: 142px; border-radius: 50%; border: 1px dashed rgba(200,255,52,.43); animation: orbit 10s linear infinite; }
 .node { position: absolute; width: 76px; height: 59px; display: flex; flex-direction: column; justify-content: center; padding-left: 12px; border-left: 1px solid; background: linear-gradient(90deg, rgba(15,29,26,.85), rgba(10,12,12,.1)); backdrop-filter: blur(6px); }
 .node b { font: 11px var(--mono); letter-spacing: .12em; }.node small { margin-top: 3px; color: #7a8c87; font: 9px var(--mono); }
@@ -496,6 +497,11 @@ html[data-theme="light"] .showreel-empty { color: #5d6a63; border-color: rgba(10
 .showreel-item iframe[data-provider="vimeo"],
 .lightbox-embed[data-provider="youtube"],
 .lightbox-embed[data-provider="vimeo"] { pointer-events: none; }
+/* crop YouTube Shorts' right-edge like/comment/share column & top/bottom chrome out of previews */
+.showreel-videos.is-gallery .showreel-item[data-shape] iframe[data-provider="youtube"][data-short="true"],
+.showreel-videos.auto-orient .showreel-item[data-shape] iframe[data-provider="youtube"][data-short="true"] { left: -4%; top: -8%; width: 126%; height: 116%; }
+.lightbox-short-frame { position: relative; width: min(405px, calc((100vh - 200px) * 9 / 16), calc(100vw - 48px)); aspect-ratio: 9 / 16; overflow: hidden; border: 1px solid rgba(218,250,242,.22); background: #090d0c; box-shadow: 0 24px 90px rgba(0,0,0,.65); }
+.lightbox-short-frame .lightbox-embed { position: absolute; left: -4%; top: -8%; width: 126%; height: 116%; max-height: none; aspect-ratio: auto; border: 0; box-shadow: none; }
 /* Drive keeps its exact ratio in full view too — a portrait clip never sits in a 16:9 box */
 .lightbox-embed[data-exact] { width: min(1024px, calc(100vw - 48px), calc((100vh - 200px) * var(--media-ratio, 1.7778))); aspect-ratio: var(--media-ratio, 16 / 9); max-height: none; }
 .art-neon-reel[data-showreel-open] { cursor: pointer; }
@@ -736,6 +742,31 @@ html[data-theme="light"] .hp-img-light { opacity: 1; }
     linear-gradient(to right, var(--bg) 0, color-mix(in srgb, var(--bg) 72%, transparent) 14%, transparent 42%),
     linear-gradient(to top, var(--bg) 0, transparent 26%),
     linear-gradient(to bottom, color-mix(in srgb, var(--bg) 70%, transparent) 0, transparent 16%);
+}
+@media (min-width: 810px) {
+  html[data-theme="light"] .hp-fade { background: none; }
+  html[data-theme="light"] .hp-stage {
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 0%, rgba(0, 0, 0, .45) 16%, #000 42%),
+      linear-gradient(to top, transparent 0%, #000 24%),
+      linear-gradient(to bottom, transparent 0%, #000 14%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to right, transparent 0%, rgba(0, 0, 0, .45) 16%, #000 42%),
+      linear-gradient(to top, transparent 0%, #000 24%),
+      linear-gradient(to bottom, transparent 0%, #000 14%);
+    mask-composite: intersect;
+  }
+}
+@media (min-width: 810px) and (max-width: 1099px) {
+  html[data-theme="light"] .hp-stage {
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 0%, rgba(0, 0, 0, .28) 22%, rgba(0, 0, 0, .82) 56%, #000 78%),
+      linear-gradient(to top, transparent 0%, #000 36%);
+    mask-image:
+      linear-gradient(to right, transparent 0%, rgba(0, 0, 0, .28) 22%, rgba(0, 0, 0, .82) 56%, #000 78%),
+      linear-gradient(to top, transparent 0%, #000 36%);
+  }
 }
 .hero-wrap {
   position: relative;
@@ -1044,7 +1075,7 @@ html[data-theme="light"] .hp-img-light { opacity: 1; }
               <div class="orbit orbit-one"></div>
               <div class="orbit orbit-two"></div>
               <div class="orbit orbit-three"></div>
-              <div class="core"><span>01</span><i></i></div>
+              <div class="core"><span>JL</span><i></i></div>
               <div class="node node-a"><b>OPS</b><small>Flow</small></div>
               <div class="node node-b"><b>CRTV</b><small>Motion</small></div>
               <div class="node node-c"><b>WEB</b><small>Scale</small></div>
@@ -1964,7 +1995,15 @@ const openLightbox = (media) => {
       if (lightboxEmbed && soundOn) window.setTimeout(() => setGraphicsEmbedSound(lightboxEmbed, true), 600);
     });
     lightboxMedia = null;
-    lightboxStage.replaceChildren(lightboxEmbed);
+    if (media.dataset.provider === 'youtube' && media.dataset.short === 'true') {
+      lightboxEmbed.dataset.short = 'true';
+      const shortWrap = document.createElement('div');
+      shortWrap.className = 'lightbox-short-frame';
+      shortWrap.appendChild(lightboxEmbed);
+      lightboxStage.replaceChildren(shortWrap);
+    } else {
+      lightboxStage.replaceChildren(lightboxEmbed);
+    }
     /* Drive's player has its own timeline and does not expose it to the page */
     lightboxScrub.hidden = media.dataset.provider === 'drive';
     const livePlay = media.dataset.provider === 'youtube' || media.dataset.provider === 'vimeo';
@@ -2317,7 +2356,7 @@ const buildGraphicsItem = (entry, index, chipFallback = 'DESIGN') => {
     const embedSrc = (soundOn) => {
       switch (provider) {
         case 'youtube':
-          return `https://www.youtube.com/embed/${entry.id}?autoplay=1&mute=${soundOn ? 0 : 1}&loop=1&playlist=${entry.id}&controls=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&enablejsapi=1${/^https?:/.test(location.origin) ? `&origin=${location.origin}` : ''}`;
+          return `https://www.youtube.com/embed/${entry.id}?autoplay=1&mute=${soundOn ? 0 : 1}&loop=1&playlist=${entry.id}&controls=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&fs=0&playsinline=1&enablejsapi=1${/^https?:/.test(location.origin) ? `&origin=${location.origin}` : ''}`;
         case 'vimeo':
           return `https://player.vimeo.com/video/${entry.id}?autoplay=1&muted=${soundOn ? 0 : 1}&loop=1&title=0&byline=0&controls=0&api=1`;
         case 'drive':
@@ -2351,6 +2390,7 @@ const buildGraphicsItem = (entry, index, chipFallback = 'DESIGN') => {
     frame.src = 'about:blank';
     frame.dataset.provider = provider;
     frame.dataset.sound = 'off';
+    if (provider === 'youtube' && entry.short) frame.dataset.short = 'true';
     if (silentDrive) frame.dataset.silent = 'true';
     /* YouTube/Vimeo mute through their player API — never give them reload variants,
        otherwise every sound toggle (or muting them for another clip) restarts the video */
