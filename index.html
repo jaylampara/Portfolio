@@ -497,11 +497,6 @@ html[data-theme="light"] .showreel-empty { color: #5d6a63; border-color: rgba(10
 .showreel-item iframe[data-provider="vimeo"],
 .lightbox-embed[data-provider="youtube"],
 .lightbox-embed[data-provider="vimeo"] { pointer-events: none; }
-/* crop YouTube Shorts' right-edge like/comment/share column & top/bottom chrome out of previews */
-.showreel-videos.is-gallery .showreel-item[data-shape] iframe[data-provider="youtube"][data-short="true"],
-.showreel-videos.auto-orient .showreel-item[data-shape] iframe[data-provider="youtube"][data-short="true"] { left: -4%; top: -8%; width: 126%; height: 116%; }
-.lightbox-short-frame { position: relative; width: min(405px, calc((100vh - 200px) * 9 / 16), calc(100vw - 48px)); aspect-ratio: 9 / 16; overflow: hidden; border: 1px solid rgba(218,250,242,.22); background: #090d0c; box-shadow: 0 24px 90px rgba(0,0,0,.65); }
-.lightbox-short-frame .lightbox-embed { position: absolute; left: -4%; top: -8%; width: 126%; height: 116%; max-height: none; aspect-ratio: auto; border: 0; box-shadow: none; }
 /* Drive keeps its exact ratio in full view too — a portrait clip never sits in a 16:9 box */
 .lightbox-embed[data-exact] { width: min(1024px, calc(100vw - 48px), calc((100vh - 200px) * var(--media-ratio, 1.7778))); aspect-ratio: var(--media-ratio, 16 / 9); max-height: none; }
 .art-neon-reel[data-showreel-open] { cursor: pointer; }
@@ -1995,15 +1990,7 @@ const openLightbox = (media) => {
       if (lightboxEmbed && soundOn) window.setTimeout(() => setGraphicsEmbedSound(lightboxEmbed, true), 600);
     });
     lightboxMedia = null;
-    if (media.dataset.provider === 'youtube' && media.dataset.short === 'true') {
-      lightboxEmbed.dataset.short = 'true';
-      const shortWrap = document.createElement('div');
-      shortWrap.className = 'lightbox-short-frame';
-      shortWrap.appendChild(lightboxEmbed);
-      lightboxStage.replaceChildren(shortWrap);
-    } else {
-      lightboxStage.replaceChildren(lightboxEmbed);
-    }
+    lightboxStage.replaceChildren(lightboxEmbed);
     /* Drive's player has its own timeline and does not expose it to the page */
     lightboxScrub.hidden = media.dataset.provider === 'drive';
     const livePlay = media.dataset.provider === 'youtube' || media.dataset.provider === 'vimeo';
@@ -2356,7 +2343,7 @@ const buildGraphicsItem = (entry, index, chipFallback = 'DESIGN') => {
     const embedSrc = (soundOn) => {
       switch (provider) {
         case 'youtube':
-          return `https://www.youtube.com/embed/${entry.id}?autoplay=1&mute=${soundOn ? 0 : 1}&loop=1&playlist=${entry.id}&controls=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&fs=0&playsinline=1&enablejsapi=1${/^https?:/.test(location.origin) ? `&origin=${location.origin}` : ''}`;
+          return `https://www.youtube.com/embed/${entry.id}?autoplay=1&mute=${soundOn ? 0 : 1}&loop=1&playlist=${entry.id}&controls=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&enablejsapi=1${/^https?:/.test(location.origin) ? `&origin=${location.origin}` : ''}`;
         case 'vimeo':
           return `https://player.vimeo.com/video/${entry.id}?autoplay=1&muted=${soundOn ? 0 : 1}&loop=1&title=0&byline=0&controls=0&api=1`;
         case 'drive':
@@ -2390,7 +2377,6 @@ const buildGraphicsItem = (entry, index, chipFallback = 'DESIGN') => {
     frame.src = 'about:blank';
     frame.dataset.provider = provider;
     frame.dataset.sound = 'off';
-    if (provider === 'youtube' && entry.short) frame.dataset.short = 'true';
     if (silentDrive) frame.dataset.silent = 'true';
     /* YouTube/Vimeo mute through their player API — never give them reload variants,
        otherwise every sound toggle (or muting them for another clip) restarts the video */
