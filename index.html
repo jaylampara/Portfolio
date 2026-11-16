@@ -81,12 +81,27 @@ h1 { max-width: 800px; font-size: clamp(55px, 6.15vw, 102px); letter-spacing: -.
 h1 em, h2 em { color: var(--acid); font-style: normal; }
 .hero-description { max-width: 570px; color: #a6b0ad; line-height: 1.72; font-size: 16px; }
 .hero-actions { display: flex; gap: 12px; margin-top: 35px; }
-.button { height: 51px; padding: 0 20px; align-items: center; display: inline-flex; justify-content: center; gap: 29px; border: 1px solid transparent; font: 11px var(--mono); letter-spacing: .03em; transition: transform .22s, background .22s, color .22s; }
-.button span { font-size: 17px; line-height: 0; }
-.button-primary { color: #0a1000; background: var(--acid); box-shadow: 0 0 0 0 rgba(200,255,52,0); }
-.button-primary:hover { transform: translateY(-2px); box-shadow: 0 13px 30px -12px rgba(200,255,52,.62); }
-.button-secondary { color: #dce9e3; background: rgba(255,255,255,.015); border-color: rgba(232,250,242,.29); }
-.button-secondary:hover { border-color: var(--cyan); background: rgba(108,255,211,.09); transform: translateY(-2px); }
+.button { height: 54px; padding: 0 8px 0 22px; align-items: center; display: inline-flex; justify-content: center; gap: 14px; border: 1px solid transparent; border-radius: 14px; font-family: inherit; font-size: 14px; font-weight: 600; letter-spacing: -0.005em; line-height: 1; position: relative; transition: translate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.3s, border-color 0.3s, color 0.3s, scale 0.12s; }
+.button:active { scale: 0.97; }
+.button .btn-label { display: inline; color: inherit; font-size: inherit; font-weight: inherit; line-height: 1; }
+.button .btn-badge { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border-radius: 9px; overflow: hidden; position: relative; }
+.button .btn-badge svg { display: block; grid-area: 1 / 1; width: 15px; height: 15px; }
+.button-primary { color: #060708; background-color: #c6ff3d; }
+.button-primary:hover { background-color: #f1f2ec; }
+.button-primary .btn-badge { background-color: #060708; color: #c6ff3d; }
+.button-primary .btn-badge.is-arrow svg { transition: transform 0.45s cubic-bezier(0.3, 0.9, 0.2, 1); }
+.button-primary .btn-badge.is-arrow svg + svg { transform: translateX(-34px); }
+.button-primary:hover .btn-badge.is-arrow svg { transform: translateX(34px); }
+.button-primary:hover .btn-badge.is-arrow svg + svg { transform: translateX(0); }
+.button-secondary { color: #f1f2ec; background-color: rgba(11, 12, 14, 0.55); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-color: rgba(241, 242, 236, 0.22); }
+.button-secondary:hover { border-color: #f1f2ec; background-color: #14161a; }
+.button-secondary .btn-badge { background-color: rgba(241, 242, 236, 0.09); color: inherit; }
+.button-secondary:hover .btn-badge.is-down svg { animation: btn-drop 0.6s cubic-bezier(0.3, 0.9, 0.2, 1); }
+@keyframes btn-drop {
+  40% { transform: translateY(22px); }
+  41% { transform: translateY(-22px); }
+  100% { transform: none; }
+}
 
 .hero-visual { height: 485px; display: grid; place-items: center; }
 .orbital-system { width: min(100%, 470px); aspect-ratio: 1; position: relative; display: grid; place-items: center; }
@@ -184,8 +199,8 @@ html[data-theme="light"] .portrait-burst img { border-color: rgba(13,127,102,.6)
 .clients-track { width: max-content; display: flex; animation: reviews-marquee 55s linear infinite; will-change: transform; }
 .clients-track:hover, .clients-track:focus-within { animation-play-state: paused; }
 .clients-group { display: flex; gap: 10px; padding-right: 10px; }
-.client-logo { flex: none; width: 164px; height: 70px; display: grid; place-items: center; padding: 12px 16px; border: 1px solid var(--line); background: linear-gradient(145deg, rgba(255,255,255,.045), rgba(255,255,255,.012)); transition: border-color .25s ease, background .25s ease, transform .25s ease; }
-.client-logo:hover { border-color: rgba(200,255,52,.45); background: linear-gradient(145deg, rgba(200,255,52,.09), rgba(255,255,255,.012)); transform: translateY(-2px); }
+.client-logo { flex: none; width: 164px; height: 70px; display: grid; place-items: center; padding: 12px 16px; transition: transform .25s ease; }
+.client-logo:hover { transform: translateY(-2px); }
 .client-logo img { display: block; max-width: 100%; max-height: 44px; width: auto; height: auto; object-fit: contain; }
 .client-logo-empty { display: flex; align-items: center; gap: 8px; color: #c5d1cb; font: 500 13px var(--display); letter-spacing: -.02em; text-align: center; }
 .client-logo-empty::before { content: '✦'; color: var(--acid); font-size: 10px; }
@@ -282,8 +297,10 @@ html[data-theme="light"] .nav-contact:hover, html[data-theme="light"] .filter:ho
 
 /* ink retunes for pale surfaces */
 html[data-theme="light"] .hero-description { color: #3f4a45; }
-html[data-theme="light"] .button-secondary { color: #16201a; background: rgba(0,0,0,.03); border-color: rgba(10,40,30,.28); }
-html[data-theme="light"] .button-secondary:hover { border-color: var(--cyan); background: rgba(13,127,102,.08); }
+html[data-theme="light"] .button-primary:hover { background-color: #101712; color: #f1f2ec; }
+html[data-theme="light"] .button-secondary { color: #16201a; background-color: rgba(255, 255, 255, 0.55); border-color: rgba(10, 40, 30, 0.22); }
+html[data-theme="light"] .button-secondary:hover { border-color: #16201a; background-color: rgba(255, 255, 255, 0.9); }
+html[data-theme="light"] .button-secondary .btn-badge { background-color: rgba(10, 40, 30, 0.08); }
 html[data-theme="light"] .desktop-nav { color: #4d5a53; }
 html[data-theme="light"] .theme-toggle { color: #2e3a33; background: rgba(255,255,255,.86); border-color: rgba(10,30,20,.25); box-shadow: 0 14px 40px -14px rgba(20,40,30,.4); }
 html[data-theme="light"] .theme-toggle::after { border-color: rgba(96,124,18,.65); }
@@ -296,8 +313,6 @@ html[data-theme="light"] .resume-button { border-color: rgba(97,134,0,.55); }
 html[data-theme="light"] .contact-form input, html[data-theme="light"] .contact-form textarea, html[data-theme="light"] .contact-form select { color: #10161a; }
 html[data-theme="light"] .contact-form select option { background: #ebeee8; }
 html[data-theme="light"] .marquee-track span { color: #26312b; }
-html[data-theme="light"] .client-logo { background: linear-gradient(145deg, rgba(16,54,40,.055), rgba(0,0,0,.012)); }
-html[data-theme="light"] .client-logo:hover { border-color: rgba(97,134,0,.45); background: linear-gradient(145deg, rgba(97,134,0,.1), rgba(0,0,0,.012)); }
 html[data-theme="light"] .client-logo-empty { color: #3c4842; }
 html[data-theme="light"] .review-card { background: linear-gradient(145deg, rgba(16,54,40,.055), rgba(0,0,0,.012)); }
 html[data-theme="light"] .review-message { color: #4e5b54; }
@@ -552,6 +567,114 @@ html[data-theme="light"] .project:hover .project-art { box-shadow: 0 26px 46px -
 .project .art-editorial strong, .project .art-editorial i { transition: transform .6s cubic-bezier(.2,.8,.2,1); }
 .project:hover .art-editorial strong { transform: translateX(7px); }
 .project:hover .art-editorial i { transform: scale(1.3) rotate(7deg); }
+
+/* -------- 3D Coverflow Sample Works -------- */
+.coverflow-shell { position: relative; margin-top: 8px; }
+.coverflow-stage {
+  position: relative;
+  width: 100%;
+  height: var(--cf-height, 490px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: var(--cf-perspective, 1600px);
+  overflow: hidden;
+  outline: none;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.coverflow-stage:focus-visible { outline: 1px solid var(--acid); outline-offset: 8px; }
+.coverflow-stage .project-grid {
+  position: relative;
+  display: block;
+  width: var(--cf-card-w, 420px);
+  height: var(--cf-card-h, 424px);
+  transform-style: preserve-3d;
+}
+.coverflow-stage .project {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--cf-card-w, 420px);
+  margin: 0;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  transition: transform .6s cubic-bezier(.22, 1, .36, 1), opacity .6s cubic-bezier(.22, 1, .36, 1);
+  will-change: transform, opacity;
+}
+.coverflow-stage .project .project-art {
+  border-radius: 14px;
+}
+.coverflow-dim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #060708;
+  opacity: 0;
+  transition: opacity .6s cubic-bezier(.22, 1, .36, 1);
+  pointer-events: none;
+  z-index: 6;
+}
+.coverflow-stage .project:not(.is-active) { cursor: pointer; }
+.coverflow-stage .project:not(.is-active) .coverflow-dim { opacity: .42; }
+html[data-theme="light"] .coverflow-stage .project:not(.is-active) .coverflow-dim { opacity: .26; }
+.coverflow-stage .project:not(.is-active) .project-art { pointer-events: none; }
+.coverflow-stage .project:not(.is-active):hover .project-art { transform: none; box-shadow: none; border-color: rgba(218,250,242,.28); }
+.coverflow-stage .project:not(.is-active):hover .project-art::after { animation: none; }
+.coverflow-stage .project .project-meta { transition: opacity .4s ease; }
+.coverflow-stage .project:not(.is-active) .project-meta { opacity: .48; }
+.coverflow-stage .project:not(.is-active) .project-meta > a { pointer-events: none; }
+.coverflow-stage .project.is-active .project-meta { opacity: 1; }
+.coverflow-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+}
+.coverflow-controls { display: flex; align-items: center; gap: 10px; }
+.coverflow-btn {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  color: var(--text);
+  transition: border-color .22s, color .22s, background-color .22s, transform .15s;
+}
+.coverflow-btn:hover { border-color: var(--acid); color: var(--acid); }
+.coverflow-btn:active { transform: scale(.95); }
+.coverflow-btn:focus-visible { outline: 1px solid var(--acid); outline-offset: 3px; }
+.coverflow-dots { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.coverflow-dot {
+  width: 22px;
+  height: 4px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text) 22%, transparent);
+  transition: width .3s cubic-bezier(.22, 1, .36, 1), background-color .3s;
+}
+.coverflow-dot:hover { background: color-mix(in srgb, var(--text) 48%, transparent); }
+.coverflow-dot.is-active { width: 38px; background: var(--acid); }
+.coverflow-counter {
+  font: 11px var(--mono);
+  letter-spacing: .08em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.coverflow-counter strong { color: var(--text); font-weight: 500; }
+@media (max-width: 570px) {
+  .coverflow-stage .project .project-art { aspect-ratio: 1.16 / 1; }
+  .coverflow-stage .project .project-meta h3 { font-size: 16px; }
+  .coverflow-nav { gap: 10px; margin-top: 14px; }
+  .coverflow-dot { width: 14px; }
+  .coverflow-dot.is-active { width: 26px; }
+}
+
 @media (max-width: 570px) { .showreel-modal { padding: 12px; } .showreel-dialog-bar { flex-wrap: wrap; } }
 
     
@@ -677,20 +800,18 @@ html[data-theme="light"] .hp-img-light { opacity: 1; }
   right: max(48px, calc((100% - 1380px) / 2));
   pointer-events: none;
 }
-.hp-tog, .hp-hint {
+.hp-tog {
   position: absolute;
   margin: 0;
   font-family: var(--mono);
-}
-.hp-tog {
   pointer-events: auto;
   top: 24px;
   right: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
   height: 40px;
-  padding: 0 14px 0 6px;
+  padding: 0;
   border-radius: 11px;
   border: 1px solid color-mix(in srgb, var(--text) 22%, transparent);
   background: color-mix(in srgb, var(--bg) 60%, transparent);
@@ -704,8 +825,9 @@ html[data-theme="light"] .hp-img-light { opacity: 1; }
 .hp-tog i {
   display: grid;
   place-items: center;
+  width: 28px;
   height: 28px;
-  padding: 0 8px;
+  padding: 0;
   border-radius: 7px;
   background: var(--acid);
   color: var(--bg);
@@ -714,14 +836,7 @@ html[data-theme="light"] .hp-img-light { opacity: 1; }
 }
 .hp-tog:hover, .hp-tog[aria-pressed="true"] { border-color: var(--acid); }
 .hp-tog:focus-visible { outline: 2px solid var(--acid); outline-offset: 4px; }
-.hp-hint {
-  left: 14%;
-  bottom: 64px;
-  font-size: 12px;
-  color: var(--muted);
-  white-space: nowrap;
-}
-.hp.is-static ~ .hp-hud .hp-tog, .hp.is-static ~ .hp-hud .hp-hint { display: none; }
+.hp.is-static ~ .hp-hud .hp-tog { display: none; }
 
 /* the green mouse-tracking point (hero only, fine pointers) */
 .hero.is-fine, .hero.is-fine * { cursor: none !important; }
@@ -741,7 +856,6 @@ html[data-theme="light"] .hp-img-light { opacity: 1; }
   .hero-copy { width: 74%; }
   .hero h1 { font-size: clamp(44px, 7.4vw, 66px); }
   .hero-row { flex-direction: column; align-items: flex-start; gap: 26px; }
-  .hp-hint { display: none; }
   .hp-fade {
     background:
       linear-gradient(to right, var(--bg) 0, color-mix(in srgb, var(--bg) 80%, transparent) 22%, color-mix(in srgb, var(--bg) 20%, transparent) 60%, transparent 80%),
@@ -877,8 +991,25 @@ html[data-theme="light"] .hp-img-light { opacity: 1; }
               <div class="hero-row">
                 <p class="hero-description">IT professional and creative operations manager translating ambitious ideas and complex operational bottlenecks into high-performing digital experiences.</p>
                 <div class="hero-actions">
-                  <a class="button button-primary" data-cur="explore" href="#services">Explore services <span>↗</span></a>
-                  <a class="button button-secondary" href="#resume" data-cv-download download="Jay-Lampara-Resume.pdf" data-cur="get the pdf">Download CV <span>↓</span></a>
+                  <a class="button button-primary" data-cur="explore" href="#services">
+                    <span class="btn-label">Explore services</span>
+                    <b class="btn-badge is-arrow" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12h14M13 6l6 6-6 6"></path>
+                      </svg>
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12h14M13 6l6 6-6 6"></path>
+                      </svg>
+                    </b>
+                  </a>
+                  <a class="button button-secondary" href="#resume" data-cv-download download="Jay-Lampara-Resume.pdf" data-cur="get the pdf">
+                    <span class="btn-label">Download CV</span>
+                    <b class="btn-badge is-down" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 4v13M6 12l6 6 6-6M5 21h14"></path>
+                      </svg>
+                    </b>
+                  </a>
                 </div>
               </div>
             </div>
@@ -886,8 +1017,7 @@ html[data-theme="light"] .hp-img-light { opacity: 1; }
           <div class="scroll-cue"><span></span> SCROLL TO EXPLORE</div>
         </div>
         <div class="hp-hud">
-          <button type="button" class="hp-tog" aria-pressed="false" data-cur="decompile"><i aria-hidden="true">{ }</i><span>View source</span></button>
-          <p class="hp-hint" aria-hidden="true">Move over the picture to read the source</p>
+          <button type="button" class="hp-tog" aria-pressed="false" aria-label="View Source" title="View Source" data-cur="decompile"><i aria-hidden="true">{ }</i></button>
         </div>
       </section>
 
@@ -970,39 +1100,55 @@ html[data-theme="light"] .hp-img-light { opacity: 1; }
           <button class="filter" data-filter="creative" role="tab" aria-selected="false">Creative <span>03</span></button>
           <button class="filter" data-filter="web" role="tab" aria-selected="false">Web design <span>02</span></button>
         </div>
-        <div class="project-grid">
-          <article class="project project-featured reveal" data-category="creative">
-            <div class="project-art art-neon-reel" data-showreel-open role="button" tabindex="0" aria-label="Open sample works video reel"><div class="reel-frame"><span>THE</span><strong>CONVERSION<br />ENGINE</strong><i></i></div><div class="art-stat">03:42<br /><small>WATCH REEL</small></div></div>
-            <div class="project-meta"><div><span class="project-type">Creative production / VSL</span><h3>Conversion Engine</h3></div><a href="#contact" aria-label="Ask about Conversion Engine project">↗</a></div>
-          </article>
-          <article class="project reveal" data-category="operations" data-delay="90">
-            <div class="project-art art-flow interactive-art" data-art-interaction="pipeline" role="button" tabindex="0" aria-label="Animate Pipeline Architecture workflow"><div class="flow-line flow-one"></div><div class="flow-line flow-two"></div><div class="flow-node fn-one">Lead</div><div class="flow-node fn-two">Qualify</div><div class="flow-node fn-three">Close</div><div class="flow-number">86<span>%</span></div><div class="art-pop-up pipeline-pop-up"><span class="pop-up-status">● PIPELINE SYNCED</span><strong>86% route efficiency</strong><small>Lead → Qualify → Close</small></div><span class="interaction-hint">CLICK TO SIMULATE</span></div>
-            <div class="project-meta"><div><span class="project-type">Operations / Automation</span><h3>Pipeline Architecture</h3></div><a href="#contact" aria-label="Ask about Pipeline Architecture project">↗</a></div>
-          </article>
-          <article class="project reveal" data-category="web" data-delay="160">
-            <div class="project-art art-commerce" data-waves-open role="button" tabindex="0" aria-label="Open Waves Commerce sample works"><div class="commerce-browser"><div class="browser-bar"><i></i><i></i><i></i></div><div class="commerce-content"><span>WAVES</span><b>Objects<br />of intent.</b><em>SHOP / 2026</em></div></div></div>
-            <div class="project-meta"><div><span class="project-type">Web Development</span><h3>Waves Commerce</h3></div><a href="#contact" aria-label="Ask about Waves Commerce project">↗</a></div>
-          </article>
-          <article class="project reveal" data-category="creative">
-            <div class="project-art art-motion" data-motion-open role="button" tabindex="0" aria-label="Open motion sample works"><span class="motion-word word-one">MOVE</span><span class="motion-word word-two">WITH</span><span class="motion-word word-three">INTENT</span><div class="motion-orb"></div></div>
-            <div class="project-meta"><div><span class="project-type">Motion / Brand campaign</span><h3>Move With Intent</h3></div><a href="#contact" aria-label="Ask about Move With Intent project">↗</a></div>
-          </article>
-          <article class="project reveal" data-category="creative" data-delay="90">
-            <div class="project-art art-poster" data-graphics-open role="button" tabindex="0" aria-label="Open graphic design sample works"><div class="poster-grid" aria-hidden="true"></div><div class="poster-tape" aria-hidden="true">DESIGN / 2026</div><div class="poster-frame"><span>VISION</span><strong>GRAPHIC<br />DESIGN</strong><i></i></div><div class="poster-swatches" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><div class="art-stat">24<br /><small>SHIPPED DESIGNS</small></div></div>
-            <div class="project-meta"><div><span class="project-type">Creative / Graphics design</span><h3>Poster &amp; Identity System</h3></div><a href="#contact" aria-label="Ask about Poster and Identity System project">↗</a></div>
-          </article>
-          <article class="project reveal" data-category="operations" data-delay="90">
-            <div class="project-art art-dashboard interactive-art" data-art-interaction="dashboard" role="button" tabindex="0" aria-label="Animate Command Center dashboard graphs"><div class="dash-sidebar"></div><div class="dash-main"><div class="dash-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="dash-chart"></div><span>UNIFIED OPS</span></div><div class="art-pop-up dashboard-pop-up"><span class="pop-up-status">● INSIGHT LIVE</span><strong>Output velocity +42%</strong><small>7 metrics recalculated</small></div><span class="interaction-hint">CLICK TO ANALYZE</span></div>
-            <div class="project-meta"><div><span class="project-type">Systems / Dashboard</span><h3>Command Center</h3></div><a href="#contact" aria-label="Ask about Command Center project">↗</a></div>
-          </article>
-          <article class="project reveal" data-category="operations" data-delay="160">
-            <div class="project-art art-support interactive-art" data-art-interaction="support" role="button" tabindex="0" aria-label="Animate Support Autopilot AI conversation"><div class="support-chat"><div class="chat-bubble chat-user">Where is my order?</div><div class="chat-bubble chat-ai">Answered, routed &amp; resolved — 24/7.</div><div class="chat-typing" aria-hidden="true"><i></i><i></i><i></i></div></div><div class="support-number">92<span>%</span></div><div class="art-pop-up support-pop-up"><span class="pop-up-status">● AI ON DECK</span><strong>92% auto-resolved</strong><small>Replies in under 8 seconds</small></div><span class="interaction-hint">CLICK TO CHAT</span></div>
-            <div class="project-meta"><div><span class="project-type">Operations / AI Support</span><h3>Support Autopilot</h3></div><a href="#contact" aria-label="Ask about Support Autopilot project">↗</a></div>
-          </article>
-          <article class="project reveal" data-category="web" data-delay="160">
-            <div class="project-art art-editorial" data-archive-open role="button" tabindex="0" aria-label="Open Archive No. 09 sample works"><span>ARCHIVE<br />/ 09</span><strong>A study<br />in digital<br /><em>presence.</em></strong><i></i></div>
-            <div class="project-meta"><div><span class="project-type">Mobile Application</span><h3>Archive No. 09</h3></div><a href="#contact" aria-label="Ask about Archive No. 09 project">↗</a></div>
-          </article>
+        <div class="coverflow-shell reveal">
+          <div class="coverflow-stage" tabindex="0" role="region" aria-roledescription="carousel" aria-label="Sample works">
+            <div class="project-grid">
+              <article class="project project-featured" data-category="creative">
+                <div class="project-art art-neon-reel" data-showreel-open role="button" tabindex="0" aria-label="Open sample works video reel"><div class="reel-frame"><span>THE</span><strong>CONVERSION<br />ENGINE</strong><i></i></div><div class="art-stat">03:42<br /><small>WATCH REEL</small></div><div class="coverflow-dim" aria-hidden="true"></div></div>
+                <div class="project-meta"><div><span class="project-type">Creative production / VSL</span><h3>Conversion Engine</h3></div><a href="#contact" aria-label="Ask about Conversion Engine project">↗</a></div>
+              </article>
+              <article class="project" data-category="operations">
+                <div class="project-art art-flow interactive-art" data-art-interaction="pipeline" role="button" tabindex="0" aria-label="Animate Pipeline Architecture workflow"><div class="flow-line flow-one"></div><div class="flow-line flow-two"></div><div class="flow-node fn-one">Lead</div><div class="flow-node fn-two">Qualify</div><div class="flow-node fn-three">Close</div><div class="flow-number">86<span>%</span></div><div class="art-pop-up pipeline-pop-up"><span class="pop-up-status">● PIPELINE SYNCED</span><strong>86% route efficiency</strong><small>Lead → Qualify → Close</small></div><span class="interaction-hint">CLICK TO SIMULATE</span><div class="coverflow-dim" aria-hidden="true"></div></div>
+                <div class="project-meta"><div><span class="project-type">Operations / Automation</span><h3>Pipeline Architecture</h3></div><a href="#contact" aria-label="Ask about Pipeline Architecture project">↗</a></div>
+              </article>
+              <article class="project" data-category="web">
+                <div class="project-art art-commerce" data-waves-open role="button" tabindex="0" aria-label="Open Waves Commerce sample works"><div class="commerce-browser"><div class="browser-bar"><i></i><i></i><i></i></div><div class="commerce-content"><span>WAVES</span><b>Objects<br />of intent.</b><em>SHOP / 2026</em></div></div><div class="coverflow-dim" aria-hidden="true"></div></div>
+                <div class="project-meta"><div><span class="project-type">Web Development</span><h3>Waves Commerce</h3></div><a href="#contact" aria-label="Ask about Waves Commerce project">↗</a></div>
+              </article>
+              <article class="project" data-category="creative">
+                <div class="project-art art-motion" data-motion-open role="button" tabindex="0" aria-label="Open motion sample works"><span class="motion-word word-one">MOVE</span><span class="motion-word word-two">WITH</span><span class="motion-word word-three">INTENT</span><div class="motion-orb"></div><div class="coverflow-dim" aria-hidden="true"></div></div>
+                <div class="project-meta"><div><span class="project-type">Motion / Brand campaign</span><h3>Move With Intent</h3></div><a href="#contact" aria-label="Ask about Move With Intent project">↗</a></div>
+              </article>
+              <article class="project" data-category="creative">
+                <div class="project-art art-poster" data-graphics-open role="button" tabindex="0" aria-label="Open graphic design sample works"><div class="poster-grid" aria-hidden="true"></div><div class="poster-tape" aria-hidden="true">DESIGN / 2026</div><div class="poster-frame"><span>VISION</span><strong>GRAPHIC<br />DESIGN</strong><i></i></div><div class="poster-swatches" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><div class="art-stat">24<br /><small>SHIPPED DESIGNS</small></div><div class="coverflow-dim" aria-hidden="true"></div></div>
+                <div class="project-meta"><div><span class="project-type">Creative / Graphics design</span><h3>Poster &amp; Identity System</h3></div><a href="#contact" aria-label="Ask about Poster and Identity System project">↗</a></div>
+              </article>
+              <article class="project" data-category="operations">
+                <div class="project-art art-dashboard interactive-art" data-art-interaction="dashboard" role="button" tabindex="0" aria-label="Animate Command Center dashboard graphs"><div class="dash-sidebar"></div><div class="dash-main"><div class="dash-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="dash-chart"></div><span>UNIFIED OPS</span></div><div class="art-pop-up dashboard-pop-up"><span class="pop-up-status">● INSIGHT LIVE</span><strong>Output velocity +42%</strong><small>7 metrics recalculated</small></div><span class="interaction-hint">CLICK TO ANALYZE</span><div class="coverflow-dim" aria-hidden="true"></div></div>
+                <div class="project-meta"><div><span class="project-type">Systems / Dashboard</span><h3>Command Center</h3></div><a href="#contact" aria-label="Ask about Command Center project">↗</a></div>
+              </article>
+              <article class="project" data-category="operations">
+                <div class="project-art art-support interactive-art" data-art-interaction="support" role="button" tabindex="0" aria-label="Animate Support Autopilot AI conversation"><div class="support-chat"><div class="chat-bubble chat-user">Where is my order?</div><div class="chat-bubble chat-ai">Answered, routed &amp; resolved — 24/7.</div><div class="chat-typing" aria-hidden="true"><i></i><i></i><i></i></div></div><div class="support-number">92<span>%</span></div><div class="art-pop-up support-pop-up"><span class="pop-up-status">● AI ON DECK</span><strong>92% auto-resolved</strong><small>Replies in under 8 seconds</small></div><span class="interaction-hint">CLICK TO CHAT</span><div class="coverflow-dim" aria-hidden="true"></div></div>
+                <div class="project-meta"><div><span class="project-type">Operations / AI Support</span><h3>Support Autopilot</h3></div><a href="#contact" aria-label="Ask about Support Autopilot project">↗</a></div>
+              </article>
+              <article class="project" data-category="web">
+                <div class="project-art art-editorial" data-archive-open role="button" tabindex="0" aria-label="Open Archive No. 09 sample works"><span>ARCHIVE<br />/ 09</span><strong>A study<br />in digital<br /><em>presence.</em></strong><i></i><div class="coverflow-dim" aria-hidden="true"></div></div>
+                <div class="project-meta"><div><span class="project-type">Mobile Application</span><h3>Archive No. 09</h3></div><a href="#contact" aria-label="Ask about Archive No. 09 project">↗</a></div>
+              </article>
+            </div>
+          </div>
+          <div class="coverflow-nav">
+            <div class="coverflow-controls">
+              <button type="button" class="coverflow-btn" data-coverflow-prev aria-label="Previous project">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              </button>
+              <button type="button" class="coverflow-btn" data-coverflow-next aria-label="Next project">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </button>
+            </div>
+            <div class="coverflow-dots" data-coverflow-dots aria-label="Choose project slide"></div>
+            <div class="coverflow-counter" data-coverflow-counter><strong>01</strong> / 08</div>
+          </div>
         </div>
       </section>
 
@@ -1180,19 +1326,204 @@ const observer = new IntersectionObserver((entries) => {
 document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
 
 const filters = document.querySelectorAll('.filter');
-const projects = document.querySelectorAll('.project');
-filters.forEach((filter) => {
-  filter.addEventListener('click', () => {
-    filters.forEach((item) => { item.classList.remove('active'); item.setAttribute('aria-selected', 'false'); });
-    filter.classList.add('active');
-    filter.setAttribute('aria-selected', 'true');
-    const category = filter.dataset.filter;
-    projects.forEach((project) => {
-      const visible = category === 'all' || project.dataset.category === category;
-      project.classList.toggle('is-hidden', !visible);
+const projects = Array.from(document.querySelectorAll('.project'));
+
+(() => {
+  const stage = document.querySelector('.coverflow-stage');
+  const prevBtn = document.querySelector('[data-coverflow-prev]');
+  const nextBtn = document.querySelector('[data-coverflow-next]');
+  const dotsEl = document.querySelector('[data-coverflow-dots]');
+  const counterEl = document.querySelector('[data-coverflow-counter]');
+  if (!stage) return;
+
+  const SCALE_STEP = 0.16;
+  const MAX_VISIBLE = 2;
+  let active = 0;
+  let locked = false;
+  let lockTimer = 0;
+  let justSwiped = false;
+
+  const visibleProjects = () => projects.filter((p) => !p.classList.contains('is-hidden'));
+
+  const lock = () => {
+    locked = true;
+    window.clearTimeout(lockTimer);
+    lockTimer = window.setTimeout(() => { locked = false; }, 420);
+  };
+
+  const renderDots = (n) => {
+    if (!dotsEl) return;
+    dotsEl.innerHTML = '';
+    for (let i = 0; i < n; i += 1) {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'coverflow-dot' + (i === active ? ' is-active' : '');
+      dot.setAttribute('aria-label', `Go to project ${i + 1}`);
+      dot.addEventListener('click', () => goTo(i));
+      dotsEl.appendChild(dot);
+    }
+  };
+
+  const updateMeta = (n) => {
+    if (dotsEl) {
+      Array.from(dotsEl.children).forEach((dot, i) => {
+        dot.classList.toggle('is-active', i === active);
+      });
+    }
+    if (counterEl) {
+      const pad = (v) => String(v).padStart(2, '0');
+      counterEl.innerHTML = `<strong>${pad(n ? active + 1 : 0)}</strong> / ${pad(n)}`;
+    }
+  };
+
+  const layout = () => {
+    const list = visibleProjects();
+    const n = list.length;
+    if (!n) return;
+    active = Math.max(0, Math.min(n - 1, active));
+
+    const stageW = stage.clientWidth || 900;
+    const isMobile = stageW < 570;
+    const isTablet = stageW < 900;
+    const cardW = isMobile
+      ? Math.max(236, Math.min(320, Math.round(stageW * 0.72)))
+      : isTablet
+        ? Math.max(290, Math.min(380, Math.round(stageW * 0.56)))
+        : Math.max(340, Math.min(440, Math.round(stageW * 0.42)));
+
+    stage.style.setProperty('--cf-card-w', `${cardW}px`);
+    const perspective = Math.max(820, Math.min(1600, Math.round(stageW * 1.45)));
+    stage.style.setProperty('--cf-perspective', `${perspective}px`);
+
+    const activeCard = list[active];
+    const cardH = activeCard ? activeCard.offsetHeight : Math.round(cardW / 1.2) + 72;
+    stage.style.setProperty('--cf-card-h', `${cardH}px`);
+    stage.style.setProperty('--cf-height', `${cardH + (isMobile ? 36 : 56)}px`);
+
+    const spacing = isMobile ? cardW * 0.54 : cardW * 0.62;
+    const depth = isMobile ? cardW * 0.48 : cardW * 0.56;
+    const tilt = isMobile ? 8 : 12;
+    const sideTilt = isMobile ? 4 : 8;
+
+    list.forEach((card, i) => {
+      let rel = i - active;
+      if (n >= 3) {
+        if (rel > n / 2) rel -= n;
+        if (rel < -n / 2) rel += n;
+      }
+      const ax = Math.abs(rel);
+      const visible = ax <= MAX_VISIBLE;
+      const isActive = rel === 0;
+      const sc = Math.max(0.4, 1 - ax * SCALE_STEP);
+      const tx = rel * spacing;
+      const tz = -ax * depth;
+      const ry = -rel * tilt;
+      const rz = rel * sideTilt;
+
+      card.classList.toggle('is-active', isActive);
+      card.setAttribute('aria-hidden', String(!visible));
+      card.style.zIndex = String(10 - ax);
+      card.style.opacity = visible ? '1' : '0';
+      card.style.pointerEvents = visible ? 'auto' : 'none';
+      card.style.transform = `translate(-50%, -50%) translateX(${tx.toFixed(1)}px) translateZ(${tz.toFixed(1)}px) rotateY(${ry.toFixed(2)}deg) rotateZ(${rz.toFixed(2)}deg) scale(${sc.toFixed(3)})`;
+    });
+
+    updateMeta(n);
+  };
+
+  const step = (dir) => {
+    const n = visibleProjects().length;
+    if (n < 2 || locked) return;
+    lock();
+    active = (((active + dir) % n) + n) % n;
+    layout();
+  };
+
+  const goTo = (idx) => {
+    const n = visibleProjects().length;
+    if (n < 2 || locked || idx === active) return;
+    lock();
+    active = ((idx % n) + n) % n;
+    layout();
+  };
+
+  projects.forEach((card) => {
+    card.addEventListener('click', (event) => {
+      if (justSwiped) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      const list = visibleProjects();
+      const idx = list.indexOf(card);
+      if (idx === -1) return;
+      if (idx !== active) {
+        event.preventDefault();
+        event.stopPropagation();
+        goTo(idx);
+      }
+    }, true);
+  });
+
+  if (prevBtn) prevBtn.addEventListener('click', () => step(-1));
+  if (nextBtn) nextBtn.addEventListener('click', () => step(1));
+
+  stage.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      step(1);
+    } else if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      step(-1);
+    }
+  });
+
+  /* Touch & pointer swipe */
+  let startX = 0, startY = 0, tracking = false;
+  stage.addEventListener('pointerdown', (event) => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    startX = event.clientX;
+    startY = event.clientY;
+    tracking = true;
+  }, { passive: true });
+  stage.addEventListener('pointerup', (event) => {
+    if (!tracking) return;
+    tracking = false;
+    const dx = event.clientX - startX;
+    const dy = event.clientY - startY;
+    if (Math.abs(dx) > 36 && Math.abs(dx) > Math.abs(dy) * 1.15) {
+      justSwiped = true;
+      window.setTimeout(() => { justSwiped = false; }, 120);
+      step(dx < 0 ? 1 : -1);
+    }
+  }, { passive: true });
+  stage.addEventListener('pointercancel', () => { tracking = false; }, { passive: true });
+
+  filters.forEach((filter) => {
+    filter.addEventListener('click', () => {
+      filters.forEach((item) => { item.classList.remove('active'); item.setAttribute('aria-selected', 'false'); });
+      filter.classList.add('active');
+      filter.setAttribute('aria-selected', 'true');
+      const category = filter.dataset.filter;
+      projects.forEach((project) => {
+        const visible = category === 'all' || project.dataset.category === category;
+        project.classList.toggle('is-hidden', !visible);
+      });
+      active = 0;
+      renderDots(visibleProjects().length);
+      layout();
     });
   });
-});
+
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(() => layout()).observe(stage);
+  } else {
+    window.addEventListener('resize', layout);
+  }
+
+  renderDots(visibleProjects().length);
+  layout();
+})();
 
 const resumeModal = document.getElementById('resume-modal');
 const resumeOpen = document.querySelector('[data-resume-open]');
@@ -3304,7 +3635,7 @@ if (!reducedMotion) {
   if (!ctx) return;
   const imgs = { dark: host.querySelector('.hp-img-dark'), light: host.querySelector('.hp-img-light') };
   const active = () => (isLight() ? imgs.light : imgs.dark);
-  const SRC = 'export function Checkout({ cart, user }: Props) { const total = useMemo(() => cart.reduce((sum, item) => sum + item.price * item.qty, 0), [cart]); const [state, send] = useMachine(checkoutMachine); useEffect(() => { prefetch("/api/payment-intent"); }, []); if (state.matches("done")) return <Receipt order={state.context.order} />; return (<Form onSubmit={(e) => send({ type: "PAY", total })}><Summary items={cart} total={total} /><PayButton busy={state.matches("paying")}>Pay {format(total)}</PayButton></Form>); } const format = (n: number) => new Intl.NumberFormat("en", { style: "currency", currency: "EUR" }).format(n / 100); async function prefetch(url: string) { try { await fetch(url, { priority: "low" }) } catch { /* offline is fine */ } }'.replace(/\s+/g, '');
+  const SRC = 'export const JayLampara: Profile = { role: ["IT Professional", "Creative Ops Manager", "Multimedia Specialist"], degree: "BSIT - Business Tech Management", stack: ["GoHighLevel", "AI Workflows", "CRM", "3D Motion", "WordPress", "Shopify"] }; export function Portfolio({ brand }: Props) { const systems = buildOps({ automation: true, scale: "remote" }); const story = directMotion({ vsl: true, cinematic: true }); return <Experience clarity={systems} momentum={story} partner={brand} />; }'.replace(/\s+/g, '');
   const clamp01 = (v) => Math.min(1, Math.max(0, v));
   const easeIO = (t) => { const v = clamp01(t); return v < 0.5 ? 4 * v * v * v : 1 - Math.pow(-2 * v + 2, 3) / 2; };
   const FOCUS_X = 0.5, FOCUS_Y = 0.18; /* matches object-position: 50% 18% */
@@ -3499,12 +3830,13 @@ if (!reducedMotion) {
   /* View source / View render */
   let source = false;
   if (toggle) {
-    const labelEl = toggle.querySelector('span');
     toggle.addEventListener('click', () => {
       source = !source;
       toggle.setAttribute('aria-pressed', String(source));
       toggle.setAttribute('data-cur', source ? 'compile' : 'decompile');
-      if (labelEl) labelEl.textContent = source ? 'View render' : 'View source';
+      const label = source ? 'View render' : 'View Source';
+      toggle.setAttribute('aria-label', label);
+      toggle.setAttribute('title', label);
       sweep(source ? 1 : 0, 900);
     });
   }
