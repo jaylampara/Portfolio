@@ -122,6 +122,13 @@ h1 em, h2 em { color: var(--acid); font-style: normal; }
 .node[data-service-target] { cursor: pointer; }
 .node[data-service-target]:hover { transform: translateY(-3px); }
 .node[data-service-target]:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
+.node b, .node small { transition: opacity .32s ease, transform .32s cubic-bezier(.22, 1, .36, 1); }
+.node .node-glyph { position: absolute; inset: 0; display: grid; place-items: center; font: 18px var(--mono); color: currentColor; opacity: 0; transform: scale(.65); transition: opacity .32s ease, transform .32s cubic-bezier(.22, 1, .36, 1); pointer-events: none; }
+.node-b .node-glyph { font-size: 14px; }
+.node-c .node-glyph { font-size: 15px; }
+.orbital-system.is-morph-settled.is-icon-phase .node b,
+.orbital-system.is-morph-settled.is-icon-phase .node small { opacity: 0; transform: scale(.82) translateY(-2px); }
+.orbital-system.is-morph-settled.is-icon-phase .node .node-glyph { opacity: 1; transform: scale(1); }
 .node b { font: 11px var(--mono); letter-spacing: .12em; }.node small { margin-top: 3px; color: #7a8c87; font: 9px var(--mono); }
 .node-a { color: var(--acid); border-color: var(--acid); }.node-b { color: var(--cyan); border-color: var(--cyan); }.node-c { color: #e1ece7; border-color: #d8e2de; }
 .node[data-slot="0"] { left: 4%; top: 23%; }.node[data-slot="1"] { left: calc(98% - 76px); top: 53%; }.node[data-slot="2"] { left: 17%; top: calc(89% - 59px); }
@@ -3723,7 +3730,7 @@ interactiveArt.forEach((art) => {
   });
 });
 
-/* hero orbital system: auto-cycle nodes every 2s when settled, burst on click, and fly icons to/from #services */
+/* hero orbital system: auto-cycle nodes + icon morph every 1s when settled, burst on click, and fly icons to/from #services */
 const orbitalSystem = document.querySelector('.orbital-system');
 if (orbitalSystem) {
   let orbitalTimer;
@@ -3734,6 +3741,23 @@ if (orbitalSystem) {
   const serviceNodes = Array.from(orbitalSystem.querySelectorAll('.node[data-service-target]'));
   const coreEl = orbitalSystem.querySelector('.core');
   const servicesSection = document.getElementById('services');
+
+  const serviceNodeMap = {
+    operations: { icon: '✦', fontSize: '15px', accent: 'var(--acid)' },
+    creative: { icon: '▶', fontSize: '11px', accent: 'var(--cyan)' },
+    web: { icon: '</>', fontSize: '12px', accent: 'var(--text)' },
+  };
+
+  /* Inject matching service icon glyph inside each node for settled 1s cross-fade morph */
+  serviceNodes.forEach((node) => {
+    const cfg = serviceNodeMap[node.dataset.serviceTarget];
+    if (!cfg || node.querySelector('.node-glyph')) return;
+    const glyph = document.createElement('span');
+    glyph.className = 'node-glyph';
+    glyph.setAttribute('aria-hidden', 'true');
+    glyph.textContent = cfg.icon;
+    node.appendChild(glyph);
+  });
 
   const cycleOrbitalNodes = () => {
     orbitalNodes.forEach((node) => {
@@ -3755,9 +3779,12 @@ if (orbitalSystem) {
     if (reducedMotion || autoCycleId) return;
     autoCycleId = window.setInterval(() => {
       if (!document.hidden && orbitalSystem.classList.contains('is-morph-settled')) {
+        orbitalSystem.classList.toggle('is-icon-phase');
         cycleOrbitalNodes();
+      } else if (!orbitalSystem.classList.contains('is-morph-settled')) {
+        orbitalSystem.classList.remove('is-icon-phase');
       }
-    }, 2000);
+    }, 1500);
   };
 
   const stopAutoCycle = () => {
@@ -3789,11 +3816,6 @@ if (orbitalSystem) {
     }
   });
 
-  const serviceNodeMap = {
-    operations: { icon: '✦', fontSize: '15px', accent: 'var(--acid)' },
-    creative: { icon: '▶', fontSize: '11px', accent: 'var(--cyan)' },
-    web: { icon: '</>', fontSize: '12px', accent: 'var(--text)' },
-  };
   const arriveTimers = new WeakMap();
   const activeFlightBadges = new Map();
   const activeFlightRafs = new Map();
@@ -4308,7 +4330,9 @@ if (orbitalSystem) {
       el.style.transform = lp < 0.999 ? `translate3d(0, ${ty.toFixed(2)}px, 0)` : '';
     });
 
-    orbitEl.classList.toggle('is-morph-settled', p >= 0.985);
+    const isSettled = p >= 0.985;
+    orbitEl.classList.toggle('is-morph-settled', isSettled);
+    if (!isSettled) orbitEl.classList.remove('is-icon-phase');
   };
 
   const tick = () => {
