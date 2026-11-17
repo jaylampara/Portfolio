@@ -266,7 +266,7 @@ html[data-theme="light"] .contact-status.is-error a { color: #b3261e; border-bot
 
 .resume-modal { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 26px; opacity: 0; transition: opacity .24s ease; }.resume-modal[hidden] { display: none; }.resume-modal.is-open { opacity: 1; }.resume-backdrop { position: absolute; inset: 0; border: 0; background: rgba(1,4,3,.79); backdrop-filter: blur(11px); cursor: default; }.resume-dialog { width: min(940px, 100%); height: min(86vh, 860px); position: relative; z-index: 1; overflow: hidden; display: flex; flex-direction: column; background: #0c0f0e; border: 1px solid rgba(150,255,218,.38); box-shadow: 0 28px 100px rgba(0,0,0,.67), 0 0 0 1px rgba(200,255,52,.06) inset; transform: translateY(23px) scale(.982); transition: transform .34s cubic-bezier(.2,.72,.22,1); }.resume-modal.is-open .resume-dialog { transform: translateY(0) scale(1); }.resume-dialog::before { content: ''; height: 2px; position: absolute; top: 0; left: 0; width: 100%; background: linear-gradient(90deg, var(--acid), var(--cyan), transparent 70%); }.resume-dialog-bar { padding: 18px 20px 16px; min-height: 85px; display: flex; align-items: center; justify-content: space-between; gap: 18px; border-bottom: 1px solid var(--line); background: linear-gradient(90deg, rgba(200,255,52,.055), transparent 45%); }.resume-kicker { color: var(--acid); font: 8px var(--mono); letter-spacing: .12em; }.resume-dialog-bar h2 { font: 500 19px var(--display); margin: 5px 0 0; letter-spacing: -.045em; }.resume-actions { display: flex; align-items: center; gap: 9px; }.resume-actions a, .resume-actions button { color: #cbd8d2; border: 1px solid rgba(218,250,242,.22); background: transparent; min-height: 34px; padding: 0 10px; display: inline-flex; align-items: center; gap: 8px; font: 9px var(--mono); transition: .2s ease; }.resume-actions a:hover, .resume-actions button:hover { color: #071008; background: var(--acid); border-color: var(--acid); }.resume-actions button span, .resume-actions a span { color: var(--acid); font: 15px var(--display); }.resume-actions a:hover span, .resume-actions button:hover span { color: inherit; }.resume-pdf { flex: 1; width: 100%; border: 0; background: #1b201e; }
 
-.js .reveal { opacity: 0; transform: translateY(20px); transition: opacity .75s cubic-bezier(.2,.65,.25,1), transform .75s cubic-bezier(.2,.65,.25,1); }.js .reveal.is-visible { opacity: 1; transform: translateY(0); }
+.js .reveal { opacity: 0; transform: translateY(18px); transition: opacity .62s cubic-bezier(.22, 1, .36, 1), transform .62s cubic-bezier(.22, 1, .36, 1); }.js .reveal.is-visible { opacity: 1; transform: translateY(0); }
 @keyframes orbit { to { transform: rotate(339deg); } } @keyframes orbit-reverse { to { transform: rotate(-318deg); } } @keyframes pulse { 50% { opacity: .3; box-shadow: 0 0 0 5px rgba(200,255,52,0); } } @keyframes marquee { to { transform: translateX(-50%); } } @keyframes blob { to { border-radius: 38% 62% 44% 56% / 41% 51% 49% 59%; transform: rotate(28deg) scale(1.07); } } @keyframes flow-draw-one { from { width: 0; opacity: .2; } to { width: 70%; opacity: 1; } } @keyframes flow-draw-two { from { width: 0; opacity: .2; } to { width: 70%; opacity: 1; } } @keyframes flow-node-pop { 0% { opacity: 0; transform: scale(.4); } 70% { opacity: 1; transform: scale(1.15); } 100% { opacity: 1; transform: scale(1); } } @keyframes metric-pulse { 0% { opacity: .2; transform: scale(.68); } 55% { color: var(--acid); transform: scale(1.1); text-shadow: 0 0 20px rgba(200,255,52,.42); } 100% { opacity: 1; transform: scale(1); } } @keyframes insight-pop { 0%, 100% { opacity: 0; transform: translateY(13px) scale(.93); } 13%, 77% { opacity: 1; transform: translateY(0) scale(1); } } @keyframes dash-bar-pop { 0% { transform: scaleY(.08); opacity: .16; } 68% { transform: scaleY(1.08); opacity: 1; } 100% { transform: scaleY(1); opacity: 1; } } @keyframes chart-reveal { from { opacity: .1; transform: scaleX(.05); } to { opacity: 1; transform: scaleX(1); } }
 @media (max-width: 900px) { html { scroll-padding-top: 96px; }.section-wrap, .site-header { width: min(100% - 42px, 690px); }.site-header { height: 78px; }.desktop-nav { display: none; }.nav-toggle { display: inline-flex; }.mobile-nav { display: grid; }.nav-contact { font-size: 9px; }.hero { min-height: auto; grid-template-columns: 1fr; padding-block: 75px 80px; }.hero-visual { height: 350px; grid-row: 1; margin: -35px 0 -20px; }.hero-copy { grid-row: 2; }.orbital-system { width: min(100%, 375px); }.scroll-cue { display: none; }.metrics-band { grid-template-columns: 1fr 1fr; gap: 22px 0; padding-block: 22px; }.metric:nth-child(2) { border-right: 0; }.metric:nth-child(3) { padding-left: 0; }.availability { border-left: 1px solid var(--line); }.about { padding-block: 100px; }.about-grid { grid-template-columns: 1fr 1fr; gap: 35px; }.about-lead { grid-column: span 2; }.profile-visual { min-height: 340px; }.services, .work { padding-block: 100px; }.service-grid { grid-template-columns: 1fr; }.service-card { min-height: 410px; }.project-grid { grid-template-columns: 1fr 1fr; }.project-featured { grid-column: span 2; }.contact { grid-template-columns: 1fr; gap: 55px; padding-block: 100px; }.contact-form { padding-top: 0; }.footer { min-height: 100px; } }
 @media (max-width: 650px) { .hero .eyebrow, .visual-caption { display: none; } }
@@ -1127,9 +1127,203 @@ html[data-theme="light"] .profile-orbit .core {
     will-change: auto;
   }
 }
+
+/* ===== Motion Choreography & Micro-Interaction Polish ===== */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 60;
+  pointer-events: none;
+  transform-origin: left center;
+  transform: scaleX(var(--scroll-p, 0));
+  background: linear-gradient(90deg, var(--acid), var(--cyan));
+  opacity: .9;
+  will-change: transform;
+}
+.site-header::before {
+  transition: background-color .28s ease, border-color .28s ease, box-shadow .28s ease;
+}
+.site-header.is-scrolled::before {
+  background: rgba(8, 9, 9, .94);
+  box-shadow: 0 12px 32px -18px rgba(0, 0, 0, .7);
+}
+html[data-theme="light"] .site-header.is-scrolled::before {
+  background: rgba(207, 216, 210, .96);
+  box-shadow: 0 12px 28px -18px rgba(16, 23, 18, .22);
+}
+.brand-mark {
+  transition: transform .28s cubic-bezier(.22, 1, .36, 1);
+}
+.brand:hover .brand-mark {
+  transform: skew(-9deg) scale(1.06);
+}
+.desktop-nav a {
+  position: relative;
+  padding-block: 4px;
+  transition: color .2s cubic-bezier(.22, 1, .36, 1);
+}
+.desktop-nav a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--acid);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform .26s cubic-bezier(.22, 1, .36, 1);
+}
+.desktop-nav a:hover::after,
+.desktop-nav a:focus-visible::after,
+.desktop-nav a.is-active::after {
+  transform: scaleX(1);
+}
+.desktop-nav a.is-active {
+  color: var(--acid);
+}
+.nav-contact {
+  transition: background-color .22s cubic-bezier(.22, 1, .36, 1), color .22s cubic-bezier(.22, 1, .36, 1), transform .16s cubic-bezier(.22, 1, .36, 1);
+}
+.nav-contact:active {
+  transform: scale(.97);
+}
+
+/* Staggered hero entrance */
+.js .hero-copy.reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+.js .hero-copy.reveal .eyebrow,
+.js .hero-copy.reveal h1,
+.js .hero-copy.reveal .hero-description,
+.js .hero-copy.reveal .hero-actions {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .58s cubic-bezier(.22, 1, .36, 1), transform .58s cubic-bezier(.22, 1, .36, 1);
+}
+.js .hero-copy.reveal.is-visible .eyebrow {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: .04s;
+}
+.js .hero-copy.reveal.is-visible h1 {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: .12s;
+}
+.js .hero-copy.reveal.is-visible .hero-description {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: .22s;
+}
+.js .hero-copy.reveal.is-visible .hero-actions {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: .3s;
+}
+.scroll-cue span {
+  animation: scroll-cue-nudge 2.4s cubic-bezier(.45, 0, .55, 1) infinite;
+}
+@keyframes scroll-cue-nudge {
+  0%, 100% { transform: translateX(0); opacity: .75; }
+  50% { transform: translateX(6px); opacity: 1; }
+}
+
+/* Tactile micro-interactions */
+.core {
+  transition: transform .26s cubic-bezier(.22, 1, .36, 1), box-shadow .26s ease;
+}
+.core:hover {
+  transform: scale(1.04);
+}
+.core:active {
+  transform: scale(.96);
+}
+.service-card {
+  transition: transform .26s cubic-bezier(.22, 1, .36, 1), border-color .26s ease, background .26s ease, box-shadow .26s ease;
+}
+.service-card:active {
+  transform: scale(.99) translateY(-2px);
+}
+.service-card > a span,
+.text-link span,
+.email-link span,
+.back-top span {
+  display: inline-block;
+  transition: transform .24s cubic-bezier(.22, 1, .36, 1);
+}
+.service-card > a:hover span,
+.text-link:hover span,
+.email-link:hover span {
+  transform: translate(3px, -3px);
+}
+.back-top:hover span {
+  transform: translateY(-3px);
+}
+.filter {
+  transition: color .2s ease, border-color .2s ease, background-color .2s ease, transform .14s cubic-bezier(.22, 1, .36, 1);
+}
+.filter:active {
+  transform: scale(.96);
+}
+.contact-form label {
+  transition: border-color .22s ease;
+}
+.contact-form label:focus-within {
+  border-bottom-color: var(--acid);
+}
+.contact-form label > span {
+  transition: color .22s ease;
+}
+.contact-form label:focus-within > span {
+  color: var(--acid);
+}
+.submit-button {
+  transition: box-shadow .24s cubic-bezier(.22, 1, .36, 1), transform .2s cubic-bezier(.22, 1, .36, 1), opacity .2s ease;
+}
+.submit-button span {
+  display: inline-block;
+  transition: transform .24s cubic-bezier(.22, 1, .36, 1);
+}
+.submit-button:hover span {
+  transform: translate(3px, -3px);
+}
+.submit-button:active {
+  transform: scale(.985);
+}
+
+/* Text Repel on main h1 & h2 titles */
+[data-tr-field] {
+  position: relative;
+}
+.tr-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+.tr-letter {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-progress { display: none; }
+  .js .hero-copy.reveal .eyebrow,
+  .js .hero-copy.reveal h1,
+  .js .hero-copy.reveal .hero-description,
+  .js .hero-copy.reveal .hero-actions {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
     </style>
   </head>
   <body>
+    <div class="scroll-progress" aria-hidden="true"></div>
     <div class="noise" aria-hidden="true"></div>
     <canvas id="signal-canvas" aria-hidden="true"></canvas>
     <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Switch between dark and white mode">
@@ -4449,7 +4643,10 @@ if (!reducedMotion) {
       size: Math.random() * 1.25 + .25,
     }));
   };
+  let particleRaf = 0;
   const draw = () => {
+    particleRaf = 0;
+    if (document.hidden) return;
     ctx.clearRect(0, 0, width, height);
     const lightInk = document.documentElement.dataset.theme === 'light';
     for (let i = 0; i < particles.length; i++) {
@@ -4462,11 +4659,54 @@ if (!reducedMotion) {
         if (d < 105) { ctx.beginPath(); ctx.strokeStyle = lightInk ? ((i + j) % 4 === 0 ? `rgba(97,134,1,${.22 * (1 - d / 105)})` : `rgba(13,127,102,${.24 * (1 - d / 105)})`) : `rgba(110,255,206,${.065 * (1 - d / 105)})`; ctx.lineWidth = .6; ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke(); }
       }
     }
-    requestAnimationFrame(draw);
+    particleRaf = requestAnimationFrame(draw);
   };
   setCanvasSize(); draw();
   window.addEventListener('resize', setCanvasSize);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && !particleRaf) particleRaf = requestAnimationFrame(draw);
+  });
 }
+
+/* ---------- scroll progress bar, header scroll state, and active nav highlight ---------- */
+(() => {
+  const progressEl = document.querySelector('.scroll-progress');
+  const headerEl = document.querySelector('.site-header');
+  const navLinks = Array.from(document.querySelectorAll('.desktop-nav a[href^="#"]'));
+  let scrollRaf = 0;
+
+  const updateScrollChrome = () => {
+    scrollRaf = 0;
+    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const progress = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+    if (progressEl && !reducedMotion) progressEl.style.setProperty('--scroll-p', progress.toFixed(4));
+    if (headerEl) headerEl.classList.toggle('is-scrolled', window.scrollY > 24);
+  };
+
+  updateScrollChrome();
+  window.addEventListener('scroll', () => {
+    if (!scrollRaf) scrollRaf = window.requestAnimationFrame(updateScrollChrome);
+  }, { passive: true });
+
+  if ('IntersectionObserver' in window && navLinks.length) {
+    const sectionMap = new Map();
+    navLinks.forEach((link) => {
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) sectionMap.set(target, link);
+    });
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const link = sectionMap.get(entry.target);
+        if (!link) return;
+        if (entry.isIntersecting) {
+          navLinks.forEach((item) => item.classList.remove('is-active'));
+          link.classList.add('is-active');
+        }
+      });
+    }, { rootMargin: '-38% 0px -52% 0px', threshold: 0 });
+    sectionMap.forEach((_, section) => navObserver.observe(section));
+  }
+})();
 
 /* ---------- burger navigation for the sticky header ---------- */
 (() => {
@@ -4814,6 +5054,232 @@ if (!reducedMotion) {
 
   readColors();
   size();
+})();
+
+/* Text Repel on main h1 and h2 titles (quadratic falloff + spring physics + tilt) */
+(() => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const headings = Array.from(document.querySelectorAll('main h1, main h2'));
+  if (!headings.length) return;
+
+  const REACH = 120 / 72;
+  const STRENGTH = 45;
+  const STIFFNESS = 180;
+  const DAMPING = 14;
+  const MASS = 0.4;
+  const FAR = -9999;
+
+  const buildSplitFragment = (node) => {
+    const frag = document.createDocumentFragment();
+    node.childNodes.forEach((child) => {
+      if (child.nodeType === Node.TEXT_NODE) {
+        const parts = (child.textContent || '').split(/(\s+)/);
+        parts.forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) {
+            frag.appendChild(document.createTextNode(' '));
+            return;
+          }
+          const wordSpan = document.createElement('span');
+          wordSpan.className = 'tr-word';
+          Array.from(part).forEach((ch) => {
+            const letterSpan = document.createElement('span');
+            letterSpan.className = 'tr-letter';
+            letterSpan.setAttribute('aria-hidden', 'true');
+            letterSpan.textContent = ch;
+            wordSpan.appendChild(letterSpan);
+          });
+          frag.appendChild(wordSpan);
+        });
+      } else if (child.nodeType === Node.ELEMENT_NODE) {
+        if (child.tagName === 'BR') {
+          frag.appendChild(document.createElement('br'));
+        } else {
+          const clone = child.cloneNode(false);
+          clone.appendChild(buildSplitFragment(child));
+          frag.appendChild(clone);
+        }
+      }
+    });
+    return frag;
+  };
+
+  const fields = headings.map((heading) => {
+    const label = heading.textContent.replace(/\s+/g, ' ').trim();
+    if (label) heading.setAttribute('aria-label', label);
+    heading.setAttribute('data-tr-field', '');
+    const split = buildSplitFragment(heading);
+    heading.replaceChildren(split);
+
+    const letters = Array.from(heading.querySelectorAll('.tr-letter')).map((el) => ({
+      el,
+      ox: 0,
+      oy: 0,
+      x: 0,
+      y: 0,
+      vx: 0,
+      vy: 0,
+      tx: 0,
+      ty: 0,
+    }));
+
+    const state = {
+      heading,
+      letters,
+      radius: 90,
+      px: FAR,
+      py: FAR,
+      active: false,
+    };
+
+    const measure = () => {
+      const fs = parseFloat(getComputedStyle(heading).fontSize) || 48;
+      state.radius = fs * REACH;
+      letters.forEach((item) => {
+        let el = item.el;
+        let ox = el.offsetWidth * 0.5;
+        let oy = el.offsetHeight * 0.5;
+        while (el && el !== heading) {
+          ox += el.offsetLeft;
+          oy += el.offsetTop;
+          el = el.offsetParent;
+        }
+        item.ox = ox;
+        item.oy = oy;
+      });
+    };
+
+    state.measure = measure;
+    measure();
+    return state;
+  });
+
+  const remeasureAll = () => fields.forEach((f) => f.measure());
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(remeasureAll);
+    fields.forEach((f) => ro.observe(f.heading));
+  } else {
+    window.addEventListener('resize', remeasureAll, { passive: true });
+  }
+  document.fonts?.ready?.then(remeasureAll);
+  document.fonts?.addEventListener?.('loadingdone', remeasureAll);
+
+  let rafId = 0;
+  let lastTime = 0;
+
+  const stepSprings = (now) => {
+    rafId = 0;
+    const dt = lastTime ? Math.min(0.032, (now - lastTime) / 1000) : 0.016;
+    lastTime = now;
+    let anyMoving = false;
+
+    fields.forEach((field) => {
+      if (!field.active) return;
+      let fieldMoving = false;
+      const { letters, px, py, radius } = field;
+
+      for (let i = 0; i < letters.length; i += 1) {
+        const item = letters[i];
+        if (px > FAR + 1) {
+          const dx = item.ox - px;
+          const dy = item.oy - py;
+          const dist = Math.hypot(dx, dy);
+          if (dist > 0 && dist < radius) {
+            const force = Math.pow(1 - dist / radius, 2) * STRENGTH;
+            const angle = Math.atan2(dy, dx);
+            item.tx = Math.cos(angle) * force;
+            item.ty = Math.sin(angle) * force;
+          } else {
+            item.tx = 0;
+            item.ty = 0;
+          }
+        } else {
+          item.tx = 0;
+          item.ty = 0;
+        }
+
+        const ax = (STIFFNESS * (item.tx - item.x) - DAMPING * item.vx) / MASS;
+        const ay = (STIFFNESS * (item.ty - item.y) - DAMPING * item.vy) / MASS;
+        item.vx += ax * dt;
+        item.vy += ay * dt;
+        item.x += item.vx * dt;
+        item.y += item.vy * dt;
+
+        if (
+          Math.abs(item.x) > 0.04 || Math.abs(item.y) > 0.04 ||
+          Math.abs(item.vx) > 0.04 || Math.abs(item.vy) > 0.04 ||
+          Math.abs(item.tx) > 0.04 || Math.abs(item.ty) > 0.04
+        ) {
+          fieldMoving = true;
+          const rot = item.x * 0.3;
+          item.el.style.transform = `translate3d(${item.x.toFixed(2)}px, ${item.y.toFixed(2)}px, 0) rotate(${rot.toFixed(2)}deg)`;
+        } else if (item.el.style.transform) {
+          item.x = 0;
+          item.y = 0;
+          item.vx = 0;
+          item.vy = 0;
+          item.el.style.transform = '';
+        }
+      }
+
+      if (fieldMoving) {
+        anyMoving = true;
+      } else if (px <= FAR + 1) {
+        field.active = false;
+      }
+    });
+
+    if (anyMoving) {
+      rafId = window.requestAnimationFrame(stepSprings);
+    } else {
+      lastTime = 0;
+    }
+  };
+
+  const kick = () => {
+    if (!rafId) {
+      lastTime = 0;
+      rafId = window.requestAnimationFrame(stepSprings);
+    }
+  };
+
+  window.addEventListener('pointermove', (e) => {
+    let activated = false;
+    fields.forEach((field) => {
+      const rect = field.heading.getBoundingClientRect();
+      const r = field.radius;
+      const near =
+        e.clientX >= rect.left - r && e.clientX <= rect.right + r &&
+        e.clientY >= rect.top - r && e.clientY <= rect.bottom + r;
+      if (near) {
+        const k = rect.width ? field.heading.offsetWidth / rect.width : 1;
+        field.px = (e.clientX - rect.left) * k;
+        field.py = (e.clientY - rect.top) * k;
+        field.active = true;
+        activated = true;
+      } else if (field.px > FAR + 1) {
+        field.px = FAR;
+        field.py = FAR;
+        activated = true;
+      }
+    });
+    if (activated) kick();
+  }, { passive: true });
+
+  const resetPointers = () => {
+    let hadActive = false;
+    fields.forEach((field) => {
+      if (field.px > FAR + 1) {
+        field.px = FAR;
+        field.py = FAR;
+        hadActive = true;
+      }
+    });
+    if (hadActive) kick();
+  };
+
+  document.addEventListener('pointerleave', resetPointers);
+  document.addEventListener('pointercancel', resetPointers);
 })();
 </script>
     <!-- Self-contained export: portrait, résumé, CSS, and JavaScript are embedded. -->
