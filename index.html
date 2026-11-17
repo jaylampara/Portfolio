@@ -115,7 +115,7 @@ h1 em, h2 em { color: var(--acid); font-style: normal; }
 .orbit-two::after { border-color: var(--acid); left: 84%; top: 23%; }
 .orbit-three { inset: 25% 0; transform: rotate(68deg); border-color: rgba(255,255,255,.12); animation: orbit 22s linear infinite; }
 .orbit-three::after { display: none; }
-.core { width: 124px; height: 124px; display: grid; place-items: center; border-radius: 50%; border: 1px solid rgba(200,255,52,.76); background: radial-gradient(circle at 37% 35%, #254f39, #0c1917 55%, #07100d); box-shadow: inset 0 0 35px rgba(102,255,200,.22), 0 0 35px rgba(190,255,35,.12); position: relative; color: var(--acid); font: 600 36px var(--mono); letter-spacing: -.1em; }
+.core { width: 124px; height: 124px; display: grid; place-items: center; border-radius: 50%; border: 1px solid rgba(200,255,52,.76); background: radial-gradient(circle at 37% 35%, #254f39, #0c1917 55%, #07100d); box-shadow: inset 0 0 35px rgba(102,255,200,.22), 0 0 35px rgba(190,255,35,.12); position: relative; color: var(--acid); font: 600 36px var(--mono); letter-spacing: -.1em; cursor: pointer; }
 .core span { display: inline-block; transform: skew(-9deg); }
 .core i { position: absolute; width: 142px; height: 142px; border-radius: 50%; border: 1px dashed rgba(200,255,52,.43); animation: orbit 10s linear infinite; }
 .node { position: absolute; z-index: 2; width: 76px; height: 59px; display: flex; flex-direction: column; justify-content: center; padding-left: 12px; border-left: 1px solid; background: linear-gradient(90deg, rgba(15,29,26,.85), rgba(10,12,12,.1)); backdrop-filter: blur(6px); transition: left .72s cubic-bezier(.22, 1, .36, 1), top .72s cubic-bezier(.22, 1, .36, 1), transform .24s ease; will-change: left, top; }
@@ -1022,12 +1022,106 @@ html[data-theme="light"] .hp-img-light { opacity: 1; mix-blend-mode: multiply; }
     width: min(100%, 400px);
   }
 }
+@media (max-width: 809px) {
+  .profile-orbit {
+    order: 1;
+  }
+  .about-lead {
+    order: 2;
+  }
+}
 @media (max-width: 570px) {
   .about-grid {
     gap: 36px;
   }
   .profile-orbit .orbital-system {
     width: min(100%, 340px);
+  }
+}
+
+/* ===== Scroll-driven Morph: .metrics-band -> #about (.orbital-system + .about-lead) ===== */
+.metrics-band .metric,
+.metrics-band .availability {
+  will-change: transform, opacity;
+}
+.about-lead.reveal {
+  transition: none;
+  will-change: transform, opacity;
+}
+.about-lead .overline,
+.about-lead h2,
+.about-lead .about-detail p {
+  will-change: transform, opacity;
+}
+.profile-orbit .orbital-system {
+  translate: var(--orbit-tx, 0px) var(--orbit-ty, 0px);
+  will-change: transform, opacity;
+}
+.profile-orbit .core {
+  scale: var(--m-core-scale, 1);
+  opacity: var(--m-core-op, 1);
+  box-shadow:
+    inset 0 0 calc(35px + var(--m-seed-glow, 0) * 20px) rgba(102, 255, 200, calc(0.22 + var(--m-seed-glow, 0) * 0.28)),
+    0 0 calc(35px + var(--m-seed-glow, 0) * 34px) rgba(200, 255, 52, calc(0.12 + var(--m-seed-glow, 0) * 0.36));
+  will-change: transform, opacity;
+}
+html[data-theme="light"] .profile-orbit .core {
+  box-shadow:
+    inset 0 0 calc(28px + var(--m-seed-glow, 0) * 18px) rgba(13, 127, 102, calc(0.18 + var(--m-seed-glow, 0) * 0.24)),
+    0 0 calc(28px + var(--m-seed-glow, 0) * 28px) rgba(97, 134, 0, calc(0.16 + var(--m-seed-glow, 0) * 0.3));
+}
+.profile-orbit .core i {
+  scale: var(--m-ring-scale, 1);
+  opacity: var(--m-ring-op, 1);
+}
+.profile-orbit .orbit-one {
+  scale: var(--m-o1-scale, 1);
+  opacity: var(--m-o1-op, 1);
+  will-change: transform, opacity;
+}
+.profile-orbit .orbit-two {
+  scale: var(--m-o2-scale, 1);
+  opacity: var(--m-o2-op, 1);
+  will-change: transform, opacity;
+}
+.profile-orbit .orbit-three {
+  scale: var(--m-o3-scale, 1);
+  opacity: var(--m-o3-op, 1);
+  will-change: transform, opacity;
+}
+.profile-orbit .signal {
+  scale: var(--m-sig-scale, 1) 1;
+  opacity: var(--m-sig-op, 1);
+  will-change: transform, opacity;
+}
+.profile-orbit .node {
+  translate: var(--node-tx, 0px) var(--node-ty, 0px);
+  scale: var(--node-scale, 1);
+  opacity: var(--node-op, 1);
+}
+.profile-orbit .orbital-system:not(.is-morph-settled) .node {
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .metrics-band .metric,
+  .metrics-band .availability,
+  .about-lead .overline,
+  .about-lead h2,
+  .about-lead .about-detail p,
+  .profile-orbit .core,
+  .profile-orbit .core i,
+  .profile-orbit .orbit-one,
+  .profile-orbit .orbit-two,
+  .profile-orbit .orbit-three,
+  .profile-orbit .signal,
+  .profile-orbit .orbital-system,
+  .about-lead.reveal,
+  .profile-orbit .node {
+    translate: none !important;
+    scale: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    will-change: auto;
   }
 }
     </style>
@@ -1412,7 +1506,9 @@ const observer = new IntersectionObserver((entries) => {
     observer.unobserve(entry.target);
   });
 }, { threshold: 0.12 });
-document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+document.querySelectorAll('.reveal').forEach((el) => {
+  if (!el.classList.contains('about-lead')) observer.observe(el);
+});
 
 const filters = document.querySelectorAll('.filter');
 const projects = Array.from(document.querySelectorAll('.project'));
@@ -3627,22 +3723,64 @@ interactiveArt.forEach((art) => {
   });
 });
 
-/* hero orbital system: replay the burst on click / Enter / Space */
+/* hero orbital system: auto-cycle nodes every 2s when settled, burst on click, and fly icons to/from #services */
 const orbitalSystem = document.querySelector('.orbital-system');
 if (orbitalSystem) {
   let orbitalTimer;
-  const orbitalNodes = orbitalSystem.querySelectorAll('.node[data-slot]');
-  const playOrbital = () => {
-    window.clearTimeout(orbitalTimer);
+  let autoCycleId = 0;
+  let isClickFlightActive = false;
+  let clickFlightTimer = 0;
+  const orbitalNodes = Array.from(orbitalSystem.querySelectorAll('.node[data-slot]'));
+  const serviceNodes = Array.from(orbitalSystem.querySelectorAll('.node[data-service-target]'));
+  const coreEl = orbitalSystem.querySelector('.core');
+  const servicesSection = document.getElementById('services');
+
+  const cycleOrbitalNodes = () => {
     orbitalNodes.forEach((node) => {
       const nextSlot = (Number(node.dataset.slot) + 1) % 3;
       node.dataset.slot = String(nextSlot);
     });
+    orbitalSystem.dispatchEvent(new CustomEvent('orbital:slots-changed'));
+  };
+
+  const triggerOrbitalPulse = () => {
+    window.clearTimeout(orbitalTimer);
     orbitalSystem.classList.remove('is-active');
     void orbitalSystem.offsetWidth;
     orbitalSystem.classList.add('is-active');
     orbitalTimer = window.setTimeout(() => orbitalSystem.classList.remove('is-active'), 2400);
   };
+
+  const startAutoCycle = () => {
+    if (reducedMotion || autoCycleId) return;
+    autoCycleId = window.setInterval(() => {
+      if (!document.hidden && orbitalSystem.classList.contains('is-morph-settled')) {
+        cycleOrbitalNodes();
+      }
+    }, 2000);
+  };
+
+  const stopAutoCycle = () => {
+    if (!autoCycleId) return;
+    window.clearInterval(autoCycleId);
+    autoCycleId = 0;
+  };
+
+  const playOrbital = () => {
+    cycleOrbitalNodes();
+    triggerOrbitalPulse();
+    if (!reducedMotion) {
+      stopAutoCycle();
+      startAutoCycle();
+    }
+  };
+
+  startAutoCycle();
+  orbitalSystem.addEventListener('pointerenter', stopAutoCycle);
+  orbitalSystem.addEventListener('pointerleave', startAutoCycle);
+  orbitalSystem.addEventListener('focusin', stopAutoCycle);
+  orbitalSystem.addEventListener('focusout', startAutoCycle);
+
   orbitalSystem.addEventListener('click', playOrbital);
   orbitalSystem.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -3657,6 +3795,18 @@ if (orbitalSystem) {
     web: { icon: '</>', fontSize: '12px', accent: 'var(--text)' },
   };
   const arriveTimers = new WeakMap();
+  const activeFlightBadges = new Map();
+  const activeFlightRafs = new Map();
+  const activeFlightTimers = new Map();
+
+  const cancelFlightBadge = (key) => {
+    const timer = activeFlightTimers.get(key);
+    if (timer) { window.clearTimeout(timer); activeFlightTimers.delete(key); }
+    const raf = activeFlightRafs.get(key);
+    if (raf) { window.cancelAnimationFrame(raf); activeFlightRafs.delete(key); }
+    const existing = activeFlightBadges.get(key);
+    if (existing) { existing.remove(); activeFlightBadges.delete(key); }
+  };
 
   const highlightServiceCard = (card, accent) => {
     const prev = arriveTimers.get(card);
@@ -3668,7 +3818,71 @@ if (orbitalSystem) {
     }, 1450));
   };
 
-  const flyNodeToService = (node) => {
+  let hasTriggeredServicesFlight = servicesSection
+    ? servicesSection.getBoundingClientRect().top <= (window.innerHeight || 800) * 0.72
+    : false;
+  let hasTriggeredReverseFlight = false;
+
+  const markClickFlight = (durationMs = 1050) => {
+    isClickFlightActive = true;
+    hasTriggeredServicesFlight = true;
+    hasTriggeredReverseFlight = false;
+    window.clearTimeout(clickFlightTimer);
+    clickFlightTimer = window.setTimeout(() => {
+      isClickFlightActive = false;
+    }, durationMs);
+  };
+
+  const animateBadgeArc = (key, config, getStart, getEnd, { duration = 760, delay = 0, onArrive } = {}) => {
+    cancelFlightBadge(key);
+    const launch = () => {
+      activeFlightTimers.delete(key);
+      const startPt = getStart();
+      const badge = document.createElement('span');
+      badge.className = 'service-fly-badge';
+      badge.setAttribute('aria-hidden', 'true');
+      badge.textContent = config.icon;
+      badge.style.fontSize = config.fontSize;
+      badge.style.setProperty('--fly-accent', config.accent);
+      badge.style.transform = `translate3d(${startPt.x - 18.5}px, ${startPt.y - 18.5}px, 0)`;
+      document.body.appendChild(badge);
+      activeFlightBadges.set(key, badge);
+
+      const startTime = performance.now();
+      const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+      const stepFlight = (now) => {
+        const progress = Math.min(1, (now - startTime) / duration);
+        const eased = easeInOutCubic(progress);
+        const endPt = getEnd();
+        const arcLift = Math.min(92, Math.hypot(endPt.x - startPt.x, endPt.y - startPt.y) * 0.16);
+        const curX = startPt.x + (endPt.x - startPt.x) * eased;
+        const curY = startPt.y + (endPt.y - startPt.y) * eased - Math.sin(Math.PI * eased) * arcLift;
+        const scale = 1 + Math.sin(Math.PI * eased) * 0.25;
+
+        badge.style.transform = `translate3d(${curX - 18.5}px, ${curY - 18.5}px, 0) scale(${scale})`;
+
+        if (progress < 1) {
+          activeFlightRafs.set(key, window.requestAnimationFrame(stepFlight));
+        } else {
+          activeFlightRafs.delete(key);
+          badge.remove();
+          if (activeFlightBadges.get(key) === badge) activeFlightBadges.delete(key);
+          if (onArrive) onArrive();
+        }
+      };
+
+      activeFlightRafs.set(key, window.requestAnimationFrame(stepFlight));
+    };
+
+    if (delay > 0) {
+      activeFlightTimers.set(key, window.setTimeout(launch, delay));
+    } else {
+      launch();
+    }
+  };
+
+  const flyNodeToService = (node, { scroll = true, delay = 0 } = {}) => {
     const key = node.dataset.serviceTarget;
     const config = serviceNodeMap[key];
     const targetCard = document.querySelector(`.service-card[data-service-filter="${key}"]`);
@@ -3676,68 +3890,463 @@ if (orbitalSystem) {
     if (!config || !targetCard || !targetIcon) return;
 
     if (reducedMotion) {
-      targetCard.scrollIntoView({ behavior: 'auto', block: 'center' });
+      if (scroll) targetCard.scrollIntoView({ behavior: 'auto', block: 'center' });
       highlightServiceCard(targetCard, config.accent);
       return;
     }
 
+    if (scroll) {
+      markClickFlight(1050);
+      targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
     const startRect = node.getBoundingClientRect();
-    const startX = startRect.left + startRect.width / 2;
-    const startY = startRect.top + startRect.height / 2;
-
-    const badge = document.createElement('span');
-    badge.className = 'service-fly-badge';
-    badge.setAttribute('aria-hidden', 'true');
-    badge.textContent = config.icon;
-    badge.style.fontSize = config.fontSize;
-    badge.style.setProperty('--fly-accent', config.accent);
-    badge.style.transform = `translate3d(${startX - 18.5}px, ${startY - 18.5}px, 0)`;
-    document.body.appendChild(badge);
-
-    targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-    const duration = 760;
-    const startTime = performance.now();
-    const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-
-    const stepFlight = (now) => {
-      const progress = Math.min(1, (now - startTime) / duration);
-      const eased = easeInOutCubic(progress);
-      const iconRect = targetIcon.getBoundingClientRect();
-      const endX = iconRect.left + iconRect.width / 2;
-      const endY = iconRect.top + iconRect.height / 2;
-      const arcLift = Math.min(92, Math.hypot(endX - startX, endY - startY) * 0.16);
-      const curX = startX + (endX - startX) * eased;
-      const curY = startY + (endY - startY) * eased - Math.sin(Math.PI * eased) * arcLift;
-      const scale = 1 + Math.sin(Math.PI * eased) * 0.25;
-
-      badge.style.transform = `translate3d(${curX - 18.5}px, ${curY - 18.5}px, 0) scale(${scale})`;
-
-      if (progress < 1) {
-        window.requestAnimationFrame(stepFlight);
-      } else {
-        badge.remove();
-        highlightServiceCard(targetCard, config.accent);
+    const startPt = { x: startRect.left + startRect.width / 2, y: startRect.top + startRect.height / 2 };
+    animateBadgeArc(
+      key,
+      config,
+      () => startPt,
+      () => {
+        const iconRect = targetIcon.getBoundingClientRect();
+        return { x: iconRect.left + iconRect.width / 2, y: iconRect.top + iconRect.height / 2 };
+      },
+      {
+        duration: 760,
+        delay,
+        onArrive: () => highlightServiceCard(targetCard, config.accent),
       }
-    };
-
-    window.requestAnimationFrame(stepFlight);
+    );
   };
 
-  orbitalSystem.querySelectorAll('.node[data-service-target]').forEach((node) => {
+  /* Mobile <=809px: arm stacked .service-card elements on .core click to highlight as each enters viewport */
+  const mobileCardObserver = ('IntersectionObserver' in window)
+    ? new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const card = entry.target;
+          if (card.dataset.coreArmed !== 'true') return;
+          delete card.dataset.coreArmed;
+          mobileCardObserver.unobserve(card);
+          const config = serviceNodeMap[card.dataset.serviceFilter];
+          if (config) highlightServiceCard(card, config.accent);
+        });
+      }, { threshold: 0.28 })
+    : null;
+
+  const armMobileServiceCards = () => {
+    if (!mobileCardObserver || !window.matchMedia('(max-width: 809px)').matches) return;
+    document.querySelectorAll('.service-card[data-service-filter]').forEach((card) => {
+      card.dataset.coreArmed = 'true';
+      mobileCardObserver.observe(card);
+    });
+  };
+
+  const flyAllNodesToServices = ({ scroll = true } = {}) => {
+    const servicesGrid = document.querySelector('#services .service-grid');
+    if (!servicesGrid || !serviceNodes.length) return;
+    triggerOrbitalPulse();
+
+    if (reducedMotion) {
+      if (scroll) servicesGrid.scrollIntoView({ behavior: 'auto', block: 'center' });
+      serviceNodes.forEach((node) => flyNodeToService(node, { scroll: false }));
+      return;
+    }
+
+    if (scroll) {
+      markClickFlight(1150);
+      armMobileServiceCards();
+      const scrollTarget = window.matchMedia('(max-width: 809px)').matches
+        ? (servicesGrid.querySelector('.service-card') || servicesGrid)
+        : servicesGrid;
+      scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    serviceNodes.forEach((node, idx) => {
+      flyNodeToService(node, { scroll: false, delay: idx * 95 });
+    });
+  };
+
+  const flyAllServicesToNodes = () => {
+    if (reducedMotion || isClickFlightActive || !serviceNodes.length) return;
+    serviceNodes.forEach((node, idx) => {
+      const key = node.dataset.serviceTarget;
+      const config = serviceNodeMap[key];
+      const targetCard = document.querySelector(`.service-card[data-service-filter="${key}"]`);
+      const targetIcon = targetCard?.querySelector('.service-icon');
+      if (!config || !targetIcon) return;
+
+      targetIcon.classList.add('is-departed');
+      window.setTimeout(() => targetIcon.classList.remove('is-departed'), 520);
+
+      const iconRect = targetIcon.getBoundingClientRect();
+      const startPt = { x: iconRect.left + iconRect.width / 2, y: iconRect.top + iconRect.height / 2 };
+
+      animateBadgeArc(
+        key,
+        config,
+        () => startPt,
+        () => {
+          const nodeRect = node.getBoundingClientRect();
+          return { x: nodeRect.left + nodeRect.width / 2, y: nodeRect.top + nodeRect.height / 2 };
+        },
+        {
+          duration: 720,
+          delay: idx * 85,
+          onArrive: () => {
+            if (idx === serviceNodes.length - 1) triggerOrbitalPulse();
+          },
+        }
+      );
+    });
+  };
+
+  if (coreEl) {
+    coreEl.addEventListener('click', (event) => {
+      event.stopPropagation();
+      flyAllNodesToServices({ scroll: true });
+    });
+  }
+
+  serviceNodes.forEach((node) => {
     node.addEventListener('click', (event) => {
       event.stopPropagation();
-      flyNodeToService(node);
+      flyNodeToService(node, { scroll: true });
     });
     node.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         event.stopPropagation();
-        flyNodeToService(node);
+        flyNodeToService(node, { scroll: true });
       }
     });
   });
+
+  /* Scroll-triggered 3-icon flight between #about and #services (forward & reverse) */
+  if (servicesSection && !reducedMotion) {
+    let lastScrollY = window.scrollY;
+    let flightScrollRaf = 0;
+
+    const checkServicesFlight = () => {
+      flightScrollRaf = 0;
+      const curY = window.scrollY;
+      const deltaY = curY - lastScrollY;
+      lastScrollY = curY;
+      if (Math.abs(deltaY) < 1 || isClickFlightActive) return;
+
+      const scrollingDown = deltaY > 0;
+      const scrollingUp = deltaY < 0;
+      const vh = window.innerHeight || 800;
+      const sTop = servicesSection.getBoundingClientRect().top;
+
+      if (scrollingDown) {
+        if (!hasTriggeredServicesFlight && sTop <= vh * 0.74 && sTop > -vh * 0.35) {
+          hasTriggeredServicesFlight = true;
+          hasTriggeredReverseFlight = false;
+          flyAllNodesToServices({ scroll: false });
+        } else if (sTop <= vh * 0.55) {
+          hasTriggeredReverseFlight = false;
+        }
+      } else if (scrollingUp) {
+        if (!hasTriggeredReverseFlight && sTop > vh * 0.65 && sTop < vh * 1.15) {
+          hasTriggeredReverseFlight = true;
+          hasTriggeredServicesFlight = false;
+          flyAllServicesToNodes();
+        } else if (sTop > vh * 0.92) {
+          hasTriggeredServicesFlight = false;
+        }
+      }
+    };
+
+    window.addEventListener('scroll', () => {
+      if (!flightScrollRaf) flightScrollRaf = window.requestAnimationFrame(checkServicesFlight);
+    }, { passive: true });
+  }
 }
+
+/* ---------- Scroll-driven morph: .metrics-band -> center magnet .orbital-system -> right column + .about-lead ---------- */
+(() => {
+  const metricsBand = document.querySelector('.metrics-band');
+  const aboutSection = document.getElementById('about');
+  const aboutGrid = aboutSection?.querySelector('.about-grid');
+  const aboutLead = aboutSection?.querySelector('.about-lead');
+  const orbitWrap = aboutSection?.querySelector('.profile-orbit');
+  const orbitEl = orbitWrap?.querySelector('.orbital-system');
+  if (!metricsBand || !aboutSection || !aboutGrid || !aboutLead || !orbitWrap || !orbitEl) return;
+
+  const disciplineMetrics = Array.from(metricsBand.querySelectorAll('.metric')).slice(0, 3);
+  const availabilityEl = metricsBand.querySelector('.availability');
+  const leadParts = [
+    aboutLead.querySelector('.overline'),
+    aboutLead.querySelector('h2'),
+    ...Array.from(aboutLead.querySelectorAll('.about-detail p')),
+  ].filter(Boolean);
+  const nodes = [
+    orbitEl.querySelector('.node-a'),
+    orbitEl.querySelector('.node-b'),
+    orbitEl.querySelector('.node-c'),
+  ].filter(Boolean);
+
+  const clamp01 = (v) => Math.min(1, Math.max(0, v));
+  const easeOutCubic = (t) => 1 - Math.pow(1 - clamp01(t), 3);
+  const easeInOutCubic = (t) => {
+    const x = clamp01(t);
+    return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  };
+  const easeOutBack = (t) => {
+    const x = clamp01(t);
+    const c1 = 1.25;
+    const c3 = c1 + 1;
+    return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+  };
+  const seg = (p, start, end) => clamp01((p - start) / (end - start));
+
+  if (reducedMotion) {
+    aboutLead.classList.add('is-visible');
+    orbitEl.classList.add('is-morph-settled');
+    return;
+  }
+
+  let centerOffsetX = 0;
+  let centerOffsetY = 0;
+  let isMobileMorph = false;
+  let bioStartP = 0.72;
+  let orbitLeftStart = 0;
+  let orbitTopStart = 0;
+  let slotAnchors = [];
+  let nodeMetricDeltas = [];
+
+  let metricBandOffsets = [];
+
+  const syncNodeMetricDeltas = () => {
+    const bandRect = metricsBand.getBoundingClientRect();
+    nodeMetricDeltas = nodes.map((node, idx) => {
+      const slotIdx = Number(node.dataset.slot);
+      const anchor = slotAnchors[slotIdx] || { left: node.offsetLeft, top: node.offsetTop };
+      const nx = orbitLeftStart + anchor.left + node.offsetWidth * 0.5;
+      const ny = orbitTopStart + anchor.top + node.offsetHeight * 0.5;
+      const offset = metricBandOffsets[idx];
+      if (!offset) return { node, dx: 0, dy: 0 };
+      const mx = bandRect.left + offset.x;
+      const my = bandRect.top + offset.y;
+      return { node, dx: mx - nx, dy: my - ny };
+    });
+  };
+
+  const measureLayout = () => {
+    const gridRect = aboutGrid.getBoundingClientRect();
+    const wrapRect = orbitWrap.getBoundingClientRect();
+    const bandRect = metricsBand.getBoundingClientRect();
+    isMobileMorph = window.matchMedia('(max-width: 809px)').matches;
+
+    const leadRight = gridRect.left + aboutLead.offsetLeft + aboutLead.offsetWidth;
+    const gridPadTop = parseFloat(getComputedStyle(aboutGrid).paddingTop) || 0;
+    const leadTopInGrid = gridPadTop;
+    const leadBottomInGrid = leadTopInGrid + aboutLead.offsetHeight;
+    const orbitNaturalTopInGrid = (wrapRect.top - gridRect.top) + (wrapRect.height - orbitEl.offsetHeight) * 0.5;
+
+    if (isMobileMorph) {
+      centerOffsetX = 0;
+      centerOffsetY = 0;
+      bioStartP = 0.56;
+    } else {
+      const gridCx = gridRect.left + gridRect.width * 0.5;
+      const wrapCx = wrapRect.left + wrapRect.width * 0.5;
+      centerOffsetX = gridCx - wrapCx;
+      centerOffsetY = 0;
+
+      const orbitLeftCentered = wrapRect.left + centerOffsetX + (wrapRect.width - orbitEl.offsetWidth) * 0.5;
+      if (centerOffsetX < -20) {
+        const neededShift = Math.max(0, leadRight + 16 - orbitLeftCentered);
+        const clearRatio = clamp01(neededShift / Math.abs(centerOffsetX));
+        const invRatio = clearRatio <= 0.5
+          ? Math.cbrt(clearRatio / 4)
+          : 1 - Math.cbrt((1 - clearRatio) / 4);
+        bioStartP = Math.min(0.84, 0.48 + invRatio * 0.36);
+      } else {
+        bioStartP = 0.6;
+      }
+    }
+
+    orbitLeftStart = wrapRect.left + centerOffsetX + (wrapRect.width - orbitEl.offsetWidth) * 0.5;
+    orbitTopStart = wrapRect.top + centerOffsetY + (wrapRect.height - orbitEl.offsetHeight) * 0.5;
+
+    /* Measure untransformed metric centers relative to .metrics-band */
+    metricBandOffsets = disciplineMetrics.map((metric) => {
+      const prevTransform = metric.style.transform;
+      metric.style.transform = '';
+      const mRect = metric.getBoundingClientRect();
+      metric.style.transform = prevTransform;
+      return {
+        x: (mRect.left + mRect.width * 0.5) - bandRect.left,
+        y: (mRect.top + mRect.height * 0.5) - bandRect.top,
+      };
+    });
+
+    /* Cache exact anchor coordinates for slots 0, 1, 2 */
+    slotAnchors = [];
+    nodes.forEach((node) => {
+      const s = Number(node.dataset.slot);
+      slotAnchors[s] = { left: node.offsetLeft, top: node.offsetTop };
+    });
+
+    syncNodeMetricDeltas();
+  };
+
+  let targetP = 0;
+  let currentP = 0;
+  let lastRenderedP = 0;
+  let rafId = 0;
+
+  const computeTarget = () => {
+    const vh = window.innerHeight || 800;
+    const aboutRect = aboutGrid.getBoundingClientRect();
+    const startTop = vh * (isMobileMorph ? 0.94 : 0.96);
+    const endTop = isMobileMorph ? -vh * 0.22 : vh * (window.innerWidth <= 900 ? 0.28 : 0.2);
+    const span = Math.max(isMobileMorph ? 820 : 240, startTop - endTop);
+    return clamp01((startTop - aboutRect.top) / span);
+  };
+
+  const render = (p) => {
+    const isScrollingUp = p < lastRenderedP - 0.0005;
+    lastRenderedP = p;
+
+    /* Phase 1 (0 -> 0.34): Metrics morph out to opacity 0, then reset transform while hidden;
+       Phase 2 (0.58 -> 0.92): Fade metrics back in directly in place */
+    const mMove = easeInOutCubic(seg(p, 0.0, 0.34));
+    const mOut = easeOutCubic(seg(p, 0.08, 0.32));
+    const mBack = easeOutCubic(seg(p, 0.58, 0.92));
+    const mMotion = (isScrollingUp || p >= 0.34) ? 0 : mMove;
+    const mOpacity = 1 - mOut * (1 - mBack);
+
+    disciplineMetrics.forEach((metric, idx) => {
+      const delta = nodeMetricDeltas[idx];
+      if (mMotion > 0.002 && delta) {
+        const tx = -delta.dx * 0.42 * mMotion;
+        const ty = -delta.dy * 0.42 * mMotion;
+        const sc = 1 - mMotion * 0.28;
+        metric.style.transform = `translate3d(${tx.toFixed(2)}px, ${ty.toFixed(2)}px, 0) scale(${sc.toFixed(4)})`;
+        metric.style.opacity = mOpacity.toFixed(3);
+      } else {
+        metric.style.transform = '';
+        metric.style.opacity = mOpacity < 0.999 ? mOpacity.toFixed(3) : '';
+      }
+    });
+
+    if (availabilityEl) {
+      const availOut = easeOutCubic(seg(p, 0.04, 0.26));
+      const availMotion = (isScrollingUp || p >= 0.34) ? 0 : availOut;
+      const availOp = 1 - availOut * (1 - mBack);
+      availabilityEl.style.transform = availMotion > 0.002 ? `translate3d(0, ${(availMotion * 14).toFixed(2)}px, 0) scale(${(1 - availMotion * 0.08).toFixed(4)})` : '';
+      availabilityEl.style.opacity = availOp < 0.999 ? availOp.toFixed(3) : '';
+    }
+
+    /* Core & orbit rings act as the center magnet */
+    const coreE = easeOutBack(seg(p, 0.0, 0.42));
+    const coreScale = 0.45 + 0.55 * coreE;
+    const coreOp = 0.25 + 0.75 * easeOutCubic(seg(p, 0.0, 0.24));
+    const magnetPulse = Math.sin(seg(p, 0.08, 0.56) * Math.PI);
+    orbitEl.style.setProperty('--m-core-scale', coreScale.toFixed(4));
+    orbitEl.style.setProperty('--m-core-op', coreOp.toFixed(3));
+    orbitEl.style.setProperty('--m-seed-glow', Math.max(0, magnetPulse).toFixed(3));
+
+    const ringE = easeOutCubic(seg(p, 0.08, 0.46));
+    orbitEl.style.setProperty('--m-ring-scale', (0.35 + 0.65 * ringE).toFixed(4));
+    orbitEl.style.setProperty('--m-ring-op', ringE.toFixed(3));
+
+    const o1 = easeOutCubic(seg(p, 0.06, 0.44));
+    const o2 = easeOutCubic(seg(p, 0.12, 0.48));
+    const o3 = easeOutCubic(seg(p, 0.18, 0.52));
+    orbitEl.style.setProperty('--m-o1-scale', (0.28 + 0.72 * o1).toFixed(4));
+    orbitEl.style.setProperty('--m-o1-op', o1.toFixed(3));
+    orbitEl.style.setProperty('--m-o2-scale', (0.24 + 0.76 * o2).toFixed(4));
+    orbitEl.style.setProperty('--m-o2-op', o2.toFixed(3));
+    orbitEl.style.setProperty('--m-o3-scale', (0.2 + 0.8 * o3).toFixed(4));
+    orbitEl.style.setProperty('--m-o3-op', o3.toFixed(3));
+
+    const sigE = easeOutCubic(seg(p, 0.34, 0.56));
+    orbitEl.style.setProperty('--m-sig-scale', Math.max(0.001, sigE).toFixed(4));
+    orbitEl.style.setProperty('--m-sig-op', sigE.toFixed(3));
+
+    /* Nodes (OPS, CRTV, WEB) travel smoothly together along exact metric <-> orbital anchor paths */
+    const nodeProgress = easeInOutCubic(seg(p, 0.06, 0.46));
+    const nodeFade = easeOutCubic(seg(p, 0.06, 0.24));
+    const inv = clamp01(1 - nodeProgress);
+    const nodeScale = 0.72 + 0.28 * nodeProgress;
+    nodeMetricDeltas.forEach(({ node, dx, dy }) => {
+      node.style.setProperty('--node-tx', `${(dx * inv).toFixed(2)}px`);
+      node.style.setProperty('--node-ty', `${(dy * inv).toFixed(2)}px`);
+      node.style.setProperty('--node-scale', nodeScale.toFixed(4));
+      node.style.setProperty('--node-op', nodeFade.toFixed(3));
+    });
+
+    /* Phase 2: Slide .orbital-system to final position (right column on desktop; in-place at top of #about on <=809px) */
+    const slideStart = isMobileMorph ? 0.54 : 0.48;
+    const slideEnd = isMobileMorph ? 0.94 : 0.84;
+    const slideP = easeInOutCubic(seg(p, slideStart, slideEnd));
+    const orbitTx = centerOffsetX * (1 - slideP);
+    const orbitTy = 0;
+
+    orbitEl.style.setProperty('--orbit-tx', `${orbitTx.toFixed(2)}px`);
+    orbitEl.style.setProperty('--orbit-ty', `${orbitTy.toFixed(2)}px`);
+
+    /* Non-overlapping .about-lead.reveal.is-visible reveal once .orbital-system clears/settles */
+    const effectiveBioGate = p >= bioStartP;
+    const bioRaw = effectiveBioGate ? seg(p, bioStartP, 0.98) : 0;
+    const bioContainerP = easeOutCubic(bioRaw);
+    aboutLead.classList.toggle('is-visible', effectiveBioGate);
+    aboutLead.style.opacity = bioContainerP.toFixed(3);
+    const leadStartX = isMobileMorph ? 0 : -24 * (1 - bioContainerP);
+    const leadStartY = isMobileMorph ? 20 * (1 - bioContainerP) : 14 * (1 - bioContainerP);
+    aboutLead.style.transform = bioContainerP < 0.999 ? `translate3d(${leadStartX.toFixed(2)}px, ${leadStartY.toFixed(2)}px, 0)` : '';
+
+    leadParts.forEach((el, idx) => {
+      const start = Math.min(0.92, bioStartP + idx * 0.045);
+      const end = Math.min(1, start + 0.22);
+      const lp = effectiveBioGate ? easeOutCubic(seg(p, start, end)) : 0;
+      const ty = (1 - lp) * 16;
+      el.style.opacity = lp.toFixed(3);
+      el.style.transform = lp < 0.999 ? `translate3d(0, ${ty.toFixed(2)}px, 0)` : '';
+    });
+
+    orbitEl.classList.toggle('is-morph-settled', p >= 0.985);
+  };
+
+  const tick = () => {
+    rafId = 0;
+    const diff = targetP - currentP;
+    if (Math.abs(diff) < 0.001 || (targetP === 0 && currentP < 0.12)) {
+      currentP = targetP;
+      render(currentP);
+      return;
+    }
+    const fastUp = diff < -0.22;
+    const factor = fastUp ? 0.45 : (diff < 0 ? 0.26 : (isMobileMorph ? 0.14 : 0.18));
+    currentP = clamp01(currentP + diff * factor);
+    render(currentP);
+    rafId = window.requestAnimationFrame(tick);
+  };
+
+  const onScroll = () => {
+    targetP = computeTarget();
+    if (!rafId) rafId = window.requestAnimationFrame(tick);
+  };
+
+  const onResize = () => {
+    measureLayout();
+    targetP = computeTarget();
+    currentP = targetP;
+    render(currentP);
+  };
+
+  measureLayout();
+  targetP = computeTarget();
+  currentP = targetP;
+  render(currentP);
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onResize, { passive: true });
+  orbitEl.addEventListener('orbital:slots-changed', syncNodeMetricDeltas);
+})();
 
 /* ---------- click ripple on empty space (skips links, controls, text and animated parts) ---------- */
 if (!reducedMotion) {
