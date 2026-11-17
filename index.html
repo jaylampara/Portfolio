@@ -1024,17 +1024,13 @@ html[data-theme="light"] .hp-img-light { opacity: 1; mix-blend-mode: multiply; }
   }
   .about-lead {
     grid-column: auto;
+    order: 2;
   }
-  .profile-orbit .orbital-system {
-    width: min(100%, 400px);
-  }
-}
-@media (max-width: 809px) {
   .profile-orbit {
     order: 1;
   }
-  .about-lead {
-    order: 2;
+  .profile-orbit .orbital-system {
+    width: min(100%, 400px);
   }
 }
 @media (max-width: 570px) {
@@ -3940,7 +3936,7 @@ if (orbitalSystem) {
     );
   };
 
-  /* Mobile <=809px: arm stacked .service-card elements on .core click to highlight as each enters viewport */
+  /* Mobile <=900px: arm stacked .service-card elements on .core click to highlight as each enters viewport */
   const mobileCardObserver = ('IntersectionObserver' in window)
     ? new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
@@ -3956,7 +3952,7 @@ if (orbitalSystem) {
     : null;
 
   const armMobileServiceCards = () => {
-    if (!mobileCardObserver || !window.matchMedia('(max-width: 809px)').matches) return;
+    if (!mobileCardObserver || !window.matchMedia('(max-width: 900px)').matches) return;
     document.querySelectorAll('.service-card[data-service-filter]').forEach((card) => {
       card.dataset.coreArmed = 'true';
       mobileCardObserver.observe(card);
@@ -3977,7 +3973,7 @@ if (orbitalSystem) {
     if (scroll) {
       markClickFlight(1150);
       armMobileServiceCards();
-      const scrollTarget = window.matchMedia('(max-width: 809px)').matches
+      const scrollTarget = window.matchMedia('(max-width: 900px)').matches
         ? (servicesGrid.querySelector('.service-card') || servicesGrid)
         : servicesGrid;
       scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -4158,7 +4154,7 @@ if (orbitalSystem) {
     const gridRect = aboutGrid.getBoundingClientRect();
     const wrapRect = orbitWrap.getBoundingClientRect();
     const bandRect = metricsBand.getBoundingClientRect();
-    isMobileMorph = window.matchMedia('(max-width: 809px)').matches;
+    isMobileMorph = window.matchMedia('(max-width: 900px)').matches;
 
     const leadRight = gridRect.left + aboutLead.offsetLeft + aboutLead.offsetWidth;
     const gridPadTop = parseFloat(getComputedStyle(aboutGrid).paddingTop) || 0;
@@ -4217,6 +4213,7 @@ if (orbitalSystem) {
   let targetP = 0;
   let currentP = 0;
   let lastRenderedP = 0;
+  let isScrollingUp = false;
   let rafId = 0;
 
   const computeTarget = () => {
@@ -4229,7 +4226,8 @@ if (orbitalSystem) {
   };
 
   const render = (p) => {
-    const isScrollingUp = p < lastRenderedP - 0.0005;
+    if (p < lastRenderedP - 0.0005) isScrollingUp = true;
+    else if (p > lastRenderedP + 0.0005) isScrollingUp = false;
     lastRenderedP = p;
 
     /* Phase 1 (0 -> 0.34): Metrics morph out to opacity 0, then reset transform while hidden;
@@ -4289,19 +4287,20 @@ if (orbitalSystem) {
     orbitEl.style.setProperty('--m-sig-scale', Math.max(0.001, sigE).toFixed(4));
     orbitEl.style.setProperty('--m-sig-op', sigE.toFixed(3));
 
-    /* Nodes (OPS, CRTV, WEB) travel smoothly together along exact metric <-> orbital anchor paths */
+    /* Nodes (OPS, CRTV, WEB) travel from .metrics-band into .orbital-system on scroll down,
+       and fade out in place inside .orbital-system when scrolling up */
     const nodeProgress = easeInOutCubic(seg(p, 0.06, 0.46));
     const nodeFade = easeOutCubic(seg(p, 0.06, 0.24));
-    const inv = clamp01(1 - nodeProgress);
+    const inv = isScrollingUp ? 0 : clamp01(1 - nodeProgress);
     const nodeScale = 0.72 + 0.28 * nodeProgress;
     nodeMetricDeltas.forEach(({ node, dx, dy }) => {
-      node.style.setProperty('--node-tx', `${(dx * inv).toFixed(2)}px`);
-      node.style.setProperty('--node-ty', `${(dy * inv).toFixed(2)}px`);
+      node.style.setProperty('--node-tx', isScrollingUp ? '0px' : `${(dx * inv).toFixed(2)}px`);
+      node.style.setProperty('--node-ty', isScrollingUp ? '0px' : `${(dy * inv).toFixed(2)}px`);
       node.style.setProperty('--node-scale', nodeScale.toFixed(4));
       node.style.setProperty('--node-op', nodeFade.toFixed(3));
     });
 
-    /* Phase 2: Slide .orbital-system to final position (right column on desktop; in-place at top of #about on <=809px) */
+    /* Phase 2: Slide .orbital-system to final position (right column on desktop; in-place at top of #about on <=900px) */
     const slideStart = isMobileMorph ? 0.54 : 0.48;
     const slideEnd = isMobileMorph ? 0.94 : 0.84;
     const slideP = easeInOutCubic(seg(p, slideStart, slideEnd));
@@ -4330,7 +4329,7 @@ if (orbitalSystem) {
       el.style.transform = lp < 0.999 ? `translate3d(0, ${ty.toFixed(2)}px, 0)` : '';
     });
 
-    const isSettled = p >= 0.985;
+    const isSettled = nodeProgress >= 1 || p >= 0.46;
     orbitEl.classList.toggle('is-morph-settled', isSettled);
     if (!isSettled) orbitEl.classList.remove('is-icon-phase');
   };
