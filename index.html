@@ -1439,13 +1439,55 @@ html[data-theme="light"] .theme-toggle {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .95), inset 0 -1px 0 rgba(16, 23, 18, .08), 0 16px 40px -14px rgba(20, 40, 30, .28);
 }
 
-.button-secondary,
+.button-primary {
+  border-color: rgba(255, 255, 255, .34);
+  background: linear-gradient(180deg, rgba(208, 255, 78, .86), rgba(182, 236, 42, .72));
+  -webkit-backdrop-filter: blur(22px) saturate(185%);
+  backdrop-filter: blur(22px) saturate(185%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .52), inset 0 -1px 0 rgba(16, 26, 4, .18), 0 14px 32px -14px rgba(198, 255, 61, .35);
+}
+.button-primary:hover {
+  border-color: rgba(255, 255, 255, .55);
+  background: linear-gradient(180deg, rgba(245, 247, 240, .92), rgba(228, 232, 222, .82));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .78), inset 0 -1px 0 rgba(0, 0, 0, .1), 0 16px 34px -14px rgba(0, 0, 0, .55);
+}
+html[data-theme="light"] .button-primary {
+  border-color: rgba(255, 255, 255, .36);
+  background: linear-gradient(180deg, rgba(94, 130, 0, .86), rgba(77, 107, 0, .78));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .38), inset 0 -1px 0 rgba(10, 18, 4, .22), 0 14px 30px -14px rgba(77, 107, 0, .35);
+}
+html[data-theme="light"] .button-primary:hover {
+  border-color: rgba(255, 255, 255, .28);
+  background: linear-gradient(180deg, rgba(28, 36, 30, .9), rgba(16, 23, 18, .82));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 16px 32px -14px rgba(16, 23, 18, .35);
+}
+.button-secondary {
+  border-color: rgba(218, 250, 242, .24);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .14), rgba(16, 20, 19, .46));
+  -webkit-backdrop-filter: blur(24px) saturate(185%);
+  backdrop-filter: blur(24px) saturate(185%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .32), inset 0 -1px 0 rgba(111, 255, 212, .12), 0 12px 28px -14px rgba(0, 0, 0, .58);
+}
+.button-secondary:hover {
+  border-color: rgba(255, 255, 255, .42);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .22), rgba(22, 27, 25, .62));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .44), inset 0 -1px 0 rgba(111, 255, 212, .18), 0 14px 32px -14px rgba(0, 0, 0, .65);
+}
+html[data-theme="light"] .button-secondary {
+  border-color: rgba(255, 255, 255, .75);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .74), rgba(229, 236, 231, .52));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .92), inset 0 -1px 0 rgba(16, 23, 18, .08), 0 12px 26px -14px rgba(16, 23, 18, .2);
+}
+html[data-theme="light"] .button-secondary:hover {
+  border-color: rgba(16, 23, 18, .28);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .9), rgba(236, 242, 238, .76));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .98), 0 14px 28px -14px rgba(16, 23, 18, .24);
+}
 .hp-tog {
   -webkit-backdrop-filter: blur(20px) saturate(175%);
   backdrop-filter: blur(20px) saturate(175%);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), inset 0 -1px 0 rgba(111, 255, 212, .08), 0 10px 26px -14px rgba(0, 0, 0, .55);
 }
-html[data-theme="light"] .button-secondary,
 html[data-theme="light"] .hp-tog {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .88), 0 10px 24px -14px rgba(16, 23, 18, .18);
 }
@@ -1650,6 +1692,54 @@ html[data-theme="light"] .showreel-dialog {
   gap: 26px;
   margin-top: 38px;
 }
+.contact-open-btn {
+  height: 54px;
+  padding: 0 24px;
+  border-radius: 999px;
+  border: 1px solid rgba(200, 255, 52, .37);
+  color: var(--text);
+  font: 11px var(--mono);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(180deg, rgba(200, 255, 52, .12), rgba(13, 15, 16, .48));
+  -webkit-backdrop-filter: blur(18px) saturate(175%);
+  backdrop-filter: blur(18px) saturate(175%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), inset 0 -1px 0 rgba(200, 255, 52, .12), 0 8px 22px -12px rgba(0, 0, 0, .5);
+  transition: background .2s, color .2s, border-color .2s, transform .16s cubic-bezier(.22, 1, .36, 1);
+}
+.contact-open-btn:hover,
+.contact-open-btn:focus-visible {
+  background: var(--acid);
+  border-color: var(--acid);
+  color: var(--bg);
+  outline: 0;
+}
+.contact-open-btn:hover .status-dot,
+.contact-open-btn:focus-visible .status-dot {
+  background: var(--bg);
+  box-shadow: none;
+}
+.contact-open-btn:active {
+  transform: scale(.97);
+}
+html[data-theme="light"] .contact-open-btn {
+  color: #101712;
+  border-color: rgba(97, 134, 0, .45);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .64), rgba(229, 236, 231, .56));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .86), 0 8px 20px -12px rgba(16, 23, 18, .16);
+}
+html[data-theme="light"] .contact-open-btn:hover,
+html[data-theme="light"] .contact-open-btn:focus-visible {
+  background: var(--acid);
+  border-color: var(--acid);
+  color: #f4f5f1;
+}
+html[data-theme="light"] .contact-open-btn:hover .status-dot,
+html[data-theme="light"] .contact-open-btn:focus-visible .status-dot {
+  background: #f4f5f1;
+}
 .contact-channels {
   display: flex;
   align-items: center;
@@ -1708,7 +1798,7 @@ html[data-theme="light"] .contact-channel:focus-visible {
   }
   .contact-open-btn {
     width: 100%;
-    justify-content: space-between;
+    justify-content: center;
   }
 }
 
@@ -2121,17 +2211,7 @@ html[data-theme="light"] .contact-close:focus-visible {
           <p class="contact-pre">Have a complex idea, a creative vision, or a system ready to perform?</p>
           <h2>Let’s build your<br /><em>next advantage.</em></h2>
           <div class="contact-actions">
-            <button class="button button-primary contact-open-btn" type="button" data-contact-open>
-              <span class="btn-label">Start a project</span>
-              <b class="btn-badge is-arrow" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M5 12h14M13 6l6 6-6 6"></path>
-                </svg>
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M5 12h14M13 6l6 6-6 6"></path>
-                </svg>
-              </b>
-            </button>
+            <button class="contact-open-btn" type="button" data-contact-open><span class="status-dot"></span> Start a project</button>
                         <div class="contact-channels" aria-label="Direct contact channels">
               <a class="contact-channel" href="mailto:jayaganglampara@gmail.com" aria-label="Email jayaganglampara@gmail.com" title="Email">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -5989,6 +6069,32 @@ if (!reducedMotion) {
     });
     if (hadActive) kick();
   };
+
+  let touchResetTimer = 0;
+
+  window.addEventListener('pointerdown', (e) => {
+    if (e.pointerType !== 'touch') return;
+    let activated = false;
+    fields.forEach((field) => {
+      const rect = field.heading.getBoundingClientRect();
+      const r = field.radius;
+      const near =
+        e.clientX >= rect.left - r && e.clientX <= rect.right + r &&
+        e.clientY >= rect.top - r && e.clientY <= rect.bottom + r;
+      if (near) {
+        const k = rect.width ? field.heading.offsetWidth / rect.width : 1;
+        field.px = (e.clientX - rect.left) * k;
+        field.py = (e.clientY - rect.top) * k;
+        field.active = true;
+        activated = true;
+      }
+    });
+    if (activated) {
+      kick();
+      window.clearTimeout(touchResetTimer);
+      touchResetTimer = window.setTimeout(resetPointers, 240);
+    }
+  }, { passive: true });
 
   document.addEventListener('pointerleave', resetPointers);
   document.addEventListener('pointercancel', resetPointers);
