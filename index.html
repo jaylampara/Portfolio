@@ -5731,20 +5731,41 @@ if (!reducedMotion) {
 
   /* View source / View render */
   let source = false;
-  if (toggle) {
-    toggle.addEventListener('click', () => {
-      source = !source;
+  let introTimerA = 0;
+  let introTimerB = 0;
+  const setSourceState = (next, ms = 900) => {
+    source = next;
+    if (toggle) {
       toggle.setAttribute('aria-pressed', String(source));
       toggle.setAttribute('data-cur', source ? 'compile' : 'decompile');
       const label = source ? 'View render' : 'View Source';
       toggle.setAttribute('aria-label', label);
       toggle.setAttribute('title', label);
-      sweep(source ? 1 : 0, 900);
+    }
+    sweep(source ? 1 : 0, ms);
+  };
+  const cancelIntro = () => {
+    window.clearTimeout(introTimerA);
+    window.clearTimeout(introTimerB);
+  };
+
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      cancelIntro();
+      setSourceState(!source, 900);
     });
   }
 
   readColors();
   size();
+
+  /* Intro sequence on open / refresh: decompile into code, then compile back to show face */
+  introTimerA = window.setTimeout(() => {
+    setSourceState(true, 850);
+    introTimerB = window.setTimeout(() => {
+      setSourceState(false, 850);
+    }, 1100);
+  }, 350);
 })();
 
 /* Text Repel on main h1 and h2 titles (quadratic falloff + spring physics + tilt) */
