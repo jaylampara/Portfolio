@@ -503,10 +503,12 @@ html[data-theme="light"] .showreel-videos.auto-orient .showreel-item img { borde
 .showreel-videos.auto-orient .showreel-item[data-poster="true"] .showreel-poster { object-fit: contain; object-position: center; cursor: pointer; }
 .showreel-item[data-poster="true"] .showreel-label { z-index: 4; }
 
-/* when every item in the mosaic is horizontal, center them neatly in the grid
-   while keeping their original span-2 size; the grid switches to a 2-col layout
-   so each horizontal tile fills a row and the whole block sits centred */
+/* when every item in the mosaic is horizontal (16:9), show 2 side-by-side on desktop/tablet
+   and 1 per row on mobile */
 .showreel-videos.mosaic-uniform-horizontal { justify-content: center; grid-template-columns: repeat(2, 1fr) !important; }
+.showreel-videos.mosaic-uniform-horizontal .showreel-item[data-shape="horizontal"] { grid-column: span 1; }
+.showreel-videos.mosaic-uniform-horizontal .showreel-item[data-shape="horizontal"]:only-child { grid-column: 1 / -1; }
+@media (max-width: 570px) { .showreel-videos.mosaic-uniform-horizontal { grid-template-columns: 1fr !important; } }
 
 html[data-theme="light"] .showreel-tab { color: #3c4842; border-color: rgba(10,30,20,.25); }
 html[data-theme="light"] .showreel-tab:hover, html[data-theme="light"] .showreel-tab.active { color: #f2f5f1; }
@@ -3323,7 +3325,8 @@ const layoutMosaicGallery = (gallery) => {
   const cell = Number.isFinite(firstTrack) && firstTrack > 0
     ? firstTrack
     : Math.max(60, (gallery.clientWidth - padding - gap * (tracks - 1)) / tracks);
-  gallery.style.gridAutoRows = `${cell.toFixed(2)}px`;
+  const rowHeight = allHorizontal ? cell * (9 / 16) : cell;
+  gallery.style.gridAutoRows = `${rowHeight.toFixed(2)}px`;
 };
 window.addEventListener('resize', () => document.querySelectorAll('.showreel-videos').forEach(layoutMosaicGallery));
 
