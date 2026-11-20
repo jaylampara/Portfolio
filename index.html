@@ -541,14 +541,28 @@ html[data-theme="light"] .showreel-empty { color: #5d6a63; border-color: rgba(10
 .showreel-expand { position: absolute; right: 9px; top: 9px; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(200,255,52,.5); background: rgba(6,10,9,.72); color: #d9ff6b; display: grid; place-items: center; cursor: pointer; padding: 0; transition: .2s ease; z-index: 3; }
 .showreel-expand svg { width: 14px; height: 14px; display: block; }
 .showreel-expand:hover { background: #c8ff34; color: #071008; border-color: #c8ff34; }
-.lightbox { position: fixed; inset: 0; z-index: 400; background: rgba(3,6,5,.93); display: grid; place-items: center; animation: lightbox-in .22s ease; }
+.lightbox { position: fixed; inset: 0; z-index: 400; background: rgba(3,6,5,.93); display: grid; place-items: center; animation: lightbox-in .22s ease; touch-action: pan-y; }
 .lightbox[hidden] { display: none; }
 @keyframes lightbox-in { from { opacity: 0; } to { opacity: 1; } }
 .lightbox-backdrop { position: absolute; inset: 0; background: transparent; border: 0; cursor: default; padding: 0; }
-.lightbox-stage { position: relative; width: 100%; display: grid; place-items: center; padding: 56px 20px 108px; pointer-events: none; }
-.lightbox-media { pointer-events: auto; max-width: calc(100vw - 40px); max-height: calc(100vh - 180px); width: auto; height: auto; object-fit: contain; border: 1px solid rgba(218,250,242,.22); background: #090d0c; box-shadow: 0 24px 90px rgba(0,0,0,.65); }
-.lightbox-close { position: absolute; top: 18px; right: 22px; z-index: 2; border: 0; cursor: pointer; background: #c8ff34; color: #071008; font: 10px var(--mono); letter-spacing: .14em; text-transform: uppercase; padding: 9px 13px; transition: .2s ease; }
+.lightbox-stage { position: relative; width: 100%; display: grid; place-items: center; padding: 56px 76px 108px; pointer-events: none; }
+.lightbox-media { pointer-events: auto; max-width: calc(100vw - 152px); max-height: calc(100vh - 180px); width: auto; height: auto; object-fit: contain; border: 1px solid rgba(218,250,242,.22); background: #090d0c; box-shadow: 0 24px 90px rgba(0,0,0,.65); user-select: none; -webkit-user-drag: none; }
+.lightbox-close { position: absolute; top: 18px; right: 22px; z-index: 3; border: 0; border-radius: 999px; cursor: pointer; background: #c8ff34; color: #071008; font: 10px var(--mono); letter-spacing: .14em; text-transform: uppercase; padding: 9px 14px; transition: .2s ease; }
 .lightbox-close:hover { background: #d9ff6b; }
+.lightbox-count { position: absolute; top: 18px; left: 22px; z-index: 3; padding: 8px 13px; border-radius: 999px; border: 1px solid rgba(218,250,242,.2); background: rgba(12,16,14,.68); -webkit-backdrop-filter: blur(18px) saturate(175%); backdrop-filter: blur(18px) saturate(175%); box-shadow: inset 0 1px 0 rgba(255,255,255,.18); color: #d9e6df; font: 10px var(--mono); letter-spacing: .12em; pointer-events: none; }
+.lightbox-count[hidden] { display: none; }
+.lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 3; width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(218,250,242,.24); background: linear-gradient(180deg, rgba(218,250,242,.12), rgba(12,16,14,.64)); -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%); box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 14px 32px rgba(0,0,0,.55); color: #edf5f1; display: grid; place-items: center; cursor: pointer; padding: 0; transition: color .2s ease, border-color .2s ease, background .2s ease, transform .2s cubic-bezier(.22,1,.36,1); }
+.lightbox-nav[hidden] { display: none; }
+.lightbox-nav svg { width: 18px; height: 18px; display: block; }
+.lightbox-prev { left: 18px; }
+.lightbox-next { right: 18px; }
+.lightbox-nav:hover, .lightbox-nav:focus-visible { color: #c8ff34; border-color: rgba(200,255,52,.72); transform: translateY(-50%) scale(1.06); outline: 0; }
+.lightbox-nav:active { transform: translateY(-50%) scale(.94); }
+@media (hover: none), (pointer: coarse), (max-width: 809px) {
+  .lightbox-nav { display: none; }
+  .lightbox-stage { padding: 56px 16px 108px; }
+  .lightbox-media { max-width: calc(100vw - 32px); }
+}
 .lightbox-scrub { position: absolute; left: 50%; bottom: 30px; transform: translateX(-50%); z-index: 2; display: flex; align-items: center; gap: 12px; width: min(640px, calc(100vw - 48px)); background: rgba(6,10,9,.88); border: 1px solid rgba(200,255,52,.35); padding: 12px 18px; border-radius: 999px; }
 .lightbox-time { font: 10px var(--mono); letter-spacing: .08em; color: #d9ff6b; white-space: nowrap; }
 .lightbox-range { flex: 1; min-width: 0; height: 6px; accent-color: #c8ff34; cursor: pointer; }
@@ -2679,7 +2693,10 @@ lightbox.setAttribute('role', 'dialog');
 lightbox.setAttribute('aria-modal', 'true');
 lightbox.setAttribute('aria-label', 'Full view');
 lightbox.innerHTML = '<button class="lightbox-backdrop" type="button" aria-label="Close full view"></button>'
+  + '<span class="lightbox-count" hidden>01 / 01</span>'
+  + '<button class="lightbox-nav lightbox-prev" type="button" aria-label="Previous item" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>'
   + '<div class="lightbox-stage"></div>'
+  + '<button class="lightbox-nav lightbox-next" type="button" aria-label="Next item" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>'
   + '<button class="lightbox-close" type="button">Close <span>×</span></button>'
   + '<div class="lightbox-scrub" hidden>'
   + '<span class="lightbox-time lightbox-time-now">0:00</span>'
@@ -2690,17 +2707,24 @@ lightbox.innerHTML = '<button class="lightbox-backdrop" type="button" aria-label
   + '</div>';
 document.body.appendChild(lightbox);
 const lightboxStage = lightbox.querySelector('.lightbox-stage');
+const lightboxCount = lightbox.querySelector('.lightbox-count');
+const lightboxPrev = lightbox.querySelector('.lightbox-prev');
+const lightboxNext = lightbox.querySelector('.lightbox-next');
 const lightboxScrub = lightbox.querySelector('.lightbox-scrub');
 const lightboxRange = lightbox.querySelector('.lightbox-range');
 const lightboxTimeNow = lightbox.querySelector('.lightbox-time-now');
 const lightboxTimeEnd = lightbox.querySelector('.lightbox-time-end');
 const lightboxSound = lightbox.querySelector('.lightbox-sound');
 const lightboxPlay = lightbox.querySelector('.lightbox-play');
+const lightboxItemMedia = new WeakMap();
+const lightboxMediaItem = new WeakMap();
 let lightboxSource = null;
 let lightboxMedia = null;
 let lightboxEmbed = null;
 let lightboxOpener = null;
 let lightboxDragging = false;
+let lightboxList = [];
+let lightboxIndex = 0;
 
 /* live playback positions of embed players (YouTube infoDelivery / Vimeo timeupdate) */
 const embedMediaState = new Map();
@@ -2837,8 +2861,7 @@ const restoreParkedDriveTiles = () => {
   });
 };
 
-const closeLightbox = () => {
-  if (lightbox.hidden) return;
+const releaseLightboxMedia = () => {
   const sourceItem = lightboxSource?.closest?.('.showreel-item') || null;
   if (lightboxSource && lightboxMedia && lightboxMedia.tagName === 'VIDEO' && lightboxSource.tagName === 'VIDEO' && lightboxSource.src === lightboxMedia.src) {
     try { lightboxSource.currentTime = lightboxMedia.currentTime; } catch (error) { /* cross-origin or not seekable */ }
@@ -2856,7 +2879,6 @@ const closeLightbox = () => {
         sendEmbedCommand(lightboxSource, { event: 'command', func: 'seekTo', args: [resumeAt, true] });
         sendEmbedCommand(lightboxSource, { event: 'command', func: 'playVideo', args: [] });
       } else if (lightboxSource.dataset.provider === 'drive') {
-        // Drive's preview player owns its controls; just restore its sound state
         setGraphicsEmbedSound(lightboxSource, soundOn);
       } else {
         sendEmbedCommand(lightboxSource, { method: 'seekTo', value: resumeAt });
@@ -2874,11 +2896,17 @@ const closeLightbox = () => {
   lightboxMedia = null;
   lightboxSource = null;
   lightboxScrub.hidden = true;
-  lightbox.hidden = true;
-  /* drop any scrub seeks queued for the player that just went away */
   window.clearTimeout(embedSeekTimer);
   embedSeekTimer = 0;
   pendingEmbedSeek = null;
+};
+
+const closeLightbox = () => {
+  if (lightbox.hidden) return;
+  releaseLightboxMedia();
+  lightbox.hidden = true;
+  lightboxList = [];
+  lightboxIndex = 0;
   restoreParkedDriveTiles();
   lightboxOpener?.focus?.({ preventScroll: true });
   lightboxOpener = null;
@@ -2985,8 +3013,32 @@ document.querySelector('.profile-visual')?.addEventListener('click', (event) => 
 });
 document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closePortraitBurst(); });
 
-const openLightbox = (media) => {
-  lightboxOpener = document.activeElement;
+const updateLightboxNav = () => {
+  const multi = lightboxList.length > 1;
+  lightboxPrev.hidden = !multi;
+  lightboxNext.hidden = !multi;
+  lightboxCount.hidden = !multi;
+  if (multi) {
+    const pad = (n) => String(n).padStart(2, '0');
+    lightboxCount.textContent = `${pad(lightboxIndex + 1)} / ${pad(lightboxList.length)}`;
+  }
+};
+
+const openLightbox = (media, { keepPlaylist = false } = {}) => {
+  if (media.tagName === 'IFRAME' && media.dataset.lazySrc && media.getAttribute('src') === 'about:blank') {
+    media.src = media.dataset.lazySrc;
+  }
+  if (!keepPlaylist) {
+    lightboxOpener = document.activeElement;
+    const ownerItem = lightboxMediaItem.get(media) || media.closest?.('.showreel-item');
+    const gallery = ownerItem?.closest('.showreel-videos');
+    lightboxList = gallery
+      ? Array.from(gallery.querySelectorAll('.showreel-item')).map((el) => lightboxItemMedia.get(el)).filter(Boolean)
+      : [media];
+    const foundIdx = lightboxList.indexOf(media);
+    lightboxIndex = foundIdx >= 0 ? foundIdx : 0;
+  }
+  updateLightboxNav();
   lightboxSource = media;
   lightboxDragging = false;
   const soundOn = media.tagName === 'VIDEO' ? !media.muted : (media.tagName === 'IFRAME' ? media.dataset.sound === 'on' : false);
@@ -3166,13 +3218,55 @@ lightboxPlay.addEventListener('click', () => {
     sendEmbedCommand(lightboxEmbed, { method: next ? 'play' : 'pause' });
   }
 });
+const stepLightbox = (dir) => {
+  if (lightboxList.length < 2 || lightbox.hidden) return;
+  releaseLightboxMedia();
+  lightboxIndex = (((lightboxIndex + dir) % lightboxList.length) + lightboxList.length) % lightboxList.length;
+  const nextMedia = lightboxList[lightboxIndex];
+  if (nextMedia) openLightbox(nextMedia, { keepPlaylist: true });
+};
+
+lightboxPrev.addEventListener('click', (event) => { event.stopPropagation(); stepLightbox(-1); });
+lightboxNext.addEventListener('click', (event) => { event.stopPropagation(); stepLightbox(1); });
+
+/* Touch & pointer swipe inside full view (ignores scrubber and buttons) */
+let lbSwipeX = 0, lbSwipeY = 0, lbSwiping = false;
+lightbox.addEventListener('pointerdown', (event) => {
+  if (lightbox.hidden || lightboxList.length < 2) return;
+  if (event.pointerType === 'mouse' && event.button !== 0) return;
+  if (event.target.closest('.lightbox-scrub, .lightbox-nav, .lightbox-close')) return;
+  lbSwipeX = event.clientX;
+  lbSwipeY = event.clientY;
+  lbSwiping = true;
+}, { passive: true });
+lightbox.addEventListener('pointerup', (event) => {
+  if (!lbSwiping) return;
+  lbSwiping = false;
+  const dx = event.clientX - lbSwipeX;
+  const dy = event.clientY - lbSwipeY;
+  if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+    stepLightbox(dx < 0 ? 1 : -1);
+  }
+}, { passive: true });
+lightbox.addEventListener('pointercancel', () => { lbSwiping = false; }, { passive: true });
+
 lightbox.querySelectorAll('.lightbox-backdrop, .lightbox-close').forEach((control) => control.addEventListener('click', closeLightbox));
 document.addEventListener('keydown', (event) => {
-  if (lightbox.hidden || event.key !== 'Escape') return;
-  event.stopImmediatePropagation();
-  closeLightbox();
+  if (lightbox.hidden) return;
+  if (event.key === 'Escape') {
+    event.stopImmediatePropagation();
+    closeLightbox();
+  } else if (event.key === 'ArrowLeft') {
+    event.preventDefault();
+    stepLightbox(-1);
+  } else if (event.key === 'ArrowRight') {
+    event.preventDefault();
+    stepLightbox(1);
+  }
 });
 const attachExpand = (item, media) => {
+  lightboxItemMedia.set(item, media);
+  lightboxMediaItem.set(media, item);
   const button = document.createElement('button');
   button.className = 'showreel-expand';
   button.type = 'button';
