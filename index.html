@@ -3772,18 +3772,22 @@ const buildGraphicsItem = (entry, index, chipFallback = 'DESIGN') => {
   item.dataset.shape = 'square';
   if (entry.kind === 'image' || entry.kind === 'video') {
     const media = entry.kind === 'image' ? document.createElement('img') : document.createElement('video');
-    media.src = entry.src;
+    if (entry.shape) item.dataset.shape = entry.shape;
     if (entry.kind === 'image') {
       media.alt = `Graphic design sample ${index + 1}`;
       media.loading = 'lazy';
       media.addEventListener('load', () => snapMediaRatio(media));
+      media.src = entry.src;
     } else {
       media.muted = true;
+      media.defaultMuted = true;
       media.autoplay = true;
       media.loop = true;
       media.playsInline = true;
       media.setAttribute('muted', '');
+      media.setAttribute('autoplay', '');
       media.setAttribute('playsinline', '');
+      media.setAttribute('webkit-playsinline', '');
       media.preload = 'auto';
       if (entry.poster) media.poster = entry.poster;
       /* Drive videos are framed at the clip's exact ratio — no mosaic snapping, no crop */
@@ -3791,13 +3795,19 @@ const buildGraphicsItem = (entry, index, chipFallback = 'DESIGN') => {
         item.dataset.drive = 'true';
         item.dataset.fit = 'contain';
       }
+      const tryPlay = () => {
+        if (entry.drive) media.muted = true;
+        media.play().catch(() => {});
+      };
       media.addEventListener('loadedmetadata', () => {
         /* a 1:1 is one cell, 16:9 is two cells wide, 9:16 is two cells tall; the media is
            contained inside so the source ratio is never broken */
         snapMediaRatio(media);
         resumeVideoFromState(media, !entry.drive);
-        if (entry.drive) media.muted = true;
+        tryPlay();
       });
+      media.addEventListener('canplay', tryPlay, { once: true });
+      media.src = entry.src;
     }
     item.append(media);
     attachExpand(item, media);
@@ -4129,12 +4139,13 @@ const resolveLinkMedia = async (link) => {
       const photo = await thumbPromise;
       if (photo) return { kind: 'image', src: photo.src, label: entry.label };
     }
-    /* Stream via Cloudflare Worker proxy first when configured; otherwise try direct Drive stream. */
-    const proxyUrl = DRIVE_PROXY_BASE ? `${DRIVE_PROXY_BASE.replace(/\/+$/, '')}/drive/${id}` : null;
-    const stream = (proxyUrl && await probeAnyVideo(proxyUrl, 12000))
-      || await probeAnyVideo(`https://drive.usercontent.google.com/download?id=${id}&export=view&confirm=t`, 12000);
+    /* When Cloudflare Worker proxy is configured, render immediately without detached <video> probing
+       (which stalls on iOS Safari and double-fetches the stream). */
     const thumb = await thumbPromise;
     const ratio = thumb && thumb.w && thumb.h ? thumb.w / thumb.h : null;
+    const shape = ratio ? snapRatioToShape(ratio) : null;
+    const proxyUrl = DRIVE_PROXY_BASE ? `${DRIVE_PROXY_BASE.replace(/\/+$/, '')}/drive/${id}` : null;
+    const stream = proxyUrl || await probeAnyVideo(`https://drive.usercontent.google.com/download?id=${id}&export=view&confirm=t`, 12000);
     if (stream) {
       return {
         kind: 'video',
@@ -4142,6 +4153,7 @@ const resolveLinkMedia = async (link) => {
         label: entry.label,
         drive: true,
         ratio,
+        shape,
         poster: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`
       };
     }
@@ -4174,13 +4186,21 @@ const buildShowcaseMediaItem = (file, index, tabLabel) => {
   }
   const video = document.createElement('video');
   video.muted = true;
+  video.defaultMuted = true;
+  video.autoplay = true;
   video.loop = true;
   video.playsInline = true;
+  video.setAttribute('muted', '');
+  video.setAttribute('autoplay', '');
+  video.setAttribute('playsinline', '');
+  video.setAttribute('webkit-playsinline', '');
   video.preload = 'auto';
   video.addEventListener('loadedmetadata', () => {
     snapMediaRatio(video);
     resumeVideoFromState(video);
+    video.play().catch(() => {});
   });
+  video.addEventListener('canplay', () => video.play().catch(() => {}), { once: true });
   video.src = file;
   const muteButton = document.createElement('button');
   muteButton.className = 'showreel-mute';
