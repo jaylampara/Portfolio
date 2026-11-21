@@ -3846,6 +3846,7 @@ const buildGraphicsItem = (entry, index, chipFallback = 'DESIGN') => {
        player contains the clip inside it, so the source ratio never changes */
     const driveRatio = provider === 'drive' && entry.ratio && Number.isFinite(Number(entry.ratio)) ? Number(entry.ratio) : null;
     if (driveRatio) frame.dataset.ratio = driveRatio.toFixed(4);
+    else if (provider === 'tiktok' || (provider === 'youtube' && entry.short)) frame.dataset.ratio = '0.5625';
     item.dataset.shape = entry.shape || (provider === 'tiktok' || (provider === 'youtube' && entry.short) ? 'vertical' : provider === 'instagram' ? 'square' : 'horizontal');
 
     if (provider === 'drive') item.dataset.drive = 'true';
