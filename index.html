@@ -524,6 +524,82 @@ html[data-theme="light"] .showreel-videos.auto-orient .showreel-item img { borde
 .showreel-videos.mosaic-uniform-horizontal .showreel-item[data-shape="horizontal"]:only-child { grid-column: 1 / -1; }
 @media (max-width: 570px) { .showreel-videos.mosaic-uniform-horizontal { grid-template-columns: 1fr !important; } }
 
+/* Sample Works hover: Spotlight Focus + 3D Tilt + Glass Glare + Video Audio Pulse */
+.showreel-videos { perspective: 900px; }
+.showreel-videos .showreel-item {
+  border-radius: 10px;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transition: transform .22s ease-out, opacity .32s ease, filter .32s ease, box-shadow .35s ease;
+}
+.showreel-videos .showreel-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: radial-gradient(180px circle at var(--gx, 50%) var(--gy, 50%), rgba(255,255,255,.26), rgba(111,255,212,.12) 45%, transparent 72%);
+  transition: opacity .25s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+.showreel-videos .showreel-item::after {
+  content: '';
+  position: absolute;
+  inset: -30% auto -30% 0;
+  width: 45%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.09), rgba(200,255,52,.2), transparent);
+  transform: translateX(-200%) skewX(-18deg);
+  pointer-events: none;
+  z-index: 2;
+}
+.showreel-videos:has(.showreel-item:hover) .showreel-item:not(:hover) {
+  opacity: .46;
+  filter: saturate(.76);
+  transform: scale(.97);
+}
+.showreel-videos .showreel-item:hover {
+  z-index: 2;
+  box-shadow: 0 20px 38px -14px rgba(0,0,0,.72), 0 0 22px -6px rgba(200,255,52,.35);
+}
+.showreel-videos .showreel-item:hover::before { opacity: 1; }
+.showreel-videos .showreel-item:hover::after { animation: showreel-tile-sheen .85s cubic-bezier(.3,.6,.35,1) forwards; }
+.showreel-videos .showreel-item:hover img,
+.showreel-videos .showreel-item:hover video { border-color: rgba(200,255,52,.72); }
+.showreel-mute::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  border: 1.5px solid var(--acid);
+  opacity: 0;
+  pointer-events: none;
+}
+.showreel-videos .showreel-item:hover .showreel-mute {
+  background: var(--acid);
+  color: #071008;
+  border-color: var(--acid);
+  transform: scale(1.08);
+}
+.showreel-videos .showreel-item:hover .showreel-mute::after {
+  animation: showreel-audio-pulse 1.15s ease-out infinite;
+}
+html[data-theme="light"] .showreel-videos .showreel-item:hover {
+  box-shadow: 0 20px 36px -14px rgba(16,23,18,.28), 0 0 18px -6px rgba(77,107,0,.28);
+}
+html[data-theme="light"] .showreel-videos .showreel-item:hover .showreel-mute { color: #f2f5f1; }
+@keyframes showreel-tile-sheen {
+  from { transform: translateX(-200%) skewX(-18deg); }
+  to { transform: translateX(360%) skewX(-18deg); }
+}
+@keyframes showreel-audio-pulse {
+  0% { transform: scale(1); opacity: .8; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .showreel-videos .showreel-item, .showreel-videos .showreel-item::before { transition: none; }
+  .showreel-videos .showreel-item:hover::after, .showreel-videos .showreel-item:hover .showreel-mute::after { animation: none; }
+}
+
 html[data-theme="light"] .showreel-tab { color: #3c4842; border-color: rgba(10,30,20,.25); }
 html[data-theme="light"] .showreel-tab:hover, html[data-theme="light"] .showreel-tab.active { color: #f2f5f1; }
 html[data-theme="light"] .showreel-tab.active span { color: rgba(255,255,255,.55); }
@@ -3503,6 +3579,31 @@ const layoutMosaicGallery = (gallery) => {
   const rowHeight = allHorizontal ? cell * (9 / 16) : cell;
   gallery.style.gridAutoRows = `${rowHeight.toFixed(2)}px`;
 };
+const attachShowcaseTilt = (gallery) => {
+  if (!gallery || gallery.dataset.tiltBound) return;
+  gallery.dataset.tiltBound = 'true';
+  const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (rm) return;
+  let activeTile = null;
+  const clearTile = () => {
+    if (activeTile) { activeTile.style.transform = ''; activeTile = null; }
+  };
+  gallery.addEventListener('pointermove', (e) => {
+    if (e.pointerType === 'touch') return;
+    const tile = e.target.closest('.showreel-item');
+    if (!tile || !gallery.contains(tile)) { clearTile(); return; }
+    if (activeTile && activeTile !== tile) activeTile.style.transform = '';
+    activeTile = tile;
+    const r = tile.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    const x = (e.clientX - r.left) / r.width;
+    const y = (e.clientY - r.top) / r.height;
+    tile.style.setProperty('--gx', `${(x * 100).toFixed(1)}%`);
+    tile.style.setProperty('--gy', `${(y * 100).toFixed(1)}%`);
+    tile.style.transform = `translateY(-4px) rotateX(${((0.5 - y) * 10).toFixed(2)}deg) rotateY(${((x - 0.5) * 10).toFixed(2)}deg) scale(1.03)`;
+  });
+  gallery.addEventListener('pointerleave', clearTile);
+};
 window.addEventListener('resize', () => document.querySelectorAll('.showreel-videos').forEach(layoutMosaicGallery));
 
 const probeSource = (src, timeoutMs = 6000) => new Promise((resolve) => {
@@ -4113,6 +4214,7 @@ const createFolderShowcase = ({ key, folder, kicker, title }) => {
     const token = ++renderToken;
     rememberGalleryVideos(gallery);
     stopAndMute();
+    attachShowcaseTilt(gallery);
     gallery.innerHTML = '<div class="showreel-empty">LOADING SAMPLE WORKS …</div>';
     if (!tab.entries) {
       const links = await listShowcaseDirectory(tab.path);
