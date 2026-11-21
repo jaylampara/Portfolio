@@ -507,14 +507,15 @@ html[data-theme="light"] .showreel-videos.auto-orient .showreel-item img { borde
 .showreel-videos.auto-orient .showreel-item[data-shape] video,
 .showreel-videos.auto-orient .showreel-item[data-shape] iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; object-fit: cover; }
 .showreel-videos.is-gallery .showreel-item[data-shape] iframe, .showreel-videos.auto-orient .showreel-item[data-shape] iframe { object-fit: cover; }
+.showreel-videos .showreel-item[data-shape="vertical"] iframe[data-provider="youtube"] { inset: auto; left: 50%; top: 50%; width: auto; height: 102%; min-width: 100%; min-height: 102%; aspect-ratio: 9 / 16; transform: translate(-50%, -50%); }
 .showreel-videos.is-gallery .showreel-item[data-shape] iframe[data-provider="drive"],
 .showreel-videos.auto-orient .showreel-item[data-shape] iframe[data-provider="drive"] { object-fit: contain; object-position: center; background: #000; }
-/* Drive previews keep their whole frame visible, centered like the thumbnail — never cropped */
+/* Drive previews fill the mosaic tile edge-to-edge without black bars */
 .showreel-videos.is-gallery .showreel-item[data-fit="contain"] video,
-.showreel-videos.auto-orient .showreel-item[data-fit="contain"] video { object-fit: contain; object-position: center; }
-/* silent Drive fallback: the full poster, contained (two-cell tile, real ratio intact) */
+.showreel-videos.auto-orient .showreel-item[data-fit="contain"] video { object-fit: cover; object-position: center; }
+/* silent Drive fallback: full-bleed poster inside the mosaic tile */
 .showreel-videos.is-gallery .showreel-item[data-poster="true"] .showreel-poster,
-.showreel-videos.auto-orient .showreel-item[data-poster="true"] .showreel-poster { object-fit: contain; object-position: center; cursor: pointer; }
+.showreel-videos.auto-orient .showreel-item[data-poster="true"] .showreel-poster { object-fit: cover; object-position: center; cursor: pointer; }
 .showreel-item[data-poster="true"] .showreel-label { z-index: 4; }
 
 /* when every item in the mosaic is horizontal (16:9), show 2 side-by-side on desktop/tablet
@@ -679,11 +680,19 @@ html[data-theme="light"] .showreel-empty { color: #5d6a63; border-color: rgba(10
 .art-neon-reel[data-showreel-open]:hover .art-stat { color: #c8ff34; }
 
 /* -------- work-tile hover animations (operations / creative / web design) -------- */
-.project-art { transition: transform .45s cubic-bezier(.2,.8,.2,1), border-color .25s, box-shadow .45s cubic-bezier(.2,.8,.2,1); }
-.project:hover .project-art { transform: translateY(-7px) scale(1.012); box-shadow: 0 24px 50px -24px rgba(0,0,0,.6), 0 0 0 1px rgba(200,255,52,.16) inset; }
-html[data-theme="light"] .project:hover .project-art { box-shadow: 0 26px 46px -22px rgba(20,40,30,.42), 0 0 0 1px rgba(97,134,0,.14) inset; }
+.project-art { transform-style: preserve-3d; transition: transform .45s cubic-bezier(.2,.8,.2,1), border-color .25s, box-shadow .45s cubic-bezier(.2,.8,.2,1); }
+.project-art.is-tilting { transition: transform .14s ease-out, border-color .25s, box-shadow .35s ease; }
+.project:hover .project-art { transform: translateY(-7px) scale(1.012); box-shadow: 0 24px 50px -24px rgba(0,0,0,.6), 0 0 26px -8px rgba(200,255,52,.3), 0 0 0 1px rgba(200,255,52,.16) inset; }
+html[data-theme="light"] .project:hover .project-art { box-shadow: 0 26px 46px -22px rgba(20,40,30,.42), 0 0 22px -8px rgba(77,107,0,.24), 0 0 0 1px rgba(97,134,0,.14) inset; }
+/* Spotlight Focus on Coverflow side cards when active tile is hovered */
+.coverflow-stage:has(.project.is-active .project-art:hover) .project:not(.is-active) .coverflow-dim { opacity: .66; }
+html[data-theme="light"] .coverflow-stage:has(.project.is-active .project-art:hover) .project:not(.is-active) .coverflow-dim { opacity: .44; }
+.coverflow-stage:has(.project.is-active .project-art:hover) .project:not(.is-active) .project-meta { opacity: .28; }
+/* Cursor-following Liquid Glass glare */
+.project-art::before { content: ''; position: absolute; inset: 0; border-radius: inherit; opacity: 0; background: radial-gradient(240px circle at var(--gx, 50%) var(--gy, 50%), rgba(255,255,255,.24), rgba(111,255,212,.11) 45%, transparent 72%); transition: opacity .25s ease; pointer-events: none; z-index: 5; }
+.coverflow-stage .project.is-active .project-art:hover::before { opacity: 1; }
 /* lime sheen sweeps across the tile once per hover */
-.project-art::after { content: ''; position: absolute; top: -32%; bottom: -32%; left: 0; width: 46%; background: linear-gradient(90deg, transparent, rgba(236,255,224,.07) 40%, rgba(200,255,52,.15) 58%, transparent); transform: translateX(-190%) skewX(-17deg); pointer-events: none; }
+.project-art::after { content: ''; position: absolute; top: -32%; bottom: -32%; left: 0; width: 46%; background: linear-gradient(90deg, transparent, rgba(236,255,224,.07) 40%, rgba(200,255,52,.15) 58%, transparent); transform: translateX(-190%) skewX(-17deg); pointer-events: none; z-index: 4; }
 .project:hover .project-art::after { animation: tile-sheen 1.05s cubic-bezier(.3,.6,.35,1) forwards; }
 @keyframes tile-sheen { from { transform: translateX(-190%) skewX(-17deg); } to { transform: translateX(430%) skewX(-17deg); } }
 /* title underline draws itself, arrow already lifts */
@@ -2852,6 +2861,33 @@ const projects = Array.from(document.querySelectorAll('.project'));
     }, 1000);
   }
 
+  /* 3D Tilt + Glass Glare on the active Selected Work tile */
+  if (!reducedMotion) {
+    let tiltedArt = null;
+    const clearTilt = () => {
+      if (!tiltedArt) return;
+      tiltedArt.classList.remove('is-tilting');
+      tiltedArt.style.transform = '';
+      tiltedArt = null;
+    };
+    stage.addEventListener('pointermove', (e) => {
+      if (e.pointerType === 'touch') return;
+      const art = e.target.closest('.project.is-active .project-art');
+      if (!art || !stage.contains(art)) { clearTilt(); return; }
+      if (tiltedArt && tiltedArt !== art) clearTilt();
+      tiltedArt = art;
+      art.classList.add('is-tilting');
+      const r = art.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      const x = (e.clientX - r.left) / r.width;
+      const y = (e.clientY - r.top) / r.height;
+      art.style.setProperty('--gx', `${(x * 100).toFixed(1)}%`);
+      art.style.setProperty('--gy', `${(y * 100).toFixed(1)}%`);
+      art.style.transform = `perspective(1000px) translateY(-7px) rotateX(${((0.5 - y) * 9).toFixed(2)}deg) rotateY(${((x - 0.5) * 9).toFixed(2)}deg) scale(1.02)`;
+    });
+    stage.addEventListener('pointerleave', clearTilt);
+  }
+
   if (shell) {
     shell.addEventListener('pointerenter', () => { hovering = true; });
     shell.addEventListener('pointerleave', () => { hovering = false; });
@@ -3743,8 +3779,11 @@ const buildGraphicsItem = (entry, index, chipFallback = 'DESIGN') => {
       media.addEventListener('load', () => snapMediaRatio(media));
     } else {
       media.muted = true;
+      media.autoplay = true;
       media.loop = true;
       media.playsInline = true;
+      media.setAttribute('muted', '');
+      media.setAttribute('playsinline', '');
       media.preload = 'auto';
       if (entry.poster) media.poster = entry.poster;
       /* Drive videos are framed at the clip's exact ratio — no mosaic snapping, no crop */
@@ -4071,6 +4110,10 @@ const resolveLinkMedia = async (link) => {
   /* Google Drive — a file hinted as a photo (label contains photo/image/art…) becomes
      an image thumbnail; everything else renders in Drive's own /preview player, which
      plays any shared file at its true shape (never a cropped poster) */
+  /* Optional Cloudflare Worker proxy URL for reliable Google Drive <video> autoplay
+     (e.g. 'https://drive-proxy.yourname.workers.dev'). Leave empty to try direct Drive streaming. */
+  const DRIVE_PROXY_BASE = 'https://portfolio-drive-proxy-worker.jaylampara.workers.dev';
+
   if (entry.kind === 'drive') {
     const { id } = entry;
     const labelText = (entry.label || '').toLowerCase();
@@ -4086,10 +4129,10 @@ const resolveLinkMedia = async (link) => {
       const photo = await thumbPromise;
       if (photo) return { kind: 'image', src: photo.src, label: entry.label };
     }
-    /* Drive serves public files directly with byte ranges, so preview them as a real
-       <video>: muted autoplay, the same ♪ switch as the other clips, true aspect ratio,
-       and contained (centered, never cropped) rendering. The thumbnail is the poster. */
-    const stream = await probeAnyVideo(`https://drive.usercontent.google.com/download?id=${id}&export=view&confirm=t`, 6000);
+    /* Stream via Cloudflare Worker proxy first when configured; otherwise try direct Drive stream. */
+    const proxyUrl = DRIVE_PROXY_BASE ? `${DRIVE_PROXY_BASE.replace(/\/+$/, '')}/drive/${id}` : null;
+    const stream = (proxyUrl && await probeAnyVideo(proxyUrl, 12000))
+      || await probeAnyVideo(`https://drive.usercontent.google.com/download?id=${id}&export=view&confirm=t`, 12000);
     const thumb = await thumbPromise;
     const ratio = thumb && thumb.w && thumb.h ? thumb.w / thumb.h : null;
     if (stream) {
