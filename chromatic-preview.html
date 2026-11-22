@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chromatic Aberration Preview — Portfolio</title>
+  <style>
+    :root {
+      --bg: #07080a;
+      --surface: rgba(255, 255, 255, 0.04);
+      --border: rgba(255, 255, 255, 0.12);
+      --text: #f4f6f8;
+      --muted: #9aa3b2;
+      --accent: #c8ff34;
+      --cyan: #00f0ff;
+      --red: #ff2a5f;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    [data-theme="light"] {
+      --bg: #f3f5f8;
+      --surface: rgba(255, 255, 255, 0.72);
+      --border: rgba(15, 23, 42, 0.12);
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #0f172a;
+      --cyan: #0099cc;
+      --red: #e11d48;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
+      background:
+        radial-gradient(900px 500px at 15% -10%, rgba(0, 240, 255, 0.08), transparent 60%),
+        radial-gradient(800px 450px at 85% 0%, rgba(255, 42, 95, 0.07), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 32px 20px 64px;
+      transition: background 0.35s var(--ease), color 0.35s var(--ease);
+    }
+
+    .wrap {
+      max-width: 1060px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 32px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .title-group h1 {
+      margin: 0;
+      font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+      letter-spacing: -0.03em;
+    }
+
+    .title-group p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill-btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      padding: 9px 14px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 500;
+      cursor: pointer;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      transition: transform 0.2s var(--ease), border-color 0.2s var(--ease);
+    }
+
+    .pill-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .intensity-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .intensity-wrap input {
+      width: 90px;
+      accent-color: var(--cyan);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .panel {
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: var(--surface);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      padding: 26px;
+      overflow: hidden;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .panel h2 {
+      margin: 4px 0 0;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hint {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    /* 1. Text Repel Velocity RGB Split */
+    .repel-stage {
+      min-height: 180px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      border: 1px dashed var(--border);
+      padding: 28px 16px;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    .repel-word {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.02em;
+      font-size: clamp(2.1rem, 6.2vw, 4.4rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+    }
+
+    .repel-char {
+      display: inline-block;
+      will-change: transform, text-shadow;
+      transition: transform 0.24s var(--ease), text-shadow 0.18s var(--ease);
+    }
+
+    .repel-char.space {
+      width: 0.32em;
+    }
+
+    /* 2. Liquid Glass 3D Tilt Prismatic Edge */
+    .tilt-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      perspective: 1000px;
+    }
+
+    .glass-card {
+      --rx: 0deg;
+      --ry: 0deg;
+      --sx: 0px;
+      --sy: 0px;
+      --gx: 50%;
+      --gy: 50%;
+      --op: 0;
+      position: relative;
+      border-radius: 22px;
+      overflow: hidden;
+      background: linear-gradient(145deg, rgba(255,255,255,0.09), rgba(255,255,255,0.02));
+      border: 1px solid var(--border);
+      transform: rotateX(var(--rx)) rotateY(var(--ry));
+      transform-style: preserve-3d;
+      transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+      box-shadow:
+        calc(var(--sx) * -1) calc(var(--sy) * -1) 0 0 rgba(255, 42, 95, calc(var(--op) * 0.55)),
+        var(--sx) var(--sy) 0 0 rgba(0, 240, 255, calc(var(--op) * 0.55)),
+        0 20px 45px rgba(0, 0, 0, 0.28);
+      cursor: pointer;
+    }
+
+    .glass-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: inherit;
+      background: radial-gradient(
+        circle 220px at var(--gx) var(--gy),
+        rgba(255, 255, 255, 0.22),
+        rgba(0, 240, 255, 0.08) 38%,
+        rgba(255, 42, 95, 0.06) 62%,
+        transparent 78%
+      );
+      opacity: var(--op);
+      transition: opacity 0.25s var(--ease);
+      z-index: 2;
+    }
+
+    .glass-media {
+      aspect-ratio: 16 / 10;
+      width: 100%;
+      object-fit: cover;
+      display: block;
+      background: #11151d;
+    }
+
+    .glass-body {
+      padding: 16px 18px 18px;
+    }
+
+    .glass-body h3 {
+      margin: 0 0 4px;
+      font-size: 1rem;
+    }
+
+    .glass-body p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* 3. Hero Portrait Decompile / Compile Scanline RGB Split */
+    .portrait-layout {
+      display: grid;
+      grid-template-columns: minmax(220px, 320px) 1fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    @media (max-width: 720px) {
+      .portrait-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .portrait-stage {
+      position: relative;
+      aspect-ratio: 4 / 5;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #0d1016;
+    }
+
+    .portrait-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    .portrait-base {
+      z-index: 1;
+    }
+
+    .portrait-red,
+    .portrait-cyan {
+      z-index: 2;
+      opacity: 0;
+      mix-blend-mode: screen;
+      clip-path: inset(0% 0% 100% 0%);
+      will-change: transform, clip-path, opacity;
+    }
+
+    .portrait-red {
+      filter: sepia(1) saturate(6) hue-rotate(-50deg) contrast(1.1);
+    }
+
+    .portrait-cyan {
+      filter: sepia(1) saturate(6) hue-rotate(140deg) contrast(1.1);
+    }
+
+    .scanline {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 3px;
+      top: -10%;
+      z-index: 4;
+      opacity: 0;
+      background: linear-gradient(90deg, transparent, var(--cyan), #ffffff, var(--red), transparent);
+      box-shadow: 0 0 18px var(--cyan), 0 0 28px var(--red);
+      pointer-events: none;
+    }
+
+    .portrait-info p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .repel-char, .glass-card, .scanline, .portrait-red, .portrait-cyan {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="title-group">
+        <h1>Chromatic Aberration — Live Preview</h1>
+        <p>Standalone sandbox (index.html is untouched). At rest, all 3 effects sit at 0px split.</p>
+      </div>
+      <div class="controls">
+        <label class="intensity-wrap">
+          <span>Intensity</span>
+          <input id="intensity" type="range" min="0.5" max="2" step="0.1" value="1" />
+          <span id="intensityVal">1.0x</span>
+        </label>
+        <button id="themeBtn" class="pill-btn" type="button">Switch to Light</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- 1. Text Repel -->
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="badge">01 · Kinetic Typography</div>
+            <h2>Text Repel — Velocity-Driven RGB Split</h2>
+          </div>
+          <span class="hint">Move cursor (or drag finger) across the headline</span>
+        </div>
+        <div class="repel-stage" id="repelStage">
+          <div class="repel-word" id="repelWord" aria-label="DESIGNED TO MOVE"></div>
+        </div>
+      </section>
+
+      <!-- 2. Liquid Glass 3D Tilt -->
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="badge">02 · Liquid Glass Optics</div>
+            <h2>3D Tilt — Prismatic Edge Refraction</h2>
+          </div>
+          <span class="hint">Hover and tilt either card to see red/cyan edge dispersion</span>
+        </div>
+        <div class="tilt-row">
+          <article class="glass-card" data-tilt>
+            <img class="glass-media" src="sample-work/poster-and-identity-system/3 - Product listings/1.webp" alt="Product listing sample" />
+            <div class="glass-body">
+              <h3>Selected Work / Sample Tile</h3>
+              <p>Red shifts opposite tilt angle, cyan shifts with tilt angle — zero blur at rest.</p>
+            </div>
+          </article>
+          <article class="glass-card" data-tilt>
+            <img class="glass-media" src="Profiles/Dark.webp" alt="Portrait card sample" />
+            <div class="glass-body">
+              <h3>Liquid Glass Surface</h3>
+              <p>Uses subtle dual-channel rim shadows + radial specular glare instead of heavy filters.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- 3. Hero Portrait Scanline Sweep -->
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="badge">03 · Hero Portrait Intro</div>
+            <h2>Decompile / Compile — Scanline RGB Sweep</h2>
+          </div>
+          <span class="hint">Click the button to trigger the optical sweep</span>
+        </div>
+        <div class="portrait-layout">
+          <div class="portrait-stage" id="portraitStage">
+            <img class="portrait-layer portrait-base" id="pBase" src="Profiles/Dark.webp" alt="Hero portrait" />
+            <img class="portrait-layer portrait-red" id="pRed" src="Profiles/Dark.webp" alt="" aria-hidden="true" />
+            <img class="portrait-layer portrait-cyan" id="pCyan" src="Profiles/Dark.webp" alt="" aria-hidden="true" />
+            <div class="scanline" id="scanline"></div>
+          </div>
+          <div class="portrait-info">
+            <p>Only the active horizontal band around the scanline splits into red and cyan channels while compiling or decompiling. Once the sweep finishes, the portrait snaps back to crisp 0px alignment.</p>
+            <button id="sweepBtn" class="pill-btn" type="button">Run { } Decompile → Compile Sweep</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const intensityInput = document.getElementById("intensity");
+    const intensityVal = document.getElementById("intensityVal");
+    let scale = 1;
+
+    intensityInput.addEventListener("input", () => {
+      scale = parseFloat(intensityInput.value);
+      intensityVal.textContent = scale.toFixed(1) + "x";
+    });
+
+    // Theme toggle
+    const themeBtn = document.getElementById("themeBtn");
+    const portraitImgs = [document.getElementById("pBase"), document.getElementById("pRed"), document.getElementById("pCyan")];
+    themeBtn.addEventListener("click", () => {
+      const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = next;
+      themeBtn.textContent = next === "dark" ? "Switch to Light" : "Switch to Dark";
+      const src = next === "dark" ? "Profiles/Dark.webp" : "Profiles/Light.webp";
+      portraitImgs.forEach((img) => { img.src = src; });
+    });
+
+    // 1. Text Repel with velocity-driven RGB split
+    const repelStage = document.getElementById("repelStage");
+    const repelWord = document.getElementById("repelWord");
+    const phrase = "DESIGNED TO MOVE";
+    const chars = [];
+
+    for (const ch of phrase) {
+      const span = document.createElement("span");
+      span.className = ch === " " ? "repel-char space" : "repel-char";
+      span.textContent = ch === " " ? "\u00A0" : ch;
+      repelWord.appendChild(span);
+      if (ch !== " ") chars.push(span);
+    }
+
+    function applyRepel(clientX, clientY) {
+      const radius = 150;
+      for (const el of chars) {
+        const r = el.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dx = cx - clientX;
+        const dy = cy - clientY;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist < radius && dist > 0.001) {
+          const force = (1 - dist / radius);
+          const nx = dx / dist;
+          const ny = dy / dist;
+          const tx = nx * force * 20;
+          const ty = ny * force * 16;
+          const split = force * 3.2 * scale;
+          const sx = nx * split;
+          const sy = ny * split * 0.5;
+
+          el.style.transform = `translate3d(${tx.toFixed(1)}px, ${ty.toFixed(1)}px, 0)`;
+          el.style.textShadow = `${(-sx).toFixed(2)}px ${(-sy).toFixed(2)}px 0 rgba(255,42,95,0.85), ${sx.toFixed(2)}px ${sy.toFixed(2)}px 0 rgba(0,240,255,0.85)`;
+        } else {
+          el.style.transform = "";
+          el.style.textShadow = "";
+        }
+      }
+    }
+
+    function resetRepel() {
+      for (const el of chars) {
+        el.style.transform = "";
+        el.style.textShadow = "";
+      }
+    }
+
+    repelStage.addEventListener("pointermove", (e) => applyRepel(e.clientX, e.clientY));
+    repelStage.addEventListener("pointerdown", (e) => applyRepel(e.clientX, e.clientY));
+    repelStage.addEventListener("pointerleave", resetRepel);
+    repelStage.addEventListener("pointerup", () => setTimeout(resetRepel, 240));
+
+    // 2. Liquid Glass 3D Tilt with prismatic edge fringe
+    document.querySelectorAll("[data-tilt]").forEach((card) => {
+      card.addEventListener("pointermove", (e) => {
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width;
+        const py = (e.clientY - r.top) / r.height;
+        const dx = px - 0.5;
+        const dy = py - 0.5;
+
+        card.style.setProperty("--rx", `${(-dy * 10).toFixed(2)}deg`);
+        card.style.setProperty("--ry", `${(dx * 12).toFixed(2)}deg`);
+        card.style.setProperty("--sx", `${(dx * 5 * scale).toFixed(2)}px`);
+        card.style.setProperty("--sy", `${(dy * 5 * scale).toFixed(2)}px`);
+        card.style.setProperty("--gx", `${(px * 100).toFixed(1)}%`);
+        card.style.setProperty("--gy", `${(py * 100).toFixed(1)}%`);
+        card.style.setProperty("--op", "1");
+      });
+
+      card.addEventListener("pointerleave", () => {
+        card.style.setProperty("--rx", "0deg");
+        card.style.setProperty("--ry", "0deg");
+        card.style.setProperty("--sx", "0px");
+        card.style.setProperty("--sy", "0px");
+        card.style.setProperty("--op", "0");
+      });
+    });
+
+    // 3. Portrait scanline RGB sweep
+    const pRed = document.getElementById("pRed");
+    const pCyan = document.getElementById("pCyan");
+    const scanline = document.getElementById("scanline");
+    const sweepBtn = document.getElementById("sweepBtn");
+    let sweepRaf = null;
+
+    function runSweep() {
+      if (sweepRaf) cancelAnimationFrame(sweepRaf);
+      const duration = 1200;
+      const start = performance.now();
+
+      function frame(now) {
+        const t = Math.min((now - start) / duration, 1);
+        // 0 -> 0.5 top-to-bottom (decompile), 0.5 -> 1 bottom-to-top (compile)
+        const progress = t < 0.5 ? t * 2 : (1 - (t - 0.5) * 2);
+        const yPct = progress * 100;
+        const band = 14;
+        const top = Math.max(0, yPct - band / 2);
+        const bottom = Math.max(0, 100 - (yPct + band / 2));
+        const shift = (4.5 * scale) * Math.sin(t * Math.PI);
+
+        scanline.style.opacity = t < 1 ? "0.95" : "0";
+        scanline.style.top = `${yPct}%`;
+
+        pRed.style.opacity = t < 1 ? "0.85" : "0";
+        pCyan.style.opacity = t < 1 ? "0.85" : "0";
+        pRed.style.clipPath = `inset(${top}% 0% ${bottom}% 0%)`;
+        pCyan.style.clipPath = `inset(${top}% 0% ${bottom}% 0%)`;
+        pRed.style.transform = `translate3d(${(-shift).toFixed(2)}px, 0, 0)`;
+        pCyan.style.transform = `translate3d(${shift.toFixed(2)}px, 0, 0)`;
+
+        if (t < 1) {
+          sweepRaf = requestAnimationFrame(frame);
+        } else {
+          pRed.style.transform = "";
+          pCyan.style.transform = "";
+        }
+      }
+
+      sweepRaf = requestAnimationFrame(frame);
+    }
+
+    sweepBtn.addEventListener("click", runSweep);
+    setTimeout(runSweep, 450);
+  </script>
+</body>
+</html>
