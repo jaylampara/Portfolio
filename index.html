@@ -3330,10 +3330,24 @@ const openLightbox = (media, { keepPlaylist = false } = {}) => {
   if (media.tagName === 'VIDEO') {
     lightboxMedia = document.createElement('video');
     lightboxMedia.className = 'lightbox-media';
+    lightboxMedia.autoplay = true;
     lightboxMedia.loop = true;
     lightboxMedia.playsInline = true;
+    lightboxMedia.defaultMuted = !soundOn;
     lightboxMedia.muted = !soundOn;
+    lightboxMedia.setAttribute('autoplay', '');
+    lightboxMedia.setAttribute('playsinline', '');
+    lightboxMedia.setAttribute('webkit-playsinline', '');
+    if (!soundOn) lightboxMedia.setAttribute('muted', '');
+    lightboxMedia.preload = 'auto';
     lightboxMedia.src = media.src;
+    const syncVideoPlayBtn = () => {
+      const playing = Boolean(lightboxMedia && !lightboxMedia.paused && !lightboxMedia.ended);
+      lightboxPlay.setAttribute('aria-pressed', String(playing));
+      lightboxPlay.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+      lightboxPlay.textContent = playing ? '❚❚' : '▶';
+    };
+    const playLightboxVideo = () => { lightboxMedia?.play().then(syncVideoPlayBtn).catch(syncVideoPlayBtn); };
     lightboxMedia.addEventListener('loadedmetadata', () => {
       if (lightboxMedia.videoWidth && lightboxMedia.videoHeight) {
         lightboxMedia.style.aspectRatio = `${lightboxMedia.videoWidth} / ${lightboxMedia.videoHeight}`;
@@ -3341,6 +3355,19 @@ const openLightbox = (media, { keepPlaylist = false } = {}) => {
       try { lightboxMedia.currentTime = media.currentTime || 0; } catch (error) { /* not seekable yet */ }
       lightboxTimeEnd.textContent = formatVideoTime(lightboxMedia.duration);
       syncLightboxScrub();
+      playLightboxVideo();
+    });
+    lightboxMedia.addEventListener('durationchange', () => {
+      if (lightboxMedia.duration) lightboxTimeEnd.textContent = formatVideoTime(lightboxMedia.duration);
+      syncLightboxScrub();
+    });
+    lightboxMedia.addEventListener('canplay', playLightboxVideo, { once: true });
+    lightboxMedia.addEventListener('play', syncVideoPlayBtn);
+    lightboxMedia.addEventListener('pause', syncVideoPlayBtn);
+    lightboxMedia.addEventListener('click', () => {
+      if (!lightboxMedia) return;
+      if (lightboxMedia.paused) lightboxMedia.play().catch(() => {});
+      else lightboxMedia.pause();
     });
     lightboxEmbed = null;
     lightboxStage.replaceChildren(lightboxMedia);
@@ -3348,8 +3375,9 @@ const openLightbox = (media, { keepPlaylist = false } = {}) => {
     lightboxMedia.addEventListener('timeupdate', syncLightboxScrub);
     lightboxTimeNow.textContent = formatVideoTime(media.currentTime);
     lightboxTimeEnd.textContent = formatVideoTime(media.duration) || '0:00';
-    lightboxMedia.play().catch(() => {});
-    lightboxPlay.hidden = true;
+    lightboxPlay.hidden = false;
+    syncVideoPlayBtn();
+    playLightboxVideo();
   } else if (media.tagName === 'IFRAME') {
     /* YouTube / Vimeo link video: full view keeps the same player, now scrubbable */
     lightboxEmbed = document.createElement('iframe');
@@ -3484,6 +3512,11 @@ lightboxSound.addEventListener('click', () => {
   }
 });
 lightboxPlay.addEventListener('click', () => {
+  if (lightboxMedia && lightboxMedia.tagName === 'VIDEO') {
+    if (lightboxMedia.paused) lightboxMedia.play().catch(() => {});
+    else lightboxMedia.pause();
+    return;
+  }
   const wasPlaying = lightboxPlay.getAttribute('aria-pressed') === 'true';
   const next = !wasPlaying;
   lightboxPlay.setAttribute('aria-pressed', String(next));
@@ -4118,10 +4151,6 @@ const resolveLinkMedia = async (link) => {
   /* Google Drive — a file hinted as a photo (label contains photo/image/art…) becomes
      an image thumbnail; everything else renders in Drive's own /preview player, which
      plays any shared file at its true shape (never a cropped poster) */
-  /* Optional Cloudflare Worker proxy URL for reliable Google Drive <video> autoplay
-     (e.g. 'https://drive-proxy.yourname.workers.dev'). Leave empty to try direct Drive streaming. */
-  const DRIVE_PROXY_BASE = 'https://portfolio-drive-proxy-worker.jaylampara.workers.dev';
-
   if (entry.kind === 'drive') {
     const { id } = entry;
     const labelText = (entry.label || '').toLowerCase();
@@ -4137,13 +4166,9 @@ const resolveLinkMedia = async (link) => {
       const photo = await thumbPromise;
       if (photo) return { kind: 'image', src: photo.src, label: entry.label };
     }
-    /* When Cloudflare Worker proxy is configured, render immediately without detached <video> probing
-       (which stalls on iOS Safari and double-fetches the stream). */
+    const stream = await probeAnyVideo(`https://drive.usercontent.google.com/download?id=${id}&export=view&confirm=t`, 10000);
     const thumb = await thumbPromise;
     const ratio = thumb && thumb.w && thumb.h ? thumb.w / thumb.h : null;
-    const shape = ratio ? snapRatioToShape(ratio) : null;
-    const proxyUrl = DRIVE_PROXY_BASE ? `${DRIVE_PROXY_BASE.replace(/\/+$/, '')}/drive/${id}` : null;
-    const stream = proxyUrl || await probeAnyVideo(`https://drive.usercontent.google.com/download?id=${id}&export=view&confirm=t`, 12000);
     if (stream) {
       return {
         kind: 'video',
@@ -4151,7 +4176,7 @@ const resolveLinkMedia = async (link) => {
         label: entry.label,
         drive: true,
         ratio,
-        shape,
+        shape: ratio ? snapRatioToShape(ratio) : null,
         poster: `https://drive.google.com/thumbnail?id=${id}&sz=w1000`
       };
     }
