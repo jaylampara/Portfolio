@@ -477,6 +477,7 @@ html[data-theme="light"] .showreel-mute:hover, html[data-theme="light"] .showree
 .showreel-close:hover span { color: inherit; }
 .showreel-videos { padding: 18px 20px 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .showreel-tabs { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 14px 20px 0; flex-shrink: 0; border-bottom: 1px solid transparent; }
+.showreel-tabs[hidden] { display: none; }
 .showreel-tab { color: #cbd8d2; border: 1px solid rgba(218,250,242,.22); background: transparent; min-height: 34px; padding: 0 13px; display: inline-flex; align-items: center; gap: 6px; font: 9px var(--mono); letter-spacing: .08em; cursor: pointer; transition: .2s ease; }
 .showreel-tab span { color: rgba(200,255,52,.55); }
 .showreel-tab:hover { color: #071008; background: var(--acid); border-color: var(--acid); }
@@ -3751,7 +3752,7 @@ const classifyMediaLink = ({ href, label }) => {
     const playable = /raw=1|dl\.dropboxusercontent/.test(direct) ? direct : `${direct}${direct.includes('?') ? '&' : '?'}raw=1`;
     return { kind: 'file', src: playable, label };
   }
-  if (/\.(png|jpe?g|webp|gif|avif)(\?|#|$)/i.test(href)) return { kind: 'image', src: href, label };
+  if (/\.(png|jpe?g|webp|gif|avif|svg)(\?|#|$)/i.test(href)) return { kind: 'image', src: href, label };
   if (/\.(mp4|m4v|mov|webm|ogv)(\?|#|$)/i.test(href)) return { kind: 'video', src: href, label };
   return { kind: 'link', href, label };
 };
@@ -3979,19 +3980,67 @@ const buildGraphicsItem = (entry, index, chipFallback = 'DESIGN') => {
   item.dataset.shape = 'horizontal';
   return item;
 };/* ---------- folder-driven showcase engine (Conversion Engine, Graphics, Motion, Waves, Archive) ---------- */
-const SHOWCASE_IMAGE_EXTS = ['png', 'jpg', 'jpeg', 'webp', 'gif', 'avif'];
+const SHOWCASE_IMAGE_EXTS = ['png', 'jpg', 'jpeg', 'webp', 'gif', 'avif', 'svg'];
 const SHOWCASE_VIDEO_EXTS = ['mp4', 'mov', 'webm'];
 const SHOWCASE_MEDIA_PATTERN = new RegExp(`\\.(${[...SHOWCASE_IMAGE_EXTS, ...SHOWCASE_VIDEO_EXTS].join('|')})$`, 'i');
-const showcaseNumericKey = (value) => { const match = decodeURIComponent(value).match(/(\d+)/); return match ? Number(match[1]) : 99; };
+const safeDecodeShowcase = (value) => {
+  try { return decodeURIComponent(value); } catch (error) { return value; }
+};
+const encodeShowcasePath = (path) => {
+  const hasTrailingSlash = /\/$/.test(path);
+  const encoded = path
+    .split('/')
+    .filter((segment, index, arr) => segment !== '' || (index === 0 && arr.length > 1))
+    .map((segment) => (segment === '' || segment === '.' || segment === '..') ? segment : encodeURIComponent(segment))
+    .join('/');
+  return hasTrailingSlash && encoded && !encoded.endsWith('/') ? `${encoded}/` : encoded;
+};
+const showcaseNumericKey = (value) => {
+  const leaf = safeDecodeShowcase(value).replace(/\/+$/, '').replace(/^.*\//, '');
+  const match = leaf.match(/(\d+)/);
+  return match ? Number(match[1]) : 99;
+};
+const showcaseCompare = (a, b) => {
+  const diff = showcaseNumericKey(a) - showcaseNumericKey(b);
+  if (diff !== 0) return diff;
+  return safeDecodeShowcase(a).localeCompare(safeDecodeShowcase(b), undefined, { numeric: true, sensitivity: 'base' });
+};
+
+const isDirectoryListingHtml = (text, doc) => {
+  if (doc.querySelector('[data-showreel-open], [data-clients]')) return false;
+  const heading = `${doc.title || ''} ${doc.querySelector('h1')?.textContent || ''}`.trim();
+  if (/^(?:directory listing for|index of|listing of|files within)\b/i.test(heading)) return true;
+  if (/(?:directory listing for|index of\b)/i.test(text.slice(0, 600))) return true;
+  if (doc.querySelector('ul#files, table#list, #files')) return true;
+  return false;
+};
 
 const fetchShowcaseHtmlListing = async (path) => {
   try {
-    const response = await fetch(path);
+    const requestPath = encodeShowcasePath(path);
+    const response = await fetch(requestPath);
     if (!response || !response.ok || !response.headers.get('Content-Type')?.includes('text/html')) return null;
     const text = await response.text();
-    if (!/directory listing for/i.test(text.slice(0, 300))) return null;
     const doc = new DOMParser().parseFromString(text, 'text/html');
-    return Array.from(doc.querySelectorAll('a[href]')).map((anchor) => anchor.getAttribute('href')).filter((href) => href && href !== '../');
+    if (!isDirectoryListingHtml(text, doc)) return null;
+    const baseUrl = new URL(response.url || requestPath, location.href);
+    if (!baseUrl.pathname.endsWith('/')) baseUrl.pathname += '/';
+    const entries = new Set();
+    doc.querySelectorAll('a[href]').forEach((anchor) => {
+      const rawHref = anchor.getAttribute('href');
+      if (!rawHref || rawHref.startsWith('#') || rawHref.startsWith('?')) return;
+      let resolved;
+      try { resolved = new URL(rawHref, baseUrl); } catch (error) { return; }
+      if (resolved.origin !== baseUrl.origin || resolved.search || resolved.hash) return;
+      if (!resolved.pathname.startsWith(baseUrl.pathname)) return;
+      const rest = resolved.pathname.slice(baseUrl.pathname.length);
+      const trimmed = rest.replace(/\/+$/, '');
+      if (!trimmed || trimmed.includes('/')) return;
+      const name = safeDecodeShowcase(trimmed);
+      if (!name || name === '.' || name === '..' || name.startsWith('.')) return;
+      entries.add(/\/$/.test(rest) ? `${name}/` : name);
+    });
+    return Array.from(entries);
   } catch (error) {
     return null;
   }
@@ -4077,7 +4126,7 @@ const listShowcaseDirectory = async (path) => {
   return showcaseGithubDirectory(path);
 };
 
-const showcaseCleanLabel = (name) => decodeURIComponent(name).replace(/\/$/, '').replace(/^\d+[\s._-]*/, '').trim() || 'Samples';
+const showcaseCleanLabel = (name) => safeDecodeShowcase(name).replace(/\/$/, '').replace(/^\d+[\s._-]*/, '').trim() || 'Samples';
 
 /* fallback scan when the server has no directory listing (e.g. file:// opening):
    numbered photos / videos plus numbered 1.txt…12.txt link files, all in parallel */
@@ -4086,11 +4135,11 @@ const probeShowcaseEntries = async (path) => {
     const target = slot + 1;
     return (async () => {
       for (const extension of [...SHOWCASE_IMAGE_EXTS, ...SHOWCASE_VIDEO_EXTS]) {
-        const found = await probeSource(`${path}${target}.${extension}`);
-        if (found) return { file: found, key: target };
+        const found = await probeSource(encodeShowcasePath(`${path}${target}.${extension}`));
+        if (found) return { file: found, key: target, name: `${target}.${extension}` };
       }
-      const link = await readShowcaseLinkEntry(`${path}${target}.txt`);
-      return link ? { link: await resolveLinkMedia(link), key: target } : null;
+      const link = await readShowcaseLinkEntry(encodeShowcasePath(`${path}${target}.txt`));
+      return link ? { link: await resolveLinkMedia(link), key: target, name: `${target}.txt` } : null;
     })();
   });
   return (await Promise.all(jobs)).filter(Boolean);
@@ -4098,8 +4147,8 @@ const probeShowcaseEntries = async (path) => {
 
 const showcaseMediaFromLinks = (links, base = '') => links
   .filter((href) => SHOWCASE_MEDIA_PATTERN.test(href))
-  .sort((a, b) => showcaseNumericKey(a) - showcaseNumericKey(b))
-  .map((href) => base + decodeURIComponent(href));
+  .sort(showcaseCompare)
+  .map((href) => encodeShowcasePath(base + href));
 
 /* numbered link files live in the same folder as the media: 1.txt, 2.txt … — each
    holds one URL (first non-comment line) plus an optional " | label" tail so the
@@ -4312,11 +4361,11 @@ const createFolderShowcase = ({ key, folder, kicker, title }) => {
         const mediaFiles = showcaseMediaFromLinks(links, tab.path);
         const linkFiles = links.filter((href) => !SHOWCASE_MEDIA_PATTERN.test(href) && /\.txt$/i.test(href) && !/readme\.txt$/i.test(href));
         const classified = await Promise.all(linkFiles.map(async (href) => {
-          const link = await readShowcaseLinkEntry(tab.path + href);
-          return link ? { link: await resolveLinkMedia(link), key: showcaseNumericKey(href) } : null;
+          const link = await readShowcaseLinkEntry(encodeShowcasePath(tab.path + href));
+          return link ? { link: await resolveLinkMedia(link), key: showcaseNumericKey(href), name: href } : null;
         }));
-        tab.entries = [...mediaFiles.map((src) => ({ file: src, key: showcaseNumericKey(src) })), ...classified.filter(Boolean)]
-          .sort((a, b) => a.key - b.key);
+        tab.entries = [...mediaFiles.map((src) => ({ file: src, key: showcaseNumericKey(src), name: safeDecodeShowcase(src).replace(/^.*\//, '') })), ...classified.filter(Boolean)]
+          .sort((a, b) => (a.key - b.key) || String(a.name || '').localeCompare(String(b.name || ''), undefined, { numeric: true, sensitivity: 'base' }));
       }
     }
     if (token !== renderToken) return;
@@ -4327,7 +4376,13 @@ const createFolderShowcase = ({ key, folder, kicker, title }) => {
     if (!entries.length) {
       const empty = document.createElement('div');
       empty.className = 'showreel-empty';
-      empty.innerHTML = `NO SAMPLES FOUND YET<br />DROP PHOTOS (1.PNG, 2.JPG …), VIDEOS (1.MP4, 2.MOV …)<br />OR LINK FILES (1.TXT WITH A URL) INTO ${decodeURIComponent(tab.path).toUpperCase()}`;
+      empty.replaceChildren(
+        document.createTextNode('NO SAMPLES FOUND YET'),
+        document.createElement('br'),
+        document.createTextNode('DROP PHOTOS (1.PNG, 2.JPG, 3.SVG …), VIDEOS (1.MP4, 2.MOV …)'),
+        document.createElement('br'),
+        document.createTextNode(`OR LINK FILES (1.TXT WITH A URL) INTO ${safeDecodeShowcase(tab.path).toUpperCase()}`)
+      );
       gallery.appendChild(empty);
       return;
     }
@@ -4363,7 +4418,7 @@ const createFolderShowcase = ({ key, folder, kicker, title }) => {
     if (links === null) {
       structure = [{ label: title, path: rootPath, needProbe: true }];
     } else {
-      const subfolders = links.filter((href) => /\/$/.test(href));
+      const subfolders = links.filter((href) => /\/$/.test(href)).sort(showcaseCompare);
       structure = subfolders.length
         ? subfolders.map((href) => ({ label: showcaseCleanLabel(href), path: `${rootPath}${href}` }))
         : [{ label: title, path: rootPath }]; /* media sitting straight in the folder root — one tab, no subfolders */
@@ -4517,7 +4572,7 @@ let clientEntriesCache = [];
 let clientResizeTimer = 0;
 
 /* filenames double as labels: "03 - Circles Ola.svg" reads "Circles Ola" */
-const clientLogoLabel = (href) => decodeURIComponent(href)
+const clientLogoLabel = (href) => safeDecodeShowcase(href)
   .replace(/^.*\//, '')
   .replace(/\.[^.]+$/, '')
   .replace(/^\d+[\s._-]*/, '')
@@ -4528,7 +4583,7 @@ const clientLogoLabel = (href) => decodeURIComponent(href)
 /* an optional same-numbered .txt may hold just a label: 1.txt → "Circles Ola" */
 const readClientLabel = async (href) => {
   try {
-    const response = await fetch(`clients/${href}`);
+    const response = await fetch(encodeShowcasePath(`clients/${href}`));
     if (!response.ok) return '';
     const text = await response.text();
     if (/^\s*<(?:!doctype|html)/i.test(text)) return '';
@@ -4541,7 +4596,7 @@ const readClientLabel = async (href) => {
 
 const loadClientLogo = async (href, key) => {
   const name = clientLogoLabel(href) || `Client ${String(key).padStart(2, '0')}`;
-  return { key, src: `clients/${href}`, label: name };
+  return { key, src: encodeShowcasePath(`clients/${href}`), label: name };
 };
 
 const loadClientEntries = async () => {
@@ -4635,7 +4690,7 @@ window.addEventListener('resize', () => {
 });
 
 /* ---------- folder-driven client reviews (reviews/*.txt + matching photo) ---------- */
-const REVIEW_IMAGE_EXTS = [...SHOWCASE_IMAGE_EXTS, 'svg'];
+const REVIEW_IMAGE_EXTS = [...new Set([...SHOWCASE_IMAGE_EXTS, 'svg'])];
 const REVIEW_IMAGE_PATTERN = new RegExp(`\\.(${REVIEW_IMAGE_EXTS.join('|')})$`, 'i');
 let reviewEntriesCache = [];
 let reviewResizeTimer = 0;
@@ -4684,7 +4739,7 @@ const reviewImagePath = (value) => {
 
 const loadReviewEntry = async (href, key, imageFiles = null) => {
   try {
-    const response = await fetch(`reviews/${href}`);
+    const response = await fetch(encodeShowcasePath(`reviews/${href}`));
     if (!response.ok) return null;
     const text = await response.text();
     if (/^\s*<(?:!doctype|html)/i.test(text)) return null;
@@ -4695,7 +4750,7 @@ const loadReviewEntry = async (href, key, imageFiles = null) => {
       key,
       stars: review.stars,
       message: review.message,
-      image: review.image ? reviewImagePath(review.image) : matchedImage ? `reviews/${matchedImage}` : ''
+      image: review.image ? reviewImagePath(review.image) : matchedImage ? encodeShowcasePath(`reviews/${matchedImage}`) : ''
     };
   } catch (error) {
     return null;
