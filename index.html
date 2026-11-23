@@ -490,6 +490,95 @@ html[data-theme="light"] .showreel-mute:hover, html[data-theme="light"] .showree
 .showreel-ext b { color: var(--acid); font-weight: normal; font-size: 15px; }
 .showreel-ext:hover { border-color: rgba(200,255,52,.5); }
 html[data-theme="light"] .showreel-ext { color: #10161a; background: #e2e6df; border-color: rgba(10,30,20,.22); }
+/* Auto-scrolling & nav-clicking live website preview for .txt site links */
+.showreel-web { position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; min-height: 100%; background: #0a100e; border: 1px solid rgba(218,250,242,.18); border-radius: inherit; overflow: hidden; text-align: left; }
+.showreel-web.is-lightbox { width: min(1024px, calc(100vw - 48px)); aspect-ratio: 16/10; height: auto; max-height: calc(100vh - 180px); min-height: 0; border-radius: 12px; pointer-events: auto; box-shadow: 0 24px 90px rgba(0,0,0,.65); }
+.showreel-web-bar { position: relative; z-index: 4; display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: #101815; border-bottom: 1px solid rgba(218,250,242,.12); flex-shrink: 0; }
+.showreel-web-dots { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.showreel-web-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(218,250,242,.26); display: block; }
+.showreel-web-dots i:first-child { background: #ff5f56; }
+.showreel-web-dots i:nth-child(2) { background: #ffbd2e; }
+.showreel-web-dots i:nth-child(3) { background: #27c93f; }
+.showreel-web-url { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,.05); border: 1px solid rgba(218,250,242,.1); color: #cde0d7; font: 9px var(--mono); letter-spacing: .04em; }
+.showreel-web-open,
+.showreel-web-expand,
+.showreel-web-mode { flex-shrink: 0; padding: 3px 8px; border-radius: 999px; border: 1px solid rgba(200,255,52,.45); background: rgba(200,255,52,.12); color: var(--acid); font: 8px var(--mono); letter-spacing: .08em; text-decoration: none; cursor: pointer; transition: .18s ease; }
+.showreel-web-open:hover,
+.showreel-web-expand:hover,
+.showreel-web-mode:hover,
+.showreel-web-mode[aria-pressed="true"] { background: var(--acid); color: #071008; border-color: var(--acid); }
+.showreel-web-expand,
+.showreel-web-mode { border-color: rgba(218,250,242,.24); background: rgba(255,255,255,.06); color: #d8e7e0; }
+.showreel-web.is-lightbox .showreel-web-expand { display: none; }
+.showreel-web:not(.is-lightbox) .showreel-web-open { display: none; }
+.showreel-web-nav { position: relative; z-index: 4; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 10px; background: rgba(14,21,18,.96); border-bottom: 1px solid rgba(218,250,242,.08); flex-shrink: 0; }
+.showreel-web-brand { color: #eef5f1; font: 700 9px var(--mono); letter-spacing: .12em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 32%; }
+.showreel-web-links { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.showreel-web-links::-webkit-scrollbar { display: none; }
+.showreel-web-nav-btn { position: relative; border: 1px solid transparent; background: transparent; color: #9db0a7; font: 8px var(--mono); letter-spacing: .06em; padding: 3px 7px; border-radius: 999px; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: color .2s ease, background .2s ease, border-color .2s ease, transform .15s ease; }
+.showreel-web-nav-btn:hover { color: #edf5f1; background: rgba(255,255,255,.06); }
+.showreel-web-nav-btn.is-active { color: #071008; background: var(--acid); border-color: var(--acid); }
+.showreel-web-nav-btn.is-clicked { transform: scale(.91); }
+.showreel-web-stage { position: relative; flex: 1; min-height: 0; overflow: hidden; background: #0c1310; }
+.showreel-web-scroll { position: relative; width: 100%; will-change: transform; transition: transform 3.1s cubic-bezier(.37, 0, .63, 1); }
+.showreel-web-scroll.is-instant { transition: transform .55s cubic-bezier(.22, 1, .36, 1); }
+.showreel-web.is-interactive .showreel-web-scroll { height: 100% !important; transform: none !important; transition: none; }
+.showreel-videos.is-gallery .showreel-item[data-shape] .showreel-web iframe.showreel-web-frame,
+.showreel-videos.auto-orient .showreel-item[data-shape] .showreel-web iframe.showreel-web-frame,
+.showreel-web.is-lightbox iframe.showreel-web-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  inset: auto;
+  width: 1440px;
+  height: 3200px;
+  border: 0;
+  object-fit: initial;
+  transform-origin: 0 0;
+  transform: scale(var(--web-scale, .265));
+  pointer-events: none;
+  background: #fff;
+}
+.showreel-videos.is-gallery .showreel-item[data-shape] .showreel-web.is-interactive iframe.showreel-web-frame,
+.showreel-videos.auto-orient .showreel-item[data-shape] .showreel-web.is-interactive iframe.showreel-web-frame,
+.showreel-item[data-expandable] .showreel-web.is-interactive iframe.showreel-web-frame,
+.showreel-web.is-interactive iframe.showreel-web-frame,
+.showreel-web.is-lightbox iframe.showreel-web-frame {
+  pointer-events: auto;
+  width: 1440px;
+  height: calc(100% / var(--web-scale, .265));
+}
+.showreel-web-activate { position: absolute; inset: 0; z-index: 3; display: grid; place-items: end center; padding: 10px; border: 0; background: transparent; cursor: pointer; }
+.showreel-web-activate span { padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(200,255,52,.5); background: rgba(7,16,8,.82); color: var(--acid); font: 8px var(--mono); letter-spacing: .09em; opacity: 0; transform: translateY(4px); transition: opacity .2s ease, transform .2s ease; }
+.showreel-web-activate:hover span,
+.showreel-web-activate:focus-visible span { opacity: 1; transform: translateY(0); }
+.showreel-web.is-interactive .showreel-web-activate,
+.showreel-web.is-lightbox .showreel-web-activate,
+.showreel-web.is-interactive .showreel-web-cursor { display: none; }
+.showreel-item:has(.showreel-web.is-interactive) { transform: none !important; }
+.showreel-web-loading { position: absolute; inset: 0; z-index: 2; display: grid; place-content: center; gap: 6px; text-align: center; padding: 14px; background: rgba(10,16,14,.86); color: #b7cbc1; font: 9px var(--mono); letter-spacing: .09em; pointer-events: none; transition: opacity .3s ease; }
+.showreel-web-loading[hidden] { display: none; }
+.showreel-web-loading b { color: var(--acid); font-weight: normal; font-size: 10px; }
+.showreel-web-cursor { position: absolute; left: 0; top: 0; z-index: 6; width: 14px; height: 18px; pointer-events: none; transform: translate3d(55%, 55%, 0); transition: transform .62s cubic-bezier(.22, 1, .36, 1), opacity .25s ease; filter: drop-shadow(0 3px 6px rgba(0,0,0,.65)); }
+.showreel-web-cursor svg { display: block; width: 100%; height: 100%; }
+.showreel-web-cursor::after { content: ''; position: absolute; left: -5px; top: -5px; width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--acid); opacity: 0; transform: scale(.35); }
+.showreel-web-cursor.is-clicking svg { transform: scale(.84); }
+.showreel-web-cursor.is-clicking::after { animation: web-cursor-ripple .42s ease-out forwards; }
+@keyframes web-cursor-ripple {
+  0% { opacity: .95; transform: scale(.35); }
+  100% { opacity: 0; transform: scale(1.75); }
+}
+.showreel-web.is-paused .showreel-web-cursor { opacity: .25; }
+html[data-theme="light"] .showreel-web { background: #f2f5f1; border-color: rgba(10,30,20,.22); }
+html[data-theme="light"] .showreel-web-bar { background: #e3e8e1; border-bottom-color: rgba(10,30,20,.14); }
+html[data-theme="light"] .showreel-web-url { background: rgba(255,255,255,.78); border-color: rgba(10,30,20,.14); color: #203028; }
+html[data-theme="light"] .showreel-web-nav { background: #edf1eb; border-bottom-color: rgba(10,30,20,.1); }
+html[data-theme="light"] .showreel-web-brand { color: #101712; }
+html[data-theme="light"] .showreel-web-nav-btn { color: #46574f; }
+html[data-theme="light"] .showreel-web-nav-btn:hover { color: #101712; background: rgba(10,30,20,.06); }
+html[data-theme="light"] .showreel-web-nav-btn.is-active { color: #f2f5f1; }
+html[data-theme="light"] .showreel-web-stage { background: #eef2ec; }
+html[data-theme="light"] .showreel-web-loading { background: rgba(238,242,236,.9); color: #36453d; }
 .showreel-videos.auto-orient { grid-template-columns: repeat(3, 1fr); align-items: stretch; grid-auto-flow: dense; gap: 8px; }
 .art-commerce[data-waves-open], .art-editorial[data-archive-open] { cursor: pointer; }
 html[data-theme="light"] .showreel-videos.auto-orient .showreel-item img { border-color: rgba(10,30,20,.22); background: #e2e6df; }
@@ -3430,6 +3519,13 @@ const openLightbox = (media, { keepPlaylist = false } = {}) => {
     lightboxRange.value = state?.duration ? String(Math.round((embedStart / state.duration) * 1000)) : '0';
     lightboxTimeNow.textContent = formatVideoTime(embedStart);
     lightboxTimeEnd.textContent = formatVideoTime(state?.duration || 0) || '0:00';
+  } else if (media.classList?.contains('showreel-web')) {
+    const fullPreview = createWebsitePreview(media._webEntry || { href: media.dataset.href }, { expanded: true });
+    fullPreview.classList.add('is-lightbox');
+    lightboxMedia = fullPreview;
+    lightboxEmbed = null;
+    lightboxStage.replaceChildren(fullPreview);
+    lightboxScrub.hidden = true;
   } else {
     /* photos: no timeline, no sound */
     lightboxMedia = document.createElement('img');
@@ -3546,7 +3642,7 @@ let lbSwipeX = 0, lbSwipeY = 0, lbSwiping = false;
 lightbox.addEventListener('pointerdown', (event) => {
   if (lightbox.hidden || lightboxList.length < 2) return;
   if (event.pointerType === 'mouse' && event.button !== 0) return;
-  if (event.target.closest('.lightbox-scrub, .lightbox-nav, .lightbox-close')) return;
+  if (event.target.closest('.lightbox-scrub, .lightbox-nav, .lightbox-close, .showreel-web')) return;
   lbSwipeX = event.clientX;
   lbSwipeY = event.clientY;
   lbSwiping = true;
@@ -3585,12 +3681,12 @@ const attachExpand = (item, media) => {
   if (!item.getAttribute('aria-label')) item.setAttribute('aria-label', 'View full');
   const openItemFull = () => { closeLightbox(); openLightbox(media); };
   item.addEventListener('click', (event) => {
-    if (event.target.closest('.showreel-mute, a')) return;
+    if (event.target.closest('.showreel-mute, a, button')) return;
     event.stopPropagation();
     openItemFull();
   });
   item.addEventListener('keydown', (event) => {
-    if (event.target.closest('.showreel-mute, a')) return;
+    if (event.target.closest('.showreel-mute, a, button')) return;
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       openItemFull();
@@ -3659,7 +3755,7 @@ const attachShowcaseTilt = (gallery) => {
   gallery.addEventListener('pointermove', (e) => {
     if (e.pointerType === 'touch') return;
     const tile = e.target.closest('.showreel-item');
-    if (!tile || !gallery.contains(tile)) { clearTile(); return; }
+    if (!tile || !gallery.contains(tile) || tile.querySelector('.showreel-web.is-interactive')) { clearTile(); return; }
     if (activeTile && activeTile !== tile) activeTile.style.transform = '';
     activeTile = tile;
     const r = tile.getBoundingClientRect();
@@ -3798,6 +3894,431 @@ window.addEventListener('message', (event) => {
 /* one item builder serves every modal — photos, videos, YouTube/Vimeo embeds, OPEN cards;
    chipFallback is the label under tiles without their own, and the owning modal's click
    handler drives the ♪ button */
+const webNavRequests = new Map();
+
+const formatWebDisplayUrl = (rawUrl) => {
+  try {
+    const u = new URL(rawUrl);
+    return `${u.hostname.replace(/^www\./, '')}${u.pathname === '/' ? '' : u.pathname}${u.hash || ''}`;
+  } catch (error) {
+    return rawUrl;
+  }
+};
+
+const webBaseUrlNoHash = (rawUrl) => {
+  try {
+    const u = new URL(rawUrl);
+    return `${u.origin}${u.pathname}${u.search}`;
+  } catch (error) {
+    return String(rawUrl || '').split('#')[0];
+  }
+};
+
+const navLabelFromUrl = (urlObj, baseNorm) => {
+  const cleanPath = urlObj.pathname.replace(/\/+$/, '') || '/';
+  const norm = `${urlObj.origin}${cleanPath}`;
+  const hash = (urlObj.hash || '').replace(/^#/, '');
+  if (norm === baseNorm && (!hash || /^top$/i.test(hash))) return 'Home';
+  const raw = hash || cleanPath.split('/').filter(Boolean).pop() || '';
+  if (!raw) return 'Home';
+  return raw
+    .replace(/\.[a-z0-9]+$/i, '')
+    .replace(/[-_]+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (ch) => ch.toUpperCase())
+    .slice(0, 24) || 'Page';
+};
+
+const extractNavItemsFromMicrolink = (payload, baseUrl) => {
+  let baseObj;
+  try { baseObj = new URL(baseUrl); } catch (error) { return null; }
+  const rawNav = payload?.data?.nav;
+  if (!Array.isArray(rawNav)) return null;
+  const titleText = (payload?.data?.title || '').split(/[|\-–—·]/)[0].trim();
+  const baseNorm = `${baseObj.origin}${baseObj.pathname.replace(/\/+$/, '') || '/'}`;
+  const baseHostBare = baseObj.hostname.replace(/^www\./, '');
+  const seenKeys = new Set();
+  const seenLabels = new Set();
+  const items = [];
+  const skipPath = /\/(?:cart|checkout|account|login|register|search|wishlist|password|policies)(?:[/?#]|$)/i;
+
+  rawNav.forEach((rawHref) => {
+    if (items.length >= 6 || typeof rawHref !== 'string') return;
+    const trimmed = rawHref.trim();
+    if (!trimmed || trimmed === '#' || trimmed.endsWith('#') || /^(?:javascript|mailto|tel|sms):/i.test(trimmed)) return;
+    let resolved;
+    try { resolved = new URL(trimmed, baseUrl); } catch (error) { return; }
+    if (!/^https?:$/i.test(resolved.protocol)) return;
+    if (resolved.hostname.replace(/^www\./, '') !== baseHostBare) return;
+    if (skipPath.test(resolved.pathname)) return;
+    const cleanPath = resolved.pathname.replace(/\/+$/, '') || '/';
+    const cleanHash = /^#top$/i.test(resolved.hash) ? '' : resolved.hash;
+    const targetHref = (cleanHash === '' && /^#top$/i.test(resolved.hash)) ? baseObj.href : resolved.href;
+    const key = `${cleanPath}${resolved.search}${cleanHash}`;
+    const label = navLabelFromUrl(resolved, baseNorm);
+    if (!label || seenKeys.has(key) || seenLabels.has(label.toLowerCase())) return;
+    seenKeys.add(key);
+    seenLabels.add(label.toLowerCase());
+    items.push({ href: targetHref, label, displayUrl: formatWebDisplayUrl(targetHref) });
+  });
+
+  const hasRoot = items.some((it) => {
+    try {
+      const u = new URL(it.href);
+      return `${u.origin}${u.pathname.replace(/\/+$/, '') || '/'}` === baseNorm && !u.hash;
+    } catch (error) { return false; }
+  });
+  if (!hasRoot && items.length) {
+    items.unshift({ href: baseObj.href, label: 'Home', displayUrl: formatWebDisplayUrl(baseObj.href) });
+  }
+  return { title: titleText || null, items: items.slice(0, 6) };
+};
+
+const discoverWebsiteNav = (baseUrl) => {
+  const cacheKey = `web-nav:v2:${baseUrl}`;
+  try {
+    const cached = JSON.parse(window.sessionStorage.getItem(cacheKey) || 'null');
+    if (cached && Array.isArray(cached.items)) return Promise.resolve(cached);
+  } catch (error) { /* storage disabled */ }
+  if (webNavRequests.has(baseUrl)) return webNavRequests.get(baseUrl);
+  const req = (async () => {
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), 11000);
+    try {
+      const endpoint = `https://api.microlink.io/?url=${encodeURIComponent(baseUrl)}&data.nav.selectorAll=header%20a%2Cnav%20a&data.nav.attr=href`;
+      const response = await fetch(endpoint, { signal: controller.signal });
+      if (!response.ok) return null;
+      const payload = await response.json();
+      const extracted = extractNavItemsFromMicrolink(payload, baseUrl);
+      if (!extracted || !extracted.items.length) return null;
+      try { window.sessionStorage.setItem(cacheKey, JSON.stringify(extracted)); } catch (error) { /* ignore */ }
+      return extracted;
+    } catch (error) {
+      return null;
+    } finally {
+      window.clearTimeout(timer);
+    }
+  })();
+  webNavRequests.set(baseUrl, req);
+  return req;
+};
+
+const createWebsitePreview = (entry, { expanded = false } = {}) => {
+  const baseHref = entry.href || entry.src || '#';
+  let parsedBase = null;
+  try { parsedBase = new URL(baseHref); } catch (error) { /* non-URL fallback */ }
+  const host = parsedBase ? parsedBase.hostname.replace(/^www\./, '') : 'website';
+  let brandTitle = (entry.label || host.split('.')[0] || 'Preview').toUpperCase();
+
+  const rawPages = Array.isArray(entry.pages) && entry.pages.length ? entry.pages : [{ href: baseHref, label: entry.label }];
+  const explicitMulti = rawPages.length > 1;
+  const toStop = (page, idx) => {
+    const displayUrl = formatWebDisplayUrl(page.href);
+    const pathTail = displayUrl.split('/').filter(Boolean).pop() || '';
+    const fallbackLabel = idx === 0 ? host : pathTail.replace(/[-_]+/g, ' ').replace(/\.\w+$/, '').slice(0, 14) || `Page ${idx + 1}`;
+    return {
+      href: page.href,
+      label: page.label || fallbackLabel,
+      displayUrl
+    };
+  };
+
+  let stops = explicitMulti ? rawPages.slice(0, 6).map(toStop) : [toStop(rawPages[0], 0)];
+
+  const web = document.createElement('div');
+  web.className = 'showreel-web';
+  web.dataset.href = baseHref;
+  web._webEntry = entry;
+
+  const bar = document.createElement('div');
+  bar.className = 'showreel-web-bar';
+  const dots = document.createElement('span');
+  dots.className = 'showreel-web-dots';
+  dots.setAttribute('aria-hidden', 'true');
+  dots.innerHTML = '<i></i><i></i><i></i>';
+  const urlBar = document.createElement('span');
+  urlBar.className = 'showreel-web-url';
+  urlBar.textContent = stops[0].displayUrl;
+  const expandBtn = document.createElement('button');
+  expandBtn.type = 'button';
+  expandBtn.className = 'showreel-web-expand';
+  expandBtn.setAttribute('aria-label', `Expand ${host} preview`);
+  expandBtn.textContent = 'EXPAND ⤢';
+  expandBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    closeLightbox();
+    openLightbox(web);
+  });
+  const modeBtn = document.createElement('button');
+  modeBtn.type = 'button';
+  modeBtn.className = 'showreel-web-mode';
+  modeBtn.setAttribute('aria-pressed', String(Boolean(expanded)));
+  modeBtn.textContent = expanded ? 'AUTO ↻' : 'LIVE';
+  const openLink = document.createElement('a');
+  openLink.className = 'showreel-web-open';
+  openLink.href = baseHref;
+  openLink.target = '_blank';
+  openLink.rel = 'noopener noreferrer';
+  openLink.textContent = 'OPEN ↗';
+  bar.append(dots, urlBar, modeBtn, expandBtn, openLink);
+
+  const nav = document.createElement('div');
+  nav.className = 'showreel-web-nav';
+  const brand = document.createElement('span');
+  brand.className = 'showreel-web-brand';
+  brand.textContent = brandTitle;
+  const navLinks = document.createElement('div');
+  navLinks.className = 'showreel-web-links';
+  nav.append(brand, navLinks);
+
+  const stage = document.createElement('div');
+  stage.className = 'showreel-web-stage';
+  const scroller = document.createElement('div');
+  scroller.className = 'showreel-web-scroll';
+
+  const frame = document.createElement('iframe');
+  frame.className = 'showreel-web-frame';
+  frame.title = `${host} live preview`;
+  frame.loading = 'lazy';
+  frame.referrerPolicy = 'no-referrer';
+  frame.src = stops[0].href;
+
+  const activateOverlay = document.createElement('button');
+  activateOverlay.type = 'button';
+  activateOverlay.className = 'showreel-web-activate';
+  activateOverlay.setAttribute('aria-label', `Click to navigate ${host} live site`);
+  const activateHint = document.createElement('span');
+  activateHint.textContent = 'CLICK TO NAVIGATE LIVE SITE';
+  activateOverlay.append(activateHint);
+
+  const loading = document.createElement('div');
+  loading.className = 'showreel-web-loading';
+  const loadingHost = document.createElement('b');
+  loadingHost.textContent = host.toUpperCase();
+  const loadingMsg = document.createElement('span');
+  loadingMsg.textContent = 'LOADING LIVE SITE …';
+  loading.append(loadingHost, loadingMsg);
+
+  scroller.append(frame);
+  stage.append(scroller, activateOverlay, loading);
+
+  const cursor = document.createElement('div');
+  cursor.className = 'showreel-web-cursor';
+  cursor.setAttribute('aria-hidden', 'true');
+  cursor.innerHTML = '<svg viewBox="0 0 18 22" fill="none"><path d="M2 1.5L16 11.5L9.4 12.6L12.6 19.6L9.7 20.9L6.5 13.9L2 18.2V1.5Z" fill="#c8ff34" stroke="#071008" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+
+  web.append(bar, nav, stage, cursor);
+
+  let navButtons = [];
+  let activeIndex = 0;
+  let currentFrameBase = webBaseUrlNoHash(stops[0].href);
+  let interactive = Boolean(expanded);
+  let paused = false;
+  let phase = 'scroll';
+  let scrollDown = true;
+  let scrollTimer = 0;
+  let clickTimer = 0;
+
+  const syncScale = () => {
+    const w = stage.clientWidth || (expanded ? 960 : 380);
+    const scale = Math.max(0.15, w / 1440);
+    web.style.setProperty('--web-scale', scale.toFixed(4));
+    scroller.style.height = interactive ? '100%' : `${Math.round(3200 * scale)}px`;
+  };
+
+  let ro = null;
+  if ('ResizeObserver' in window) {
+    ro = new ResizeObserver(syncScale);
+    ro.observe(stage);
+  }
+
+  frame.addEventListener('load', () => {
+    loading.hidden = true;
+  });
+
+  const setScrollFrac = (frac, instant = false) => {
+    syncScale();
+    if (interactive) {
+      scroller.style.transform = '';
+      return;
+    }
+    scroller.classList.toggle('is-instant', instant);
+    const maxY = Math.max(0, scroller.scrollHeight - stage.clientHeight);
+    const y = Math.round(Math.max(0, Math.min(1, frac)) * maxY);
+    scroller.style.transform = `translate3d(0, -${y}px, 0)`;
+  };
+
+  const setInteractive = (on) => {
+    interactive = Boolean(on);
+    web.classList.toggle('is-interactive', interactive);
+    modeBtn.setAttribute('aria-pressed', String(interactive));
+    modeBtn.textContent = interactive ? 'AUTO ↻' : 'LIVE';
+    window.clearTimeout(scrollTimer);
+    window.clearTimeout(clickTimer);
+    cursor.classList.remove('is-clicking');
+    if (interactive) {
+      scroller.style.transform = '';
+      scroller.style.height = '100%';
+      web.closest('.showreel-item')?.style && (web.closest('.showreel-item').style.transform = '');
+      try { frame.focus({ preventScroll: true }); } catch (error) { /* ignore */ }
+    } else {
+      syncScale();
+      activateStop(activeIndex, { immediate: true });
+    }
+  };
+
+  const moveCursorTo = (x, y) => {
+    cursor.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
+  };
+
+  const moveCursorToContent = () => {
+    const w = web.clientWidth || (expanded ? 900 : 380);
+    const h = web.clientHeight || (expanded ? 560 : 220);
+    moveCursorTo(w * 0.56, h * 0.68);
+  };
+
+  const moveCursorToButton = (btn) => {
+    const webRect = web.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+    if (webRect.width > 0 && btnRect.width > 0) {
+      moveCursorTo((btnRect.left - webRect.left) + btnRect.width * 0.55, (btnRect.top - webRect.top) + btnRect.height * 0.65);
+    } else {
+      moveCursorTo((web.clientWidth || 380) * 0.7, 42);
+    }
+  };
+
+  const activateStop = (idx, { immediate = false } = {}) => {
+    activeIndex = ((idx % stops.length) + stops.length) % stops.length;
+    const stop = stops[activeIndex];
+    navButtons.forEach((btn, i) => btn.classList.toggle('is-active', i === activeIndex));
+    navButtons[activeIndex]?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+    urlBar.textContent = stop.displayUrl;
+    openLink.href = stop.href || baseHref;
+
+    const targetHref = stop.href || baseHref;
+    const targetBase = webBaseUrlNoHash(targetHref);
+    const sameBase = targetBase === currentFrameBase;
+    if (frame.getAttribute('src') !== targetHref) {
+      currentFrameBase = targetBase;
+      frame.src = targetHref;
+    }
+
+    if (interactive) return;
+
+    const startPos = sameBase && stops.length > 1 ? Math.min(0.65, (activeIndex / stops.length) * 0.8) : 0;
+    const endPos = sameBase && stops.length > 1 ? Math.min(0.95, startPos + 0.35) : 0.88;
+    setScrollFrac(startPos, immediate);
+    window.clearTimeout(scrollTimer);
+    scrollTimer = window.setTimeout(() => {
+      if (web.isConnected && !interactive) setScrollFrac(endPos, false);
+    }, immediate ? 120 : 240);
+  };
+
+  const renderNavButtons = () => {
+    navButtons = stops.map((stop, idx) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `showreel-web-nav-btn${idx === activeIndex ? ' is-active' : ''}`;
+      btn.textContent = stop.label;
+      btn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        btn.classList.add('is-clicked');
+        window.setTimeout(() => btn.classList.remove('is-clicked'), 240);
+        activateStop(idx, { immediate: true });
+        if (!interactive) setScrollFrac(0, true);
+      });
+      navLinks.append(btn);
+      return btn;
+    });
+  };
+
+  renderNavButtons();
+
+  activateOverlay.addEventListener('click', (event) => {
+    event.stopPropagation();
+    setInteractive(true);
+  });
+
+  modeBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    setInteractive(!interactive);
+  });
+
+  web.addEventListener('pointerenter', () => {
+    paused = true;
+    web.classList.add('is-paused');
+  });
+  web.addEventListener('pointerleave', () => {
+    paused = false;
+    web.classList.remove('is-paused');
+  });
+
+  if (!explicitMulti) {
+    discoverWebsiteNav(baseHref).then((extracted) => {
+      if (!web.isConnected || !extracted) return;
+      if (extracted.title) {
+        brandTitle = extracted.title.toUpperCase();
+        brand.textContent = brandTitle;
+      }
+      if (extracted.items.length) {
+        stops = extracted.items;
+        activeIndex = 0;
+        navLinks.replaceChildren();
+        renderNavButtons();
+        urlBar.textContent = stops[0].displayUrl;
+        openLink.href = stops[0].href || baseHref;
+      }
+    });
+  }
+
+  if (interactive) web.classList.add('is-interactive');
+  requestAnimationFrame(() => {
+    if (!web.isConnected) return;
+    syncScale();
+    moveCursorToContent();
+    activateStop(0, { immediate: true });
+  });
+
+  const intervalId = window.setInterval(() => {
+    if (!web.isConnected) {
+      window.clearInterval(intervalId);
+      window.clearTimeout(scrollTimer);
+      window.clearTimeout(clickTimer);
+      ro?.disconnect();
+      return;
+    }
+    if (paused || interactive) return;
+    if (stops.length <= 1) {
+      scrollDown = !scrollDown;
+      setScrollFrac(scrollDown ? 0.88 : 0, false);
+      return;
+    }
+    if (phase === 'scroll') {
+      const nextIdx = (activeIndex + 1) % stops.length;
+      const nextBtn = navButtons[nextIdx];
+      if (nextBtn) moveCursorToButton(nextBtn);
+      phase = 'click';
+    } else if (phase === 'click') {
+      const nextIdx = (activeIndex + 1) % stops.length;
+      const nextBtn = navButtons[nextIdx];
+      cursor.classList.add('is-clicking');
+      nextBtn?.classList.add('is-clicked');
+      activateStop(nextIdx, { immediate: true });
+      window.clearTimeout(clickTimer);
+      clickTimer = window.setTimeout(() => {
+        cursor.classList.remove('is-clicking');
+        nextBtn?.classList.remove('is-clicked');
+        moveCursorToContent();
+      }, 420);
+      phase = 'dwell';
+    } else {
+      phase = 'scroll';
+    }
+  }, 2200);
+
+  return web;
+};
+
 const buildGraphicsItem = (entry, index, chipFallback = 'DESIGN') => {
   const item = document.createElement('div');
   item.className = 'showreel-item';
@@ -3967,17 +4488,10 @@ const buildGraphicsItem = (entry, index, chipFallback = 'DESIGN') => {
     attachExpand(item, frame);
     return item;
   }
-  const card = document.createElement('a');
-  card.className = 'showreel-ext';
-  card.href = entry.href || entry.src || '#';
-  card.target = '_blank';
-  card.rel = 'noopener noreferrer';
-  try { card.textContent = new URL(entry.href).hostname.replace(/^www\./, ''); } catch (error) { card.textContent = 'OPEN'; }
-  const open = document.createElement('b');
-  open.textContent = 'OPEN ↗';
-  card.append(open);
-  item.append(card);
+  const web = createWebsitePreview(entry);
+  item.append(web);
   item.dataset.shape = 'horizontal';
+  attachExpand(item, web);
   return item;
 };/* ---------- folder-driven showcase engine (Conversion Engine, Graphics, Motion, Waves, Archive) ---------- */
 const SHOWCASE_IMAGE_EXTS = ['png', 'jpg', 'jpeg', 'webp', 'gif', 'avif', 'svg'];
@@ -4159,14 +4673,16 @@ const readShowcaseLinkEntry = async (href) => { /* READMEs never count as link f
     if (!response.ok) return null;
     const text = await response.text();
     if (/^\s*<(!DOCTYPE|html)/i.test(text)) return null;
+    const pages = [];
     for (const line of text.split(/\r?\n/)) {
       const trimmed = line.trim();
       if (!trimmed || trimmed.startsWith('#')) continue;
       const [link, ...rest] = trimmed.split('|');
       if (!link.trim()) continue;
-      return { href: link.trim(), label: rest.join('|').trim() || null };
+      pages.push({ href: link.trim(), label: rest.join('|').trim() || null });
     }
-    return null;
+    if (!pages.length) return null;
+    return { href: pages[0].href, label: pages[0].label, pages };
   } catch (error) { return null; }
 };
 
@@ -4191,6 +4707,20 @@ const probeRemotePhotoShape = (candidates, timeoutMs = 9000) => new Promise((res
     probe.src = candidate;
   });
 });
+
+const looksLikeWebPageUrl = (rawUrl) => {
+  try {
+    const parsed = new URL(rawUrl);
+    if (!/^https?:$/i.test(parsed.protocol)) return false;
+    const path = parsed.pathname || '/';
+    if (path === '/' || /\/$/.test(path) || /\.(html?|php|aspx?|jsp)$/i.test(path)) return true;
+    const lastSeg = path.split('/').pop() || '';
+    if (lastSeg && !lastSeg.includes('.') && !/(image|img|photo|media|video|stream|download|raw|file|asset|cdn)/i.test(parsed.href)) return true;
+    return false;
+  } catch (error) {
+    return false;
+  }
+};
 
 /* classify a link file and probe unknown addresses so Drive/Dropbox files and
    extension-less links preview like real photos or videos, never a broken card */
@@ -4235,11 +4765,15 @@ const resolveLinkMedia = async (link) => {
        silent keeps it paused (poster + its own play button) and out of the sound mix */
     return { kind: 'embed', provider: 'drive', id, label: entry.label, shape: ratio ? snapRatioToShape(ratio) : null, ratio, silent: true };
   }
+  const pages = Array.isArray(link.pages) && link.pages.length ? link.pages : [{ href: entry.href || entry.src, label: entry.label }];
+  if (entry.kind === 'link' && looksLikeWebPageUrl(entry.href)) {
+    return { kind: 'link', href: entry.href, label: entry.label, pages };
+  }
   const probeSrc = entry.kind === 'file' ? entry.src : entry.href;
   const photo = await probeRemotePhoto([probeSrc]);
   if (photo) return { kind: 'image', src: photo, label: entry.label };
   if (await probeAnyVideo(probeSrc)) return { kind: 'video', src: probeSrc, label: entry.label };
-  return { kind: 'link', href: probeSrc, label: entry.label };
+  return { kind: 'link', href: probeSrc, label: entry.label, pages };
 };
 
 const buildShowcaseMediaItem = (file, index, tabLabel) => {
