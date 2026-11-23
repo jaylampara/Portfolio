@@ -491,6 +491,7 @@ html[data-theme="light"] .showreel-mute:hover, html[data-theme="light"] .showree
 .showreel-ext:hover { border-color: rgba(200,255,52,.5); }
 html[data-theme="light"] .showreel-ext { color: #10161a; background: #e2e6df; border-color: rgba(10,30,20,.22); }
 /* Auto-scrolling & nav-clicking live website preview for .txt site links */
+.showreel-videos .showreel-item[data-shape]:has(.showreel-web) { min-height: 240px; }
 .showreel-web { position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; min-height: 100%; background: #0a100e; border: 1px solid rgba(218,250,242,.18); border-radius: inherit; overflow: hidden; text-align: left; }
 .showreel-web.is-lightbox { width: min(1024px, calc(100vw - 48px)); aspect-ratio: 16/10; height: auto; max-height: calc(100vh - 180px); min-height: 0; border-radius: 12px; pointer-events: auto; box-shadow: 0 24px 90px rgba(0,0,0,.65); }
 .showreel-web-bar { position: relative; z-index: 4; display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: #101815; border-bottom: 1px solid rgba(218,250,242,.12); flex-shrink: 0; }
@@ -3740,7 +3741,8 @@ const layoutMosaicGallery = (gallery) => {
   const cell = Number.isFinite(firstTrack) && firstTrack > 0
     ? firstTrack
     : Math.max(60, (gallery.clientWidth - padding - gap * (tracks - 1)) / tracks);
-  const rowHeight = allHorizontal ? cell * (9 / 16) : cell;
+  const hasWebPreview = Boolean(gallery.querySelector('.showreel-web'));
+  const rowHeight = allHorizontal ? cell * (9 / 16) * (hasWebPreview ? 1.5 : 1) : cell;
   gallery.style.gridAutoRows = `${rowHeight.toFixed(2)}px`;
 };
 const attachShowcaseTilt = (gallery) => {
