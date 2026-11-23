@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 460" width="420" height="460" fill="none">
+  <title>Kinetix Stacked Brand Logo</title>
+  <defs>
+    <linearGradient id="limeKineticStacked" x1="88" y1="52" x2="202" y2="204" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#D8FF4D" />
+      <stop offset="100%" stop-color="#AEE600" />
+    </linearGradient>
+    <linearGradient id="ruleLeftGrad" x1="44" y1="0" x2="108.5" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#8A929A" stop-opacity="0" />
+      <stop offset="100%" stop-color="#8A929A" stop-opacity="0.85" />
+    </linearGradient>
+    <linearGradient id="ruleRightGrad" x1="311.5" y1="0" x2="376" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#8A929A" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#8A929A" stop-opacity="0" />
+    </linearGradient>
+    <filter id="pulseGlowStacked" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Deep Charcoal Rounded Emblem Card -->
+  <rect width="420" height="460" rx="48" fill="#111315" />
+
+  <!-- Subtle Technical Telemetry Axes -->
+  <line x1="210" y1="36" x2="210" y2="262" stroke="#1E2226" stroke-width="1" stroke-dasharray="4 4" />
+  <line x1="78" y1="154" x2="342" y2="154" stroke="#1E2226" stroke-width="1" stroke-dasharray="4 4" />
+
+  <!-- Top Center Geometric K Monogram -->
+  <g transform="translate(82, 26)">
+    <circle cx="128" cy="128" r="96" stroke="#C8FF00" stroke-opacity="0.22" stroke-width="1.25" stroke-dasharray="5 5" />
+    <path d="M62 54H98L114 128L98 202H62L78 128L62 54Z" fill="#FFFFFF" />
+    <path d="M196 54H156L110 128L156 202H196L150 128L196 54Z" fill="url(#limeKineticStacked)" />
+    <circle cx="114" cy="128" r="16" fill="#111315" />
+    <circle cx="114" cy="128" r="9.5" fill="#C8FF00" filter="url(#pulseGlowStacked)" />
+  </g>
+
+  <!-- Centered Geometric Wordmark: KINETIX -->
+  <g fill="#FFFFFF" transform="translate(48, 294) scale(0.90)">
+    <path d="M0 0H12V23L34 0H49L25 25L50 56H35L16 32L12 36V56H0V0Z" />
+    <rect x="64" y="0" width="12" height="56" />
+    <path d="M94 0H106L132 36V0H144V56H132L106 20V56H94V0Z" />
+    <path d="M162 0H202V11H174V22H198V33H174V45H203V56H162V0Z" />
+    <path d="M216 0H260V11H244V56H232V11H216V0Z" />
+    <rect x="274" y="16" width="12" height="40" />
+    <circle cx="280" cy="6" r="6.5" fill="#C8FF00" />
+    <path d="M302 0H316L330 20L344 0H358L337 28L359 56H345L330 36L315 56H301L323 28L302 0Z" />
+  </g>
+
+  <!-- Slate-Framed Tagline Lockup -->
+  <g transform="translate(0, 384)">
+    <line x1="44" y1="0" x2="108.5" y2="0" stroke="url(#ruleLeftGrad)" stroke-width="1.25" />
+    <text x="210" y="3.5" text-anchor="middle" fill="#8A929A" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="600" letter-spacing="3.2">TECH-ENABLED WELLNESS</text>
+    <line x1="311.5" y1="0" x2="376" y2="0" stroke="url(#ruleRightGrad)" stroke-width="1.25" />
+  </g>
+</svg>
