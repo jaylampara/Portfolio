@@ -240,6 +240,9 @@ html[data-theme="light"] .portrait-burst img { border-color: rgba(13,127,102,.6)
 .review-stars .is-off { color: rgba(218,250,242,.18); }
 @keyframes reviews-marquee { to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) { .reviews-track { animation: none; } .reviews-viewport { overflow-x: auto; -webkit-mask-image: none; mask-image: none; } }
+body:has(.showreel-modal.is-open, .resume-modal.is-open, .contact-modal.is-open, .lightbox:not([hidden]), .portrait-burst:not([hidden])) .clients-track,
+body:has(.showreel-modal.is-open, .resume-modal.is-open, .contact-modal.is-open, .lightbox:not([hidden]), .portrait-burst:not([hidden])) .reviews-track,
+body:has(.showreel-modal.is-open, .resume-modal.is-open, .contact-modal.is-open, .lightbox:not([hidden]), .portrait-burst:not([hidden])) .marquee-track { animation-play-state: paused; }
 @media (max-width: 570px) { .reviews-section { padding-block: 19px 21px; } .review-card { width: 286px; } }
 
 .marquee-section { overflow: hidden; padding-block: 27px; border-block: 1px solid var(--line); }
@@ -532,7 +535,7 @@ html[data-theme="light"] .showreel-ext { color: #10161a; background: #e2e6df; bo
   left: 0;
   inset: auto;
   width: 1440px;
-  height: 3200px;
+  height: 1800px;
   border: 0;
   object-fit: initial;
   transform-origin: 0 0;
@@ -3152,6 +3155,7 @@ const silencePageMedia = (except = null) => {
   /* Drive's preview player has no scriptable mute/pause API, so reload its tiles to a
      blank frame while a full view is open and restore their source on close */
   parkDriveTiles(except);
+  parkWebPreviewTiles(document.querySelector('.showreel-modal.is-open') || document);
   document.querySelectorAll('.showreel-item iframe').forEach((frame) => {
     if (frame !== except && frame.dataset.sound === 'on') {
       if (/youtube\.com|vimeo\.com/.test(frame.src)) setGraphicsEmbedSound(frame, false);
@@ -3229,6 +3233,21 @@ const restoreParkedDriveTiles = () => {
     if (parked) frame.src = parked;
   });
 };
+const parkWebPreviewTiles = (scope = document) => {
+  scope.querySelectorAll('.showreel-item .showreel-web-frame').forEach((frame) => {
+    const current = frame.getAttribute('src');
+    if (!current || current === 'about:blank' || frame.dataset.parkedWebSrc) return;
+    frame.dataset.parkedWebSrc = current;
+    frame.src = 'about:blank';
+  });
+};
+const restoreParkedWebPreviewTiles = (scope = document) => {
+  scope.querySelectorAll('.showreel-item .showreel-web-frame[data-parked-web-src]').forEach((frame) => {
+    const parked = frame.dataset.parkedWebSrc;
+    delete frame.dataset.parkedWebSrc;
+    if (parked) frame.src = parked;
+  });
+};
 
 const releaseLightboxMedia = () => {
   const sourceItem = lightboxSource?.closest?.('.showreel-item') || null;
@@ -3277,6 +3296,7 @@ const closeLightbox = () => {
   lightboxList = [];
   lightboxIndex = 0;
   restoreParkedDriveTiles();
+  restoreParkedWebPreviewTiles();
   lightboxOpener?.focus?.({ preventScroll: true });
   lightboxOpener = null;
 };
@@ -4125,7 +4145,7 @@ const createWebsitePreview = (entry, { expanded = false } = {}) => {
     const w = stage.clientWidth || (expanded ? 960 : 380);
     const scale = Math.max(0.15, w / 1440);
     web.style.setProperty('--web-scale', scale.toFixed(4));
-    scroller.style.height = interactive ? '100%' : `${Math.round(3200 * scale)}px`;
+    scroller.style.height = interactive ? '100%' : `${Math.round(1800 * scale)}px`;
   };
 
   let ro = null;
@@ -4200,7 +4220,9 @@ const createWebsitePreview = (entry, { expanded = false } = {}) => {
     const targetHref = stop.href || baseHref;
     const targetBase = webBaseUrlNoHash(targetHref);
     const sameBase = targetBase === currentFrameBase;
-    if (frame.getAttribute('src') !== targetHref) {
+    if (frame.dataset.parkedWebSrc) {
+      frame.dataset.parkedWebSrc = targetHref;
+    } else if (frame.getAttribute('src') !== targetHref) {
       currentFrameBase = targetBase;
       frame.src = targetHref;
     }
@@ -4289,7 +4311,8 @@ const createWebsitePreview = (entry, { expanded = false } = {}) => {
       ro?.disconnect();
       return;
     }
-    if (paused || interactive) return;
+    const ownerModal = web.closest('.showreel-modal');
+    if (paused || interactive || Boolean(frame.dataset.parkedWebSrc) || (!expanded && !lightbox.hidden) || (ownerModal && (ownerModal.hidden || !ownerModal.classList.contains('is-open')))) return;
     if (stops.length <= 1) {
       scrollDown = !scrollDown;
       setScrollFrac(scrollDown ? 0.88 : 0, false);
@@ -4343,7 +4366,7 @@ const buildGraphicsItem = (entry, index, chipFallback = 'DESIGN') => {
       media.setAttribute('autoplay', '');
       media.setAttribute('playsinline', '');
       media.setAttribute('webkit-playsinline', '');
-      media.preload = 'auto';
+      media.preload = 'metadata';
       if (entry.poster) media.poster = entry.poster;
       /* Drive videos are framed at the clip's exact ratio — no mosaic snapping, no crop */
       if (entry.drive) {
@@ -4802,7 +4825,7 @@ const buildShowcaseMediaItem = (file, index, tabLabel) => {
   video.setAttribute('autoplay', '');
   video.setAttribute('playsinline', '');
   video.setAttribute('webkit-playsinline', '');
-  video.preload = 'auto';
+  video.preload = 'metadata';
   video.addEventListener('loadedmetadata', () => {
     snapMediaRatio(video);
     resumeVideoFromState(video);
@@ -4862,6 +4885,7 @@ const createFolderShowcase = ({ key, folder, kicker, title }) => {
       frame.dataset.sound = 'off';
       if (frame.dataset.mutedSrc) frame.src = frame.dataset.mutedSrc;
     });
+    parkWebPreviewTiles(gallery);
     gallery.querySelectorAll('.showreel-mute').forEach((button) => button.setAttribute('aria-pressed', 'false'));
   };
 
@@ -5070,12 +5094,14 @@ const createFolderShowcase = ({ key, folder, kicker, title }) => {
     stopAndMute();
     /* Drive players have no pause API — blank them so hidden tiles never keep speaking */
     parkDriveTiles();
+    parkWebPreviewTiles(modal);
     window.setTimeout(() => { modal.hidden = true; triggerEl?.focus?.({ preventScroll: true }); }, 240);
   };
 
   const openShowcase = () => {
     triggerEl = document.activeElement;
     modal.hidden = false;
+    restoreParkedWebPreviewTiles(modal);
     requestAnimationFrame(() => modal.classList.add('is-open'));
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
@@ -6262,9 +6288,27 @@ if (!reducedMotion) {
     }));
   };
   let particleRaf = 0;
-  const draw = () => {
+  let pauseTimer = 0;
+  let lastDraw = 0;
+  const isModalBlocking = () => document.body.style.overflow === 'hidden'
+    || Boolean(document.querySelector('.showreel-modal.is-open, .resume-modal.is-open, .contact-modal.is-open, .lightbox:not([hidden]), .portrait-burst:not([hidden])'));
+  const scheduleParticles = () => {
+    if (document.hidden || particleRaf || pauseTimer) return;
+    if (isModalBlocking()) {
+      pauseTimer = window.setTimeout(() => { pauseTimer = 0; scheduleParticles(); }, 250);
+      return;
+    }
+    particleRaf = requestAnimationFrame(draw);
+  };
+  const draw = (now = 0) => {
     particleRaf = 0;
     if (document.hidden) return;
+    if (isModalBlocking()) { scheduleParticles(); return; }
+    if (now && lastDraw && now - lastDraw < 32) {
+      particleRaf = requestAnimationFrame(draw);
+      return;
+    }
+    lastDraw = now;
     ctx.clearRect(0, 0, width, height);
     const lightInk = document.documentElement.dataset.theme === 'light';
     for (let i = 0; i < particles.length; i++) {
@@ -6273,16 +6317,19 @@ if (!reducedMotion) {
       if (p.y < 0 || p.y > height) p.vy *= -1;
       ctx.beginPath(); ctx.fillStyle = lightInk ? (i % 3 === 0 ? 'rgba(97,134,1,.44)' : 'rgba(13,127,102,.42)') : 'rgba(143,255,214,.38)'; ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
       for (let j = i + 1; j < particles.length; j++) {
-        const q = particles[j]; const dx = p.x - q.x; const dy = p.y - q.y; const d = Math.hypot(dx, dy);
-        if (d < 105) { ctx.beginPath(); ctx.strokeStyle = lightInk ? ((i + j) % 4 === 0 ? `rgba(97,134,1,${.22 * (1 - d / 105)})` : `rgba(13,127,102,${.24 * (1 - d / 105)})`) : `rgba(110,255,206,${.065 * (1 - d / 105)})`; ctx.lineWidth = .6; ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke(); }
+        const q = particles[j]; const dx = p.x - q.x; const dy = p.y - q.y; const d2 = dx * dx + dy * dy;
+        if (d2 < 11025) {
+          const d = Math.sqrt(d2);
+          ctx.beginPath(); ctx.strokeStyle = lightInk ? ((i + j) % 4 === 0 ? `rgba(97,134,1,${.22 * (1 - d / 105)})` : `rgba(13,127,102,${.24 * (1 - d / 105)})`) : `rgba(110,255,206,${.065 * (1 - d / 105)})`; ctx.lineWidth = .6; ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
+        }
       }
     }
-    particleRaf = requestAnimationFrame(draw);
+    scheduleParticles();
   };
   setCanvasSize(); draw();
   window.addEventListener('resize', setCanvasSize);
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && !particleRaf) particleRaf = requestAnimationFrame(draw);
+    if (!document.hidden) scheduleParticles();
   });
 }
 
@@ -6769,11 +6816,17 @@ if (!reducedMotion) {
       px: FAR,
       py: FAR,
       active: false,
+      inView: true,
+      dirty: true,
+      rect: null,
+      width: heading.offsetWidth || 1,
     };
 
     const measure = () => {
       const fs = parseFloat(getComputedStyle(heading).fontSize) || 48;
       state.radius = fs * REACH;
+      state.width = heading.offsetWidth || 1;
+      state.dirty = true;
       letters.forEach((item) => {
         let el = item.el;
         let ox = el.offsetWidth * 0.5;
@@ -6793,6 +6846,7 @@ if (!reducedMotion) {
     return state;
   });
 
+  const markRectsDirty = () => fields.forEach((f) => { f.dirty = true; });
   const remeasureAll = () => fields.forEach((f) => f.measure());
   if ('ResizeObserver' in window) {
     const ro = new ResizeObserver(remeasureAll);
@@ -6800,6 +6854,26 @@ if (!reducedMotion) {
   } else {
     window.addEventListener('resize', remeasureAll, { passive: true });
   }
+  if ('IntersectionObserver' in window) {
+    const fieldMap = new Map(fields.map((f) => [f.heading, f]));
+    const io = new IntersectionObserver((entries) => {
+      let reset = false;
+      entries.forEach((entry) => {
+        const f = fieldMap.get(entry.target);
+        if (!f) return;
+        f.inView = entry.isIntersecting;
+        f.dirty = true;
+        if (!f.inView && f.px > FAR + 1) {
+          f.px = FAR;
+          f.py = FAR;
+          reset = true;
+        }
+      });
+      if (reset) kick();
+    }, { rootMargin: '160px 0px' });
+    fields.forEach((f) => io.observe(f.heading));
+  }
+  window.addEventListener('scroll', markRectsDirty, { passive: true });
   document.fonts?.ready?.then(remeasureAll);
   document.fonts?.addEventListener?.('loadingdone', remeasureAll);
 
@@ -6882,18 +6956,34 @@ if (!reducedMotion) {
     }
   };
 
-  window.addEventListener('pointermove', (e) => {
+  let moveRaf = 0;
+  let lastPointerX = FAR;
+  let lastPointerY = FAR;
+  const processPointerMove = () => {
+    moveRaf = 0;
     let activated = false;
     fields.forEach((field) => {
-      const rect = field.heading.getBoundingClientRect();
+      if (!field.inView) {
+        if (field.px > FAR + 1) {
+          field.px = FAR;
+          field.py = FAR;
+          activated = true;
+        }
+        return;
+      }
+      if (field.dirty || !field.rect) {
+        field.rect = field.heading.getBoundingClientRect();
+        field.dirty = false;
+      }
+      const rect = field.rect;
       const r = field.radius;
       const near =
-        e.clientX >= rect.left - r && e.clientX <= rect.right + r &&
-        e.clientY >= rect.top - r && e.clientY <= rect.bottom + r;
+        lastPointerX >= rect.left - r && lastPointerX <= rect.right + r &&
+        lastPointerY >= rect.top - r && lastPointerY <= rect.bottom + r;
       if (near) {
-        const k = rect.width ? field.heading.offsetWidth / rect.width : 1;
-        field.px = (e.clientX - rect.left) * k;
-        field.py = (e.clientY - rect.top) * k;
+        const k = rect.width ? field.width / rect.width : 1;
+        field.px = (lastPointerX - rect.left) * k;
+        field.py = (lastPointerY - rect.top) * k;
         field.active = true;
         activated = true;
       } else if (field.px > FAR + 1) {
@@ -6903,6 +6993,12 @@ if (!reducedMotion) {
       }
     });
     if (activated) kick();
+  };
+
+  window.addEventListener('pointermove', (e) => {
+    lastPointerX = e.clientX;
+    lastPointerY = e.clientY;
+    if (!moveRaf) moveRaf = window.requestAnimationFrame(processPointerMove);
   }, { passive: true });
 
   const resetPointers = () => {
@@ -6951,12 +7047,24 @@ if (!reducedMotion) {
 (() => {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  let lgRaf = 0;
+  let pendingCard = null;
+  let pendingX = 0;
+  let pendingY = 0;
+  const applySheen = () => {
+    lgRaf = 0;
+    if (!pendingCard || !pendingCard.isConnected) return;
+    const rect = pendingCard.getBoundingClientRect();
+    pendingCard.style.setProperty('--lg-x', `${(pendingX - rect.left).toFixed(1)}px`);
+    pendingCard.style.setProperty('--lg-y', `${(pendingY - rect.top).toFixed(1)}px`);
+  };
   document.addEventListener('pointermove', (e) => {
     const card = e.target instanceof Element ? e.target.closest('.service-card, .contact-form, .review-card') : null;
     if (!card) return;
-    const rect = card.getBoundingClientRect();
-    card.style.setProperty('--lg-x', `${(e.clientX - rect.left).toFixed(1)}px`);
-    card.style.setProperty('--lg-y', `${(e.clientY - rect.top).toFixed(1)}px`);
+    pendingCard = card;
+    pendingX = e.clientX;
+    pendingY = e.clientY;
+    if (!lgRaf) lgRaf = window.requestAnimationFrame(applySheen);
   }, { passive: true });
 })();
 
