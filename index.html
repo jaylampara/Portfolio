@@ -245,6 +245,12 @@ html[data-theme="light"] .portrait-burst img { border-color: rgba(13,127,102,.6)
 body:has(.showreel-modal.is-open, .resume-modal.is-open, .contact-modal.is-open, .lightbox:not([hidden]), .portrait-burst:not([hidden])) .clients-track,
 body:has(.showreel-modal.is-open, .resume-modal.is-open, .contact-modal.is-open, .lightbox:not([hidden]), .portrait-burst:not([hidden])) .reviews-track,
 body:has(.showreel-modal.is-open, .resume-modal.is-open, .contact-modal.is-open, .lightbox:not([hidden]), .portrait-burst:not([hidden])) .marquee-track { animation-play-state: paused; }
+body:has(.lightbox:not([hidden])) .showreel-modal,
+body:has(.lightbox:not([hidden])) .showreel-dialog,
+body:has(.lightbox:not([hidden])) .showreel-sticky-head {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
 @media (max-width: 570px) { .reviews-section { padding-block: 19px 21px; } .review-card { width: 286px; } }
 
 .marquee-section { overflow: hidden; padding-block: 27px; border-block: 1px solid var(--line); }
@@ -452,7 +458,9 @@ html[data-theme="light"] .showreel-backdrop { background: rgba(233,237,230,.79);
 html[data-theme="light"] .showreel-backdrop::after { content: none; }
 html[data-theme="light"] .showreel-dialog { background: #fbfbf9; border-color: rgba(13,127,102,.32); box-shadow: 0 28px 100px rgba(20,30,24,.3), 0 0 0 1px rgba(97,134,0,.08) inset; }
 html[data-theme="light"] .showreel-dialog::before { background: linear-gradient(90deg, var(--acid), var(--cyan), transparent 70%); }
+html[data-theme="light"] .showreel-sticky-head { background: rgba(251, 251, 249, .94); }
 html[data-theme="light"] .showreel-dialog-bar { border-bottom-color: var(--line); background: linear-gradient(90deg, rgba(97,134,0,.08), transparent 45%); }
+html[data-theme="light"] .showreel-tabs { border-bottom-color: var(--line); }
 html[data-theme="light"] .showreel-kicker { color: var(--acid); }
 html[data-theme="light"] .showreel-dialog-bar h2 { color: #101712; }
 html[data-theme="light"] .showreel-close { color: #3c4842; border-color: rgba(10,30,20,.25); }
@@ -473,7 +481,8 @@ html[data-theme="light"] .showreel-mute:hover, html[data-theme="light"] .showree
 .showreel-dialog { width: min(620px, 100%); max-height: min(86vh, 760px); position: relative; z-index: 1; overflow: hidden auto; scrollbar-gutter: stable; display: flex; flex-direction: column; background: #0c0f0e; border: 1px solid rgba(150,255,218,.38); box-shadow: 0 28px 100px rgba(0,0,0,.67), 0 0 0 1px rgba(200,255,52,.06) inset; transform: translateY(23px) scale(.982); transition: transform .34s cubic-bezier(.2,.72,.22,1); }
 .showreel-modal.is-open .showreel-dialog { transform: translateY(0) scale(1); }
 .showreel-dialog::before { content: ''; height: 2px; position: absolute; top: 0; left: 0; width: 100%; background: linear-gradient(90deg, #c8ff34, #6fffd4, transparent 70%); }
-.showreel-dialog-bar { padding: 18px 20px 16px; display: flex; align-items: center; justify-content: space-between; gap: 18px; border-bottom: 1px solid rgba(218,250,242,.14); flex-shrink: 0; }
+.showreel-sticky-head { position: sticky; top: 0; z-index: 12; flex-shrink: 0; background: rgba(12, 15, 14, .92); -webkit-backdrop-filter: blur(14px) saturate(160%); backdrop-filter: blur(14px) saturate(160%); }
+.showreel-dialog-bar { padding: 18px 20px 16px; display: flex; align-items: center; justify-content: space-between; gap: 18px; border-bottom: 1px solid rgba(218,250,242,.14); }
 .showreel-kicker { color: #c8ff34; font: 8px var(--mono); letter-spacing: .12em; }
 .showreel-dialog-bar h2 { font: 500 19px var(--display); margin: 5px 0 0; letter-spacing: -.045em; color: #eef4ef; }
 .showreel-close { color: #cbd8d2; border: 1px solid rgba(218,250,242,.22); background: transparent; min-height: 34px; padding: 0 10px; display: inline-flex; align-items: center; gap: 8px; font: 9px var(--mono); cursor: pointer; transition: .2s ease; flex-shrink: 0; }
@@ -481,7 +490,7 @@ html[data-theme="light"] .showreel-mute:hover, html[data-theme="light"] .showree
 .showreel-close span { color: #c8ff34; font: 15px var(--display); }
 .showreel-close:hover span { color: inherit; }
 .showreel-videos { padding: 18px 20px 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.showreel-tabs { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 14px 20px 0; flex-shrink: 0; border-bottom: 1px solid transparent; }
+.showreel-tabs { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 12px 20px; border-bottom: 1px solid rgba(218,250,242,.12); }
 .showreel-tabs[hidden] { display: none; }
 .showreel-tab { color: #cbd8d2; border: 1px solid rgba(218,250,242,.22); background: transparent; min-height: 34px; padding: 0 13px; display: inline-flex; align-items: center; gap: 6px; font: 9px var(--mono); letter-spacing: .08em; cursor: pointer; transition: .2s ease; }
 .showreel-tab span { color: rgba(200,255,52,.55); }
@@ -495,10 +504,13 @@ html[data-theme="light"] .showreel-mute:hover, html[data-theme="light"] .showree
 .showreel-ext b { color: var(--acid); font-weight: normal; font-size: 15px; }
 .showreel-ext:hover { border-color: rgba(200,255,52,.5); }
 html[data-theme="light"] .showreel-ext { color: #10161a; background: #e2e6df; border-color: rgba(10,30,20,.22); }
-/* Auto-scrolling & nav-clicking live website preview for .txt site links */
+/* Website preview cards (video preview & local HTML file) */
 .showreel-videos .showreel-item[data-shape]:has(.showreel-web) { min-height: 240px; }
 .showreel-web { position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; min-height: 100%; background: #0a100e; border: 1px solid rgba(218,250,242,.18); border-radius: inherit; overflow: hidden; text-align: left; }
-.showreel-web.is-lightbox { width: min(1024px, calc(100vw - 48px)); aspect-ratio: 16/10; height: auto; max-height: calc(100vh - 180px); min-height: 0; border-radius: 12px; pointer-events: auto; box-shadow: 0 24px 90px rgba(0,0,0,.65); }
+.showreel-web.is-lightbox { width: min(1160px, calc(100vw - 140px)); height: min(78vh, 720px); aspect-ratio: auto; min-height: 0; border-radius: 12px; pointer-events: auto; box-shadow: 0 24px 90px rgba(0,0,0,.65); }
+@media (max-width: 809px) {
+  .showreel-web.is-lightbox { width: calc(100vw - 32px); height: min(78vh, 680px); }
+}
 .showreel-web-bar { position: relative; z-index: 4; display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: #101815; border-bottom: 1px solid rgba(218,250,242,.12); flex-shrink: 0; }
 .showreel-web-dots { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 .showreel-web-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(218,250,242,.26); display: block; }
@@ -506,34 +518,26 @@ html[data-theme="light"] .showreel-ext { color: #10161a; background: #e2e6df; bo
 .showreel-web-dots i:nth-child(2) { background: #ffbd2e; }
 .showreel-web-dots i:nth-child(3) { background: #27c93f; }
 .showreel-web-url { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,.05); border: 1px solid rgba(218,250,242,.1); color: #cde0d7; font: 9px var(--mono); letter-spacing: .04em; }
-.showreel-web-open,
-.showreel-web-expand,
-.showreel-web-mode { flex-shrink: 0; padding: 3px 8px; border-radius: 999px; border: 1px solid rgba(200,255,52,.45); background: rgba(200,255,52,.12); color: var(--acid); font: 8px var(--mono); letter-spacing: .08em; text-decoration: none; cursor: pointer; transition: .18s ease; }
-.showreel-web-open:hover,
-.showreel-web-expand:hover,
-.showreel-web-mode:hover,
-.showreel-web-mode[aria-pressed="true"] { background: var(--acid); color: #071008; border-color: var(--acid); }
-.showreel-web-expand,
-.showreel-web-mode { border-color: rgba(218,250,242,.24); background: rgba(255,255,255,.06); color: #d8e7e0; }
-.showreel-web.is-lightbox .showreel-web-expand,
-.showreel-web.is-lightbox .showreel-web-mode,
-.showreel-web.is-lightbox .showreel-web-nav { display: none; }
+.showreel-web-devices { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border-radius: 999px; background: rgba(255,255,255,.05); border: 1px solid rgba(218,250,242,.12); flex-shrink: 0; }
+.showreel-web-device-btn { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border: 0; border-radius: 999px; background: transparent; color: #9db0a7; font: 8px var(--mono); letter-spacing: .06em; text-transform: uppercase; cursor: pointer; transition: background .18s ease, color .18s ease; }
+.showreel-web-device-btn svg { width: 12px; height: 12px; display: block; flex-shrink: 0; }
+.showreel-web-device-btn:hover { color: #eef5f1; background: rgba(255,255,255,.07); }
+.showreel-web-device-btn.is-active { background: var(--acid); color: #071008; }
+@media (max-width: 640px) {
+  .showreel-web-device-btn { padding: 4px 6px; }
+  .showreel-web-device-btn span { display: none; }
+}
+.showreel-web-open { flex-shrink: 0; padding: 3px 8px; border-radius: 999px; border: 1px solid rgba(200,255,52,.45); background: rgba(200,255,52,.12); color: var(--acid); font: 8px var(--mono); letter-spacing: .08em; text-decoration: none; cursor: pointer; transition: .18s ease; }
+.showreel-web-open:hover { background: var(--acid); color: #071008; border-color: var(--acid); }
 .showreel-web:not(.is-lightbox) .showreel-web-open { display: none; }
-.showreel-web-nav { position: relative; z-index: 4; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 10px; background: rgba(14,21,18,.96); border-bottom: 1px solid rgba(218,250,242,.08); flex-shrink: 0; }
-.showreel-web-brand { color: #eef5f1; font: 700 9px var(--mono); letter-spacing: .12em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 32%; }
-.showreel-web-links { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
-.showreel-web-links::-webkit-scrollbar { display: none; }
-.showreel-web-nav-btn { position: relative; border: 1px solid transparent; background: transparent; color: #9db0a7; font: 8px var(--mono); letter-spacing: .06em; padding: 3px 7px; border-radius: 999px; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: color .2s ease, background .2s ease, border-color .2s ease, transform .15s ease; }
-.showreel-web-nav-btn:hover { color: #edf5f1; background: rgba(255,255,255,.06); }
-.showreel-web-nav-btn.is-active { color: #071008; background: var(--acid); border-color: var(--acid); }
-.showreel-web-nav-btn.is-clicked { transform: scale(.91); }
 .showreel-web-stage { position: relative; flex: 1; min-height: 0; overflow: hidden; background: #0c1310; }
-.showreel-web-scroll { position: relative; width: 100%; transition: transform 3.1s cubic-bezier(.37, 0, .63, 1); }
-.showreel-web-scroll.is-instant { transition: transform .55s cubic-bezier(.22, 1, .36, 1); }
-.showreel-web.is-interactive .showreel-web-scroll { height: 100% !important; transform: none !important; transition: none; }
+.showreel-web.is-lightbox .showreel-web-stage { display: flex; justify-content: center; align-items: stretch; background: #060a09; }
+.showreel-web-viewport { position: relative; width: 100%; height: 100%; overflow: hidden; background: #0b0d10; transition: width .24s cubic-bezier(.22, 1, .36, 1); }
+.showreel-web-viewport.is-framed { border-inline: 1px solid rgba(218,250,242,.22); box-shadow: 0 12px 42px rgba(0,0,0,.55); }
 .showreel-videos.is-gallery .showreel-item[data-shape] .showreel-web iframe.showreel-web-frame,
 .showreel-videos.auto-orient .showreel-item[data-shape] .showreel-web iframe.showreel-web-frame,
-.showreel-web.is-lightbox iframe.showreel-web-frame {
+.showreel-web iframe.showreel-web-frame {
+  display: none;
   position: absolute;
   top: 0;
   left: 0;
@@ -547,45 +551,60 @@ html[data-theme="light"] .showreel-ext { color: #10161a; background: #e2e6df; bo
   pointer-events: none;
   background: #fff;
 }
-.showreel-videos.is-gallery .showreel-item[data-shape] .showreel-web.is-interactive iframe.showreel-web-frame,
-.showreel-videos.auto-orient .showreel-item[data-shape] .showreel-web.is-interactive iframe.showreel-web-frame,
-.showreel-item[data-expandable] .showreel-web.is-interactive iframe.showreel-web-frame,
-.showreel-web.is-interactive iframe.showreel-web-frame,
-.showreel-web.is-lightbox iframe.showreel-web-frame {
-  pointer-events: auto;
+.showreel-videos.is-gallery .showreel-item[data-shape] .showreel-web video.showreel-web-video,
+.showreel-videos.auto-orient .showreel-item[data-shape] .showreel-web video.showreel-web-video,
+.showreel-web video.showreel-web-video {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: cover;
+  object-position: top center;
+  background: #0c1310;
+}
+.showreel-videos.is-gallery .showreel-item[data-shape] .showreel-web.is-lightbox video.showreel-web-video,
+.showreel-videos.auto-orient .showreel-item[data-shape] .showreel-web.is-lightbox video.showreel-web-video,
+.showreel-web.is-lightbox video.showreel-web-video { display: none; }
+.showreel-videos.is-gallery .showreel-item[data-shape] .showreel-web.is-html-preview iframe.showreel-web-frame,
+.showreel-videos.auto-orient .showreel-item[data-shape] .showreel-web.is-html-preview iframe.showreel-web-frame,
+.showreel-item[data-expandable] .showreel-web.is-html-preview iframe.showreel-web-frame,
+.showreel-web.is-html-preview iframe.showreel-web-frame {
+  display: block;
   width: var(--web-vw, 1440px);
   height: calc(100% / var(--web-scale, .265));
+}
+.showreel-web.is-lightbox .showreel-web-viewport iframe.showreel-web-frame,
+.showreel-web.is-lightbox iframe.showreel-web-frame {
+  display: block;
+  pointer-events: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: 0 0;
+  transform: none;
 }
 .showreel-web-activate { position: absolute; inset: 0; z-index: 3; display: grid; place-items: end center; padding: 10px; border: 0; background: transparent; cursor: pointer; }
 .showreel-web-activate span { padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(200,255,52,.5); background: rgba(7,16,8,.82); color: var(--acid); font: 8px var(--mono); letter-spacing: .09em; opacity: 0; transform: translateY(4px); transition: opacity .2s ease, transform .2s ease; }
 .showreel-web-activate:hover span,
 .showreel-web-activate:focus-visible span { opacity: 1; transform: translateY(0); }
-.showreel-web.is-interactive .showreel-web-activate,
-.showreel-web.is-lightbox .showreel-web-activate,
-.showreel-web.is-interactive .showreel-web-cursor { display: none; }
-.showreel-item:has(.showreel-web.is-interactive) { transform: none !important; }
+.showreel-web.is-lightbox .showreel-web-activate { display: none; }
 .showreel-web-loading { position: absolute; inset: 0; z-index: 2; display: grid; place-content: center; gap: 6px; text-align: center; padding: 14px; background: rgba(10,16,14,.86); color: #b7cbc1; font: 9px var(--mono); letter-spacing: .09em; pointer-events: none; transition: opacity .3s ease; }
 .showreel-web-loading[hidden] { display: none; }
 .showreel-web-loading b { color: var(--acid); font-weight: normal; font-size: 10px; }
-.showreel-web-cursor { position: absolute; left: 0; top: 0; z-index: 6; width: 14px; height: 18px; pointer-events: none; transform: translate3d(55%, 55%, 0); transition: transform .62s cubic-bezier(.22, 1, .36, 1), opacity .25s ease; filter: drop-shadow(0 3px 6px rgba(0,0,0,.65)); }
-.showreel-web-cursor svg { display: block; width: 100%; height: 100%; }
-.showreel-web-cursor::after { content: ''; position: absolute; left: -5px; top: -5px; width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--acid); opacity: 0; transform: scale(.35); }
-.showreel-web-cursor.is-clicking svg { transform: scale(.84); }
-.showreel-web-cursor.is-clicking::after { animation: web-cursor-ripple .42s ease-out forwards; }
-@keyframes web-cursor-ripple {
-  0% { opacity: .95; transform: scale(.35); }
-  100% { opacity: 0; transform: scale(1.75); }
-}
-.showreel-web.is-paused .showreel-web-cursor { opacity: .25; }
 html[data-theme="light"] .showreel-web { background: #f2f5f1; border-color: rgba(10,30,20,.22); }
 html[data-theme="light"] .showreel-web-bar { background: #e3e8e1; border-bottom-color: rgba(10,30,20,.14); }
 html[data-theme="light"] .showreel-web-url { background: rgba(255,255,255,.78); border-color: rgba(10,30,20,.14); color: #203028; }
-html[data-theme="light"] .showreel-web-nav { background: #edf1eb; border-bottom-color: rgba(10,30,20,.1); }
-html[data-theme="light"] .showreel-web-brand { color: #101712; }
-html[data-theme="light"] .showreel-web-nav-btn { color: #46574f; }
-html[data-theme="light"] .showreel-web-nav-btn:hover { color: #101712; background: rgba(10,30,20,.06); }
-html[data-theme="light"] .showreel-web-nav-btn.is-active { color: #f2f5f1; }
+html[data-theme="light"] .showreel-web-devices { background: rgba(10,30,20,.05); border-color: rgba(10,30,20,.14); }
+html[data-theme="light"] .showreel-web-device-btn { color: #46574f; }
+html[data-theme="light"] .showreel-web-device-btn:hover { color: #101712; background: rgba(10,30,20,.06); }
+html[data-theme="light"] .showreel-web-device-btn.is-active { background: var(--acid); color: #f2f5f1; }
 html[data-theme="light"] .showreel-web-stage { background: #eef2ec; }
+html[data-theme="light"] .showreel-web.is-lightbox .showreel-web-stage { background: #dfe5de; }
+html[data-theme="light"] .showreel-web-viewport.is-framed { border-inline-color: rgba(10,30,20,.18); }
 html[data-theme="light"] .showreel-web-loading { background: rgba(238,242,236,.9); color: #36453d; }
 .showreel-videos.auto-orient { grid-template-columns: repeat(3, 1fr); align-items: stretch; grid-auto-flow: dense; gap: 8px; }
 .art-commerce[data-waves-open], .art-editorial[data-archive-open] { cursor: pointer; }
@@ -3161,6 +3180,7 @@ const silencePageMedia = (except = null) => {
   /* Drive's preview player has no scriptable mute/pause API, so reload its tiles to a
      blank frame while a full view is open and restore their source on close */
   parkDriveTiles(except);
+  deactivateOtherWebPreviews?.(null);
   parkWebPreviewTiles(document.querySelector('.showreel-modal.is-open') || document);
   document.querySelectorAll('.showreel-item iframe').forEach((frame) => {
     if (frame !== except && frame.dataset.sound === 'on') {
@@ -3240,6 +3260,9 @@ const restoreParkedDriveTiles = () => {
   });
 };
 const parkWebPreviewTiles = (scope = document) => {
+  scope.querySelectorAll('.showreel-item video.showreel-web-video').forEach((video) => {
+    video.pause();
+  });
   scope.querySelectorAll('.showreel-item .showreel-web-frame').forEach((frame) => {
     const current = frame.getAttribute('src');
     if (frame.dataset.parkedWebSrc) return;
@@ -3256,7 +3279,13 @@ const restoreParkedWebPreviewTiles = (scope = document) => {
   scope.querySelectorAll('.showreel-item .showreel-web-frame[data-parked-web-src]').forEach((frame) => {
     const parked = frame.dataset.parkedWebSrc;
     delete frame.dataset.parkedWebSrc;
-    if (parked) enqueueWebFrameLoad(frame, parked);
+    if (parked) frame.src = parked;
+  });
+  scope.querySelectorAll('.showreel-item .showreel-web.has-video video.showreel-web-video').forEach((video) => {
+    const ownerModal = video.closest('.showreel-modal');
+    if (lightbox.hidden && (!ownerModal || !ownerModal.hidden)) {
+      video.play().catch(() => {});
+    }
   });
 };
 
@@ -3552,9 +3581,10 @@ const openLightbox = (media, { keepPlaylist = false } = {}) => {
     lightboxTimeNow.textContent = formatVideoTime(embedStart);
     lightboxTimeEnd.textContent = formatVideoTime(state?.duration || 0) || '0:00';
   } else if (media.classList?.contains('showreel-web')) {
-    const activeHref = media.dataset.href || media._webEntry?.href;
+    const webEntry = media._webEntry || {};
+    const activeHref = media.dataset.href || webEntry.href || webEntry.htmlFile;
     const fullPreview = createWebsitePreview(
-      { ...(media._webEntry || {}), href: activeHref, pages: [{ href: activeHref, label: media._webEntry?.label }] },
+      { ...webEntry, href: activeHref, pages: [{ href: activeHref, label: webEntry.label }] },
       { expanded: true }
     );
     fullPreview.classList.add('is-lightbox');
@@ -3931,182 +3961,151 @@ window.addEventListener('message', (event) => {
 /* one item builder serves every modal — photos, videos, YouTube/Vimeo embeds, OPEN cards;
    chipFallback is the label under tiles without their own, and the owning modal's click
    handler drives the ♪ button */
-const webNavRequests = new Map();
+/* Simplified website preview helper (accepts video preview + HTML file, with optional paired URL) */
+const deactivateOtherWebPreviews = () => {};
 
-const formatWebDisplayUrl = (rawUrl) => {
-  try {
-    const u = new URL(rawUrl);
-    return `${u.hostname.replace(/^www\./, '')}${u.pathname === '/' ? '' : u.pathname}${u.hash || ''}`;
-  } catch (error) {
-    return rawUrl;
+const isHtmlAssetUrl = (value) => /\.html?(?:[?#]|$)/i.test(String(value || ''));
+
+const resolveAbsoluteWebHref = (rawHref) => {
+  try { return new URL(rawHref, window.location.href).href; } catch (error) { return String(rawHref || '#'); }
+};
+
+const formatWebsiteComDomain = (rawName) => {
+  const trimmed = String(rawName || '').trim();
+  if (!trimmed) return 'sample.website.com';
+  if (/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(trimmed)) {
+    const bare = trimmed.toLowerCase().replace(/^www\./, '');
+    return bare.startsWith('sample.') ? bare : `sample.${bare}`;
   }
+  const slug = trimmed
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '')
+    .slice(0, 32);
+  return `sample.${slug || 'website'}.com`;
 };
 
-const webBaseUrlNoHash = (rawUrl) => {
-  try {
-    const u = new URL(rawUrl);
-    return `${u.origin}${u.pathname}${u.search}`;
-  } catch (error) {
-    return String(rawUrl || '').split('#')[0];
-  }
+const localHtmlTitleCache = new Map();
+const localHtmlSourceCache = new Map();
+
+const buildTemporaryHtmlBlobUrl = (rawHtml, htmlPath) => {
+  const resolvedBase = resolveAbsoluteWebHref((htmlPath || window.location.href).split('#')[0]);
+  const baseTag = `<base href="${resolvedBase.replace(/"/g, '&quot;')}">`;
+  const injected = /<head\b[^>]*>/i.test(rawHtml)
+    ? rawHtml.replace(/<head\b([^>]*)>/i, `<head$1>${baseTag}`)
+    : `${baseTag}${rawHtml}`;
+  const blob = new Blob([injected], { type: 'text/html;charset=utf-8' });
+  return URL.createObjectURL(blob);
 };
 
-const navLabelFromUrl = (urlObj, baseNorm) => {
-  const cleanPath = urlObj.pathname.replace(/\/+$/, '') || '/';
-  const norm = `${urlObj.origin}${cleanPath}`;
-  const hash = (urlObj.hash || '').replace(/^#/, '');
-  if (norm === baseNorm && (!hash || /^top$/i.test(hash))) return 'Home';
-  const raw = hash || cleanPath.split('/').filter(Boolean).pop() || '';
-  if (!raw) return 'Home';
-  return raw
-    .replace(/\.[a-z0-9]+$/i, '')
-    .replace(/[-_]+/g, ' ')
-    .trim()
-    .replace(/\b\w/g, (ch) => ch.toUpperCase())
-    .slice(0, 24) || 'Page';
+const getTemporaryHtmlUrlSync = (htmlPath, fallbackSource = null) => {
+  const htmlKey = String(htmlPath || '').split('#')[0];
+  const rawHtml = typeof fallbackSource === 'string'
+    ? fallbackSource
+    : (localHtmlSourceCache.get(htmlKey) || localHtmlSourceCache.get(htmlPath));
+  return typeof rawHtml === 'string' ? buildTemporaryHtmlBlobUrl(rawHtml, htmlPath) : null;
 };
 
-const extractNavItemsFromMicrolink = (payload, baseUrl) => {
-  let baseObj;
-  try { baseObj = new URL(baseUrl); } catch (error) { return null; }
-  const rawNav = payload?.data?.nav;
-  if (!Array.isArray(rawNav)) return null;
-  const titleText = (payload?.data?.title || '').split(/[|\-–—·]/)[0].trim();
-  const baseNorm = `${baseObj.origin}${baseObj.pathname.replace(/\/+$/, '') || '/'}`;
-  const baseHostBare = baseObj.hostname.replace(/^www\./, '');
-  const seenKeys = new Set();
-  const seenLabels = new Set();
-  const items = [];
-  const skipPath = /\/(?:cart|checkout|account|login|register|search|wishlist|password|policies)(?:[/?#]|$)/i;
-
-  rawNav.forEach((rawHref) => {
-    if (items.length >= 6 || typeof rawHref !== 'string') return;
-    const trimmed = rawHref.trim();
-    if (!trimmed || trimmed === '#' || trimmed.endsWith('#') || /^(?:javascript|mailto|tel|sms):/i.test(trimmed)) return;
-    let resolved;
-    try { resolved = new URL(trimmed, baseUrl); } catch (error) { return; }
-    if (!/^https?:$/i.test(resolved.protocol)) return;
-    if (resolved.hostname.replace(/^www\./, '') !== baseHostBare) return;
-    if (skipPath.test(resolved.pathname)) return;
-    const cleanPath = resolved.pathname.replace(/\/+$/, '') || '/';
-    const cleanHash = /^#top$/i.test(resolved.hash) ? '' : resolved.hash;
-    const targetHref = (cleanHash === '' && /^#top$/i.test(resolved.hash)) ? baseObj.href : resolved.href;
-    const key = `${cleanPath}${resolved.search}${cleanHash}`;
-    const label = navLabelFromUrl(resolved, baseNorm);
-    if (!label || seenKeys.has(key) || seenLabels.has(label.toLowerCase())) return;
-    seenKeys.add(key);
-    seenLabels.add(label.toLowerCase());
-    items.push({ href: targetHref, label, displayUrl: formatWebDisplayUrl(targetHref) });
-  });
-
-  const hasRoot = items.some((it) => {
-    try {
-      const u = new URL(it.href);
-      return `${u.origin}${u.pathname.replace(/\/+$/, '') || '/'}` === baseNorm && !u.hash;
-    } catch (error) { return false; }
-  });
-  if (!hasRoot && items.length) {
-    items.unshift({ href: baseObj.href, label: 'Home', displayUrl: formatWebDisplayUrl(baseObj.href) });
-  }
-  return { title: titleText || null, items: items.slice(0, 6) };
+const createTemporaryHtmlUrl = async (htmlPath, fallbackSource = null) => {
+  const syncUrl = getTemporaryHtmlUrlSync(htmlPath, fallbackSource);
+  if (syncUrl) return syncUrl;
+  const htmlKey = String(htmlPath || '').split('#')[0];
+  const resolvedBase = resolveAbsoluteWebHref(htmlPath || window.location.href);
+  if (!htmlKey) return resolvedBase;
+  const response = await fetch(htmlKey);
+  if (!response.ok) return resolvedBase;
+  const rawHtml = await response.text();
+  localHtmlSourceCache.set(htmlKey, rawHtml);
+  return buildTemporaryHtmlBlobUrl(rawHtml, htmlPath);
 };
 
-const discoverWebsiteNav = (baseUrl) => {
-  const cacheKey = `web-nav:v2:${baseUrl}`;
-  try {
-    const cached = JSON.parse(window.sessionStorage.getItem(cacheKey) || 'null');
-    if (cached && Array.isArray(cached.items)) return Promise.resolve(cached);
-  } catch (error) { /* storage disabled */ }
-  if (webNavRequests.has(baseUrl)) return webNavRequests.get(baseUrl);
+const discoverLocalHtmlTitle = (htmlPath) => {
+  if (!htmlPath) return Promise.resolve(null);
+  const cleanPath = String(htmlPath).split('#')[0];
+  if (localHtmlTitleCache.has(cleanPath)) return localHtmlTitleCache.get(cleanPath);
   const req = (async () => {
-    const controller = new AbortController();
-    const timer = window.setTimeout(() => controller.abort(), 11000);
     try {
-      const endpoint = `https://api.microlink.io/?url=${encodeURIComponent(baseUrl)}&data.nav.selectorAll=header%20a%2Cnav%20a&data.nav.attr=href`;
-      const response = await fetch(endpoint, { signal: controller.signal });
-      if (!response.ok) return null;
-      const payload = await response.json();
-      const extracted = extractNavItemsFromMicrolink(payload, baseUrl);
-      if (!extracted || !extracted.items.length) return null;
-      try { window.sessionStorage.setItem(cacheKey, JSON.stringify(extracted)); } catch (error) { /* ignore */ }
-      return extracted;
+      let text = localHtmlSourceCache.get(cleanPath);
+      if (typeof text !== 'string') {
+        const response = await fetch(cleanPath);
+        if (!response.ok) return null;
+        text = await response.text();
+        localHtmlSourceCache.set(cleanPath, text);
+      }
+      const doc = new DOMParser().parseFromString(text, 'text/html');
+      const title = (doc.title || doc.querySelector('h1, h2')?.textContent || '').split(/[|\-–—·]/)[0].trim();
+      return title || null;
     } catch (error) {
       return null;
-    } finally {
-      window.clearTimeout(timer);
     }
   })();
-  webNavRequests.set(baseUrl, req);
+  localHtmlTitleCache.set(cleanPath, req);
   return req;
 };
 
-const webLoadQueue = [];
-let webLoadBusy = false;
-const drainWebLoadQueue = () => {
-  if (webLoadBusy || !webLoadQueue.length) return;
-  const next = webLoadQueue.shift();
-  if (!next) { drainWebLoadQueue(); return; }
-  const { frame, url } = next;
-  const ownerModal = frame.closest('.showreel-modal');
-  if (!frame.isConnected || frame.dataset.parkedWebSrc || frame.dataset.userActivated || (ownerModal && (ownerModal.hidden || !ownerModal.classList.contains('is-open')))) {
-    drainWebLoadQueue();
-    return;
+const LIGHTBOX_DEVICE_PRESETS = {
+  desktop: {
+    label: 'Desktop',
+    targetW: 1280,
+    nativeMinW: 1024,
+    icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="8.5" rx="1.2"/><path d="M5.5 13.5h5M8 11v2.5"/></svg>'
+  },
+  tablet: {
+    label: 'Tablet',
+    targetW: 768,
+    icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="1.5" width="10" height="13" rx="1.4"/><path d="M7.5 12h1"/></svg>'
+  },
+  mobile: {
+    label: 'Mobile',
+    targetW: 390,
+    icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="1.5" width="7" height="13" rx="1.4"/><path d="M7.5 12h1"/></svg>'
   }
-  webLoadBusy = true;
-  delete frame.dataset.queuedSrc;
-  let settled = false;
-  const finish = () => {
-    if (settled) return;
-    settled = true;
-    window.clearTimeout(timer);
-    webLoadBusy = false;
-    drainWebLoadQueue();
-  };
-  const timer = window.setTimeout(finish, 1200);
-  frame.addEventListener('load', finish, { once: true });
-  frame.addEventListener('error', finish, { once: true });
-  frame.src = url;
 };
-const enqueueWebFrameLoad = (frame, url) => {
-  if (!frame || !url) return;
-  for (let i = webLoadQueue.length - 1; i >= 0; i -= 1) {
-    if (webLoadQueue[i].frame === frame) webLoadQueue.splice(i, 1);
-  }
-  frame.dataset.queuedSrc = url;
-  webLoadQueue.push({ frame, url });
-  drainWebLoadQueue();
+
+const detectLightboxDeviceMode = () => {
+  const vw = window.innerWidth || document.documentElement.clientWidth || 1280;
+  if (vw <= 640) return 'mobile';
+  if (vw <= 1024) return 'tablet';
+  return 'desktop';
 };
 
 const createWebsitePreview = (entry, { expanded = false } = {}) => {
-  const baseHref = entry.href || entry.src || '#';
+  const externalHref = entry.externalHref || (entry.href && !isHtmlAssetUrl(entry.href) ? entry.href : null);
+  const htmlFile = entry.htmlFile || (entry.href && isHtmlAssetUrl(entry.href) ? entry.href : null);
+  const previewVideo = !expanded ? (entry.previewVideo || null) : null;
+  const isHtmlOnly = Boolean(!expanded && htmlFile && !previewVideo);
+  const baseHref = externalHref || htmlFile || entry.href || entry.src || '#';
   let parsedBase = null;
-  try { parsedBase = new URL(baseHref); } catch (error) { /* non-URL fallback */ }
-  const host = parsedBase ? parsedBase.hostname.replace(/^www\./, '') : 'website';
-  let brandTitle = (entry.label || host.split('.')[0] || 'Preview').toUpperCase();
+  if (externalHref) {
+    try { parsedBase = new URL(externalHref); } catch (error) { /* non-URL fallback */ }
+  }
+  const htmlLeaf = htmlFile ? safeDecodeShowcase(htmlFile.split('#')[0].split('/').filter(Boolean).pop() || 'preview.html') : '';
 
-  const rawPages = Array.isArray(entry.pages) && entry.pages.length ? entry.pages : [{ href: baseHref, label: entry.label }];
-  const explicitMulti = rawPages.length > 1;
-  const toStop = (page, idx) => {
-    const displayUrl = formatWebDisplayUrl(page.href);
-    const pathTail = displayUrl.split('/').filter(Boolean).pop() || '';
-    const fallbackLabel = idx === 0 ? host : pathTail.replace(/[-_]+/g, ' ').replace(/\.\w+$/, '').slice(0, 14) || `Page ${idx + 1}`;
-    return {
-      href: page.href,
-      label: page.label || fallbackLabel,
-      displayUrl
-    };
+  const resolveDisplayUrlLabel = (titleHint = null) => {
+    if (entry.label) return formatWebsiteComDomain(entry.label);
+    if (parsedBase) return parsedBase.hostname.replace(/^www\./, '');
+    const candidate = titleHint || htmlLeaf.replace(/\.html?$/i, '');
+    return formatWebsiteComDomain(candidate);
   };
+  let displayUrlLabel = entry.displayUrlLabel || resolveDisplayUrlLabel();
 
-  let stops = explicitMulti ? rawPages.slice(0, 6).map(toStop) : [toStop(rawPages[0], 0)];
+  const liveHref = htmlFile || baseHref;
+  const openHref = externalHref || (htmlFile ? resolveAbsoluteWebHref(htmlFile) : baseHref);
 
   const compactWeb = window.matchMedia('(max-width: 900px), (hover: none) and (pointer: coarse)').matches;
   const virtualW = compactWeb && !expanded ? 1100 : 1440;
   const virtualH = compactWeb && !expanded ? 1350 : 1800;
 
+  let activeDeviceMode = expanded ? detectLightboxDeviceMode() : null;
+  const deviceButtons = new Map();
+
   const web = document.createElement('div');
   web.className = 'showreel-web';
-  web.dataset.href = baseHref;
-  web._webEntry = entry;
+  if (isHtmlOnly) web.classList.add('is-html-preview');
+  if (previewVideo) web.classList.add('has-video');
+  if (expanded) web.dataset.device = activeDeviceMode;
+  web.dataset.href = liveHref;
+  web._webEntry = { ...entry, externalHref, htmlFile, previewVideo: entry.previewVideo || null, displayUrlLabel };
   web.style.setProperty('--web-vw', `${virtualW}px`);
   web.style.setProperty('--web-vh', `${virtualH}px`);
 
@@ -4118,99 +4117,202 @@ const createWebsitePreview = (entry, { expanded = false } = {}) => {
   dots.innerHTML = '<i></i><i></i><i></i>';
   const urlBar = document.createElement('span');
   urlBar.className = 'showreel-web-url';
-  urlBar.textContent = stops[0].displayUrl;
-  const expandBtn = document.createElement('button');
-  expandBtn.type = 'button';
-  expandBtn.className = 'showreel-web-expand';
-  expandBtn.setAttribute('aria-label', `Expand ${host} preview`);
-  expandBtn.textContent = 'EXPAND ⤢';
-  expandBtn.addEventListener('click', (event) => {
-    event.stopPropagation();
-    closeLightbox();
-    openLightbox(web);
-  });
-  const modeBtn = document.createElement('button');
-  modeBtn.type = 'button';
-  modeBtn.className = 'showreel-web-mode';
-  modeBtn.setAttribute('aria-pressed', String(Boolean(expanded)));
-  modeBtn.textContent = expanded ? 'AUTO ↻' : 'LIVE';
+  urlBar.textContent = displayUrlLabel;
   const openLink = document.createElement('a');
   openLink.className = 'showreel-web-open';
-  openLink.href = baseHref;
+  openLink.href = openHref;
   openLink.target = '_blank';
   openLink.rel = 'noopener noreferrer';
   openLink.textContent = 'OPEN ↗';
-  bar.append(dots, urlBar, modeBtn, expandBtn, openLink);
+  openLink.addEventListener('click', (event) => {
+    if (externalHref || !htmlFile) return;
+    if (window.location.protocol !== 'file:' && !event.altKey && !entry.blobPreview) return;
+    event.preventDefault();
+    const syncBlobUrl = getTemporaryHtmlUrlSync(htmlFile, entry.htmlSource);
+    if (syncBlobUrl) {
+      window.open(syncBlobUrl, '_blank', 'noopener');
+      return;
+    }
+    createTemporaryHtmlUrl(htmlFile, entry.htmlSource).then((blobUrl) => {
+      window.open(blobUrl, '_blank', 'noopener');
+    });
+  });
 
-  const nav = document.createElement('div');
-  nav.className = 'showreel-web-nav';
-  const brand = document.createElement('span');
-  brand.className = 'showreel-web-brand';
-  brand.textContent = brandTitle;
-  const navLinks = document.createElement('div');
-  navLinks.className = 'showreel-web-links';
-  nav.append(brand, navLinks);
+  if (expanded) {
+    const deviceToolbar = document.createElement('div');
+    deviceToolbar.className = 'showreel-web-devices';
+    deviceToolbar.setAttribute('role', 'group');
+    deviceToolbar.setAttribute('aria-label', 'Preview viewport size');
+    Object.entries(LIGHTBOX_DEVICE_PRESETS).forEach(([mode, meta]) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `showreel-web-device-btn${mode === activeDeviceMode ? ' is-active' : ''}`;
+      btn.dataset.device = mode;
+      btn.setAttribute('aria-label', `${meta.label} view`);
+      btn.setAttribute('title', `${meta.label} view`);
+      btn.setAttribute('aria-pressed', String(mode === activeDeviceMode));
+      btn.innerHTML = `${meta.icon}<span>${meta.label}</span>`;
+      btn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        if (activeDeviceMode === mode) return;
+        activeDeviceMode = mode;
+        syncLightboxDevice();
+      });
+      deviceButtons.set(mode, btn);
+      deviceToolbar.append(btn);
+    });
+    bar.append(dots, urlBar, deviceToolbar, openLink);
+  } else {
+    bar.append(dots, urlBar, openLink);
+  }
 
   const stage = document.createElement('div');
   stage.className = 'showreel-web-stage';
-  const scroller = document.createElement('div');
-  scroller.className = 'showreel-web-scroll';
 
   const frame = document.createElement('iframe');
   frame.className = 'showreel-web-frame';
-  frame.title = `${host} live preview`;
-  frame.loading = 'lazy';
+  frame.title = `${displayUrlLabel} live preview`;
+  frame.loading = (isHtmlOnly || expanded) ? 'eager' : 'lazy';
   frame.referrerPolicy = 'no-referrer';
-  frame.src = expanded ? stops[0].href : 'about:blank';
-  if (!expanded) frame.dataset.queuedSrc = stops[0].href;
+
+  const viewportEl = expanded ? document.createElement('div') : null;
+  if (viewportEl) {
+    viewportEl.className = 'showreel-web-viewport';
+    viewportEl.append(frame);
+  }
 
   const activateOverlay = document.createElement('button');
   activateOverlay.type = 'button';
   activateOverlay.className = 'showreel-web-activate';
-  activateOverlay.setAttribute('aria-label', `Click to navigate ${host} live site`);
+  activateOverlay.setAttribute('aria-label', `Open ${displayUrlLabel} live preview`);
   const activateHint = document.createElement('span');
-  activateHint.textContent = 'CLICK TO NAVIGATE LIVE SITE';
+  activateHint.textContent = 'OPEN LIVE PREVIEW';
   activateOverlay.append(activateHint);
 
   const loading = document.createElement('div');
   loading.className = 'showreel-web-loading';
   const loadingHost = document.createElement('b');
-  loadingHost.textContent = host.toUpperCase();
+  loadingHost.textContent = displayUrlLabel.toUpperCase();
   const loadingMsg = document.createElement('span');
-  loadingMsg.textContent = 'LOADING LIVE SITE …';
+  loadingMsg.textContent = expanded ? 'LOADING LIVE SITE …' : 'LOADING PREVIEW …';
   loading.append(loadingHost, loadingMsg);
 
-  scroller.append(frame);
-  stage.append(scroller, activateOverlay, loading);
+  let videoEl = null;
+  if (previewVideo) {
+    videoEl = document.createElement('video');
+    videoEl.className = 'showreel-web-video';
+    videoEl.muted = true;
+    videoEl.defaultMuted = true;
+    videoEl.autoplay = true;
+    videoEl.loop = true;
+    videoEl.playsInline = true;
+    videoEl.setAttribute('muted', '');
+    videoEl.setAttribute('autoplay', '');
+    videoEl.setAttribute('playsinline', '');
+    videoEl.setAttribute('webkit-playsinline', '');
+    videoEl.preload = 'metadata';
+    const hideVideoLoader = () => {
+      if (!web.isConnected || expanded) return;
+      loading.hidden = true;
+      videoEl.play().catch(() => {});
+    };
+    videoEl.addEventListener('loadeddata', hideVideoLoader);
+    videoEl.addEventListener('canplay', hideVideoLoader);
+    videoEl.addEventListener('error', () => {
+      web.classList.remove('has-video');
+      videoEl?.remove();
+      videoEl = null;
+      if (htmlFile) {
+        web.classList.add('is-html-preview');
+        frame.loading = 'eager';
+        frame.src = liveHref;
+      } else {
+        loadingMsg.textContent = 'PREVIEW UNAVAILABLE';
+      }
+    });
+    videoEl.src = previewVideo;
+  }
 
-  const cursor = document.createElement('div');
-  cursor.className = 'showreel-web-cursor';
-  cursor.setAttribute('aria-hidden', 'true');
-  cursor.innerHTML = '<svg viewBox="0 0 18 22" fill="none"><path d="M2 1.5L16 11.5L9.4 12.6L12.6 19.6L9.7 20.9L6.5 13.9L2 18.2V1.5Z" fill="#c8ff34" stroke="#071008" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+  const primaryStageNode = viewportEl || frame;
+  if (videoEl) stage.append(primaryStageNode, videoEl, activateOverlay, loading);
+  else stage.append(primaryStageNode, activateOverlay, loading);
 
-  web.append(bar, nav, stage, cursor);
+  web.append(bar, stage);
 
-  let navButtons = [];
-  let activeIndex = 0;
-  let currentFrameBase = webBaseUrlNoHash(stops[0].href);
-  let hasBootedFrame = Boolean(expanded);
-  let interactive = Boolean(expanded);
-  let paused = false;
-  let phase = 'scroll';
-  let scrollDown = true;
-  let scrollTimer = 0;
-  let clickTimer = 0;
+  function syncLightboxDevice() {
+    if (!expanded || !viewportEl) return;
+    web.dataset.device = activeDeviceMode;
+    deviceButtons.forEach((btn, mode) => {
+      const isSelected = mode === activeDeviceMode;
+      btn.classList.toggle('is-active', isSelected);
+      btn.setAttribute('aria-pressed', String(isSelected));
+    });
+    const stageW = stage.clientWidth || (window.innerWidth ? Math.max(280, window.innerWidth - 32) : 960);
+    const stageH = stage.clientHeight || 560;
+    if (activeDeviceMode === 'desktop') {
+      viewportEl.style.width = '100%';
+      viewportEl.classList.remove('is-framed');
+      if (stageW >= LIGHTBOX_DEVICE_PRESETS.desktop.nativeMinW) {
+        frame.style.width = '100%';
+        frame.style.height = '100%';
+        frame.style.transform = 'none';
+      } else {
+        const scale = stageW / LIGHTBOX_DEVICE_PRESETS.desktop.targetW;
+        frame.style.width = `${LIGHTBOX_DEVICE_PRESETS.desktop.targetW}px`;
+        frame.style.height = `${Math.ceil(stageH / scale)}px`;
+        frame.style.transform = `scale(${scale.toFixed(4)})`;
+      }
+    } else if (activeDeviceMode === 'tablet') {
+      const targetW = LIGHTBOX_DEVICE_PRESETS.tablet.targetW;
+      if (stageW >= targetW) {
+        const fillFull = stageW - targetW <= 16;
+        viewportEl.style.width = fillFull ? '100%' : `${targetW}px`;
+        viewportEl.classList.toggle('is-framed', !fillFull);
+        frame.style.width = '100%';
+        frame.style.height = '100%';
+        frame.style.transform = 'none';
+      } else {
+        viewportEl.style.width = '100%';
+        viewportEl.classList.remove('is-framed');
+        const scale = stageW / targetW;
+        frame.style.width = `${targetW}px`;
+        frame.style.height = `${Math.ceil(stageH / scale)}px`;
+        frame.style.transform = `scale(${scale.toFixed(4)})`;
+      }
+    } else {
+      const targetW = LIGHTBOX_DEVICE_PRESETS.mobile.targetW;
+      if (stageW <= 430) {
+        viewportEl.style.width = '100%';
+        viewportEl.classList.remove('is-framed');
+      } else {
+        viewportEl.style.width = `${targetW}px`;
+        viewportEl.classList.add('is-framed');
+      }
+      frame.style.width = '100%';
+      frame.style.height = '100%';
+      frame.style.transform = 'none';
+    }
+  }
 
   const syncScale = () => {
-    const w = stage.clientWidth || (expanded ? 960 : 380);
+    if (expanded) {
+      syncLightboxDevice();
+      return;
+    }
+    const w = stage.clientWidth || 380;
     const scale = Math.max(0.15, w / virtualW);
     web.style.setProperty('--web-scale', scale.toFixed(4));
-    scroller.style.height = interactive ? '100%' : `${Math.round(virtualH * scale)}px`;
   };
 
   let ro = null;
   if ('ResizeObserver' in window) {
-    ro = new ResizeObserver(syncScale);
+    ro = new ResizeObserver(() => {
+      if (!web.isConnected) {
+        ro.disconnect();
+        return;
+      }
+      syncScale();
+    });
     ro.observe(stage);
   }
 
@@ -4219,241 +4321,37 @@ const createWebsitePreview = (entry, { expanded = false } = {}) => {
     if (!currentSrc || currentSrc === 'about:blank') return;
     loading.hidden = true;
   });
-
-  const setScrollFrac = (frac, instant = false) => {
-    syncScale();
-    if (interactive) {
-      scroller.style.transform = '';
-      return;
-    }
-    scroller.classList.toggle('is-instant', instant);
-    const maxY = Math.max(0, scroller.scrollHeight - stage.clientHeight);
-    const y = Math.round(Math.max(0, Math.min(1, frac)) * maxY);
-    scroller.style.transform = `translate3d(0, -${y}px, 0)`;
-  };
-
-  const setInteractive = (on) => {
-    interactive = Boolean(on);
-    web.classList.toggle('is-interactive', interactive);
-    modeBtn.setAttribute('aria-pressed', String(interactive));
-    modeBtn.textContent = interactive ? 'AUTO ↻' : 'LIVE';
-    window.clearTimeout(scrollTimer);
-    window.clearTimeout(clickTimer);
-    cursor.classList.remove('is-clicking');
-    if (interactive) {
-      scroller.style.transform = '';
-      scroller.style.height = '100%';
-      web.closest('.showreel-item')?.style && (web.closest('.showreel-item').style.transform = '');
-      frame.dataset.userActivated = 'true';
-      const targetHref = (stops[activeIndex] && stops[activeIndex].href) || baseHref;
-      delete frame.dataset.parkedWebSrc;
-      delete frame.dataset.queuedSrc;
-      if (frame.getAttribute('src') !== targetHref) frame.src = targetHref;
-      try { frame.focus({ preventScroll: true }); } catch (error) { /* ignore */ }
-    } else {
-      syncScale();
-      activateStop(activeIndex, { immediate: true });
-    }
-  };
-
-  const moveCursorTo = (x, y) => {
-    cursor.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
-  };
-
-  const moveCursorToContent = () => {
-    const w = web.clientWidth || (expanded ? 900 : 380);
-    const h = web.clientHeight || (expanded ? 560 : 220);
-    moveCursorTo(w * 0.56, h * 0.68);
-  };
-
-  const moveCursorToButton = (btn) => {
-    const webRect = web.getBoundingClientRect();
-    const btnRect = btn.getBoundingClientRect();
-    if (webRect.width > 0 && btnRect.width > 0) {
-      moveCursorTo((btnRect.left - webRect.left) + btnRect.width * 0.55, (btnRect.top - webRect.top) + btnRect.height * 0.65);
-    } else {
-      moveCursorTo((web.clientWidth || 380) * 0.7, 42);
-    }
-  };
-
-  const activateStop = (idx, { immediate = false, userTrigger = false } = {}) => {
-    activeIndex = ((idx % stops.length) + stops.length) % stops.length;
-    const stop = stops[activeIndex];
-    navButtons.forEach((btn, i) => btn.classList.toggle('is-active', i === activeIndex));
-    navButtons[activeIndex]?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
-    urlBar.textContent = stop.displayUrl;
-    openLink.href = stop.href || baseHref;
-
-    const targetHref = stop.href || baseHref;
-    web.dataset.href = targetHref;
-    const targetBase = webBaseUrlNoHash(targetHref);
-    const sameBase = targetBase === currentFrameBase;
-    if (userTrigger) frame.dataset.userActivated = 'true';
-    if (frame.dataset.parkedWebSrc && !userTrigger) {
-      frame.dataset.parkedWebSrc = targetHref;
-    } else if (!hasBootedFrame && !userTrigger) {
-      hasBootedFrame = true;
-      currentFrameBase = targetBase;
-      enqueueWebFrameLoad(frame, targetHref);
-    } else if (frame.getAttribute('src') !== targetHref) {
-      hasBootedFrame = true;
-      delete frame.dataset.parkedWebSrc;
-      delete frame.dataset.queuedSrc;
-      currentFrameBase = targetBase;
-      frame.src = targetHref;
-    }
-
-    if (interactive) return;
-
-    const startPos = sameBase && stops.length > 1 ? Math.min(0.65, (activeIndex / stops.length) * 0.8) : 0;
-    const endPos = sameBase && stops.length > 1 ? Math.min(0.95, startPos + 0.35) : 0.88;
-    setScrollFrac(startPos, immediate);
-    window.clearTimeout(scrollTimer);
-    scrollTimer = window.setTimeout(() => {
-      if (web.isConnected && !interactive) setScrollFrac(endPos, false);
-    }, immediate ? 120 : 240);
-  };
-
-  const renderNavButtons = () => {
-    navButtons = stops.map((stop, idx) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = `showreel-web-nav-btn${idx === activeIndex ? ' is-active' : ''}`;
-      btn.textContent = stop.label;
-      btn.addEventListener('click', (event) => {
-        event.stopPropagation();
-        btn.classList.add('is-clicked');
-        window.setTimeout(() => btn.classList.remove('is-clicked'), 240);
-        activateStop(idx, { immediate: true, userTrigger: true });
-        if (!interactive) setScrollFrac(0, true);
-      });
-      navLinks.append(btn);
-      return btn;
-    });
-  };
-
-  renderNavButtons();
+  frame.src = (expanded || isHtmlOnly) ? liveHref : 'about:blank';
 
   activateOverlay.addEventListener('click', (event) => {
     event.stopPropagation();
-    setInteractive(true);
+    closeLightbox();
+    openLightbox(web);
   });
 
-  modeBtn.addEventListener('click', (event) => {
-    event.stopPropagation();
-    setInteractive(!interactive);
-  });
-
-  web.addEventListener('pointerenter', () => {
-    paused = true;
-    web.classList.add('is-paused');
-  });
-  web.addEventListener('pointerleave', () => {
-    paused = false;
-    web.classList.remove('is-paused');
-  });
-
-  if (!expanded && !explicitMulti) {
-    discoverWebsiteNav(baseHref).then((extracted) => {
-      if (!web.isConnected || !extracted) return;
-      if (extracted.title) {
-        brandTitle = extracted.title.toUpperCase();
-        brand.textContent = brandTitle;
-      }
-      if (extracted.items.length) {
-        stops = extracted.items;
-        activeIndex = 0;
-        navLinks.replaceChildren();
-        renderNavButtons();
-        urlBar.textContent = stops[0].displayUrl;
-        openLink.href = stops[0].href || baseHref;
+  if (htmlFile && !entry.label && !parsedBase && !entry.displayUrlLabel) {
+    discoverLocalHtmlTitle(htmlFile).then((title) => {
+      if (!web.isConnected) return;
+      if (title) {
+        displayUrlLabel = formatWebsiteComDomain(title);
+        urlBar.textContent = displayUrlLabel;
+        loadingHost.textContent = displayUrlLabel.toUpperCase();
+        frame.title = `${displayUrlLabel} live preview`;
+        activateOverlay.setAttribute('aria-label', `Open ${displayUrlLabel} live preview`);
+        if (web._webEntry) web._webEntry.displayUrlLabel = displayUrlLabel;
       }
     });
+  } else if (expanded && !externalHref && htmlFile && !getTemporaryHtmlUrlSync(htmlFile)) {
+    discoverLocalHtmlTitle(htmlFile);
   }
 
-  if (interactive) web.classList.add('is-interactive');
   requestAnimationFrame(() => {
     if (!web.isConnected) return;
-    syncScale();
-    moveCursorToContent();
-    activateStop(0, { immediate: true });
-    if (compactWeb && !expanded && 'IntersectionObserver' in window) {
-      const dialogRoot = web.closest('.showreel-dialog');
-      if (dialogRoot && !web._ioBound) {
-        web._ioBound = true;
-        let outOfViewTimer = 0;
-        const io = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (!web.isConnected) { io.disconnect(); return; }
-            if (entry.isIntersecting) {
-              window.clearTimeout(outOfViewTimer);
-              if (frame.dataset.parkedWebSrc && lightbox.hidden) {
-                const parked = frame.dataset.parkedWebSrc;
-                delete frame.dataset.parkedWebSrc;
-                loading.hidden = false;
-                enqueueWebFrameLoad(frame, parked);
-              }
-            } else {
-              window.clearTimeout(outOfViewTimer);
-              outOfViewTimer = window.setTimeout(() => {
-                if (!web.isConnected || interactive) return;
-                const cur = frame.getAttribute('src');
-                if (cur && cur !== 'about:blank' && !frame.dataset.parkedWebSrc) {
-                  frame.dataset.parkedWebSrc = cur;
-                  frame.src = 'about:blank';
-                  loading.hidden = false;
-                }
-              }, 800);
-            }
-          });
-        }, { root: dialogRoot, rootMargin: '120px 0px' });
-        io.observe(web);
-        web._io = io;
-      }
+    if (previewVideo && videoEl && videoEl.readyState >= 2) {
+      loading.hidden = true;
     }
+    syncScale();
   });
-
-  if (!expanded) {
-    const intervalId = window.setInterval(() => {
-      if (!web.isConnected) {
-        window.clearInterval(intervalId);
-        window.clearTimeout(scrollTimer);
-        window.clearTimeout(clickTimer);
-        ro?.disconnect();
-        web._io?.disconnect();
-        return;
-      }
-      const ownerModal = web.closest('.showreel-modal');
-      const curSrc = frame.getAttribute('src');
-      if (paused || interactive || !curSrc || curSrc === 'about:blank' || Boolean(frame.dataset.parkedWebSrc) || !lightbox.hidden || (ownerModal && (ownerModal.hidden || !ownerModal.classList.contains('is-open')))) return;
-      if (stops.length <= 1) {
-        scrollDown = !scrollDown;
-        setScrollFrac(scrollDown ? 0.88 : 0, false);
-        return;
-      }
-      if (phase === 'scroll') {
-        const nextIdx = (activeIndex + 1) % stops.length;
-        const nextBtn = navButtons[nextIdx];
-        if (nextBtn) moveCursorToButton(nextBtn);
-        phase = 'click';
-      } else if (phase === 'click') {
-        const nextIdx = (activeIndex + 1) % stops.length;
-        const nextBtn = navButtons[nextIdx];
-        cursor.classList.add('is-clicking');
-        nextBtn?.classList.add('is-clicked');
-        activateStop(nextIdx, { immediate: true });
-        window.clearTimeout(clickTimer);
-        clickTimer = window.setTimeout(() => {
-          cursor.classList.remove('is-clicking');
-          nextBtn?.classList.remove('is-clicked');
-          moveCursorToContent();
-        }, 420);
-        phase = 'dwell';
-      } else {
-        phase = 'scroll';
-      }
-    }, 2200);
-  }
 
   return web;
 };
@@ -4635,7 +4533,10 @@ const buildGraphicsItem = (entry, index, chipFallback = 'DESIGN') => {
 };/* ---------- folder-driven showcase engine (Conversion Engine, Graphics, Motion, Waves, Archive) ---------- */
 const SHOWCASE_IMAGE_EXTS = ['png', 'jpg', 'jpeg', 'webp', 'gif', 'avif', 'svg'];
 const SHOWCASE_VIDEO_EXTS = ['mp4', 'mov', 'webm'];
+const SHOWCASE_IMAGE_PATTERN = new RegExp(`\\.(${SHOWCASE_IMAGE_EXTS.join('|')})$`, 'i');
+const SHOWCASE_VIDEO_PATTERN = new RegExp(`\\.(${SHOWCASE_VIDEO_EXTS.join('|')})$`, 'i');
 const SHOWCASE_MEDIA_PATTERN = new RegExp(`\\.(${[...SHOWCASE_IMAGE_EXTS, ...SHOWCASE_VIDEO_EXTS].join('|')})$`, 'i');
+const SHOWCASE_HTML_PATTERN = /\.(?:html?)$/i;
 const safeDecodeShowcase = (value) => {
   try { return decodeURIComponent(value); } catch (error) { return value; }
 };
@@ -4781,21 +4682,119 @@ const listShowcaseDirectory = async (path) => {
 
 const showcaseCleanLabel = (name) => safeDecodeShowcase(name).replace(/\/$/, '').replace(/^\d+[\s._-]*/, '').trim() || 'Samples';
 
+const probeShowcaseHtml = async (href) => {
+  try {
+    const response = await fetch(href);
+    if (!response.ok) return null;
+    const ct = response.headers.get('Content-Type') || '';
+    if (ct && !/text\/html/i.test(ct)) return null;
+    const text = await response.text();
+    if (/data-showreel-open|data-clients/i.test(text)) return null;
+    localHtmlSourceCache.set(href, text);
+    return href;
+  } catch (error) {
+    return null;
+  }
+};
+
+const showcaseSlotBucket = (name) => {
+  const stem = safeDecodeShowcase(name || '').replace(/^.*\//, '').replace(/\.[^.]+$/, '').trim().toLowerCase();
+  const numMatch = stem.match(/\d+/);
+  return numMatch ? `num:${Number(numMatch[0])}` : `stem:${stem}`;
+};
+
+const bundleShowcaseEntries = (rawItems) => {
+  const buckets = new Map();
+  (rawItems || []).forEach((item) => {
+    if (!item) return;
+    const bucketKey = showcaseSlotBucket(item.name || item.file || item.htmlFile || '');
+    let bucket = buckets.get(bucketKey);
+    if (!bucket) {
+      bucket = { key: item.key ?? 99, htmlEntries: [], linkEntries: [], videoEntries: [], imageEntries: [] };
+      buckets.set(bucketKey, bucket);
+    }
+    bucket.key = Math.min(bucket.key, item.key ?? 99);
+    if (item.htmlFile) bucket.htmlEntries.push(item);
+    else if (item.link) bucket.linkEntries.push(item);
+    else if (item.file && SHOWCASE_VIDEO_PATTERN.test(safeDecodeShowcase(item.file))) bucket.videoEntries.push(item);
+    else if (item.file) bucket.imageEntries.push(item);
+  });
+
+  const bundled = [];
+  buckets.forEach((bucket) => {
+    const primaryHtml = bucket.htmlEntries[0] || null;
+    const primaryLink = bucket.linkEntries[0] || null;
+    const primaryVideo = bucket.videoEntries[0] || null;
+    const isWebLink = primaryLink?.link?.kind === 'link';
+    const canBundleWeb = Boolean(primaryHtml) || (isWebLink && Boolean(primaryVideo));
+
+    if (canBundleWeb) {
+      const htmlPath = primaryHtml ? primaryHtml.htmlFile : null;
+      const externalHref = isWebLink ? primaryLink.link.href : null;
+      const baseLink = primaryLink?.link || {
+        kind: 'link',
+        href: htmlPath,
+        label: null
+      };
+      const mergedLink = {
+        ...baseLink,
+        kind: 'link',
+        href: externalHref || htmlPath,
+        externalHref,
+        htmlFile: htmlPath,
+        previewVideo: primaryVideo ? primaryVideo.file : null
+      };
+      bundled.push({
+        link: mergedLink,
+        key: bucket.key,
+        name: primaryLink?.name || primaryHtml?.name || primaryVideo?.name || ''
+      });
+      bucket.htmlEntries.slice(1).forEach((extra) => bundled.push({
+        link: { kind: 'link', href: extra.htmlFile, htmlFile: extra.htmlFile, label: null },
+        key: extra.key,
+        name: extra.name
+      }));
+      bucket.linkEntries.slice(1).filter((extra) => extra?.link?.kind !== 'link').forEach((extra) => bundled.push(extra));
+      bucket.videoEntries.slice(1).forEach((extra) => bundled.push(extra));
+      bucket.imageEntries.forEach((extra) => bundled.push(extra));
+      return;
+    }
+
+    bucket.linkEntries.filter((entry) => entry?.link?.kind !== 'link').forEach((entry) => bundled.push(entry));
+    bucket.videoEntries.forEach((entry) => bundled.push(entry));
+    bucket.imageEntries.forEach((entry) => bundled.push(entry));
+  });
+
+  return bundled.sort((a, b) => (a.key - b.key) || String(a.name || '').localeCompare(String(b.name || ''), undefined, { numeric: true, sensitivity: 'base' }));
+};
+
 /* fallback scan when the server has no directory listing (e.g. file:// opening):
-   numbered photos / videos plus numbered 1.txt…12.txt link files, all in parallel */
+   numbered photos / videos / HTML files plus 1.txt…12.txt link files, bundled per slot */
 const probeShowcaseEntries = async (path) => {
   const jobs = Array.from({ length: 12 }, (_, slot) => {
     const target = slot + 1;
-    return (async () => {
-      for (const extension of [...SHOWCASE_IMAGE_EXTS, ...SHOWCASE_VIDEO_EXTS]) {
+    const probeFirstExt = async (exts) => {
+      for (const extension of exts) {
         const found = await probeSource(encodeShowcasePath(`${path}${target}.${extension}`));
         if (found) return { file: found, key: target, name: `${target}.${extension}` };
       }
+      return null;
+    };
+    const probeHtmlSlot = async () => {
+      for (const ext of ['html', 'htm']) {
+        const found = await probeShowcaseHtml(encodeShowcasePath(`${path}${target}.${ext}`));
+        if (found) return { htmlFile: found, key: target, name: `${target}.${ext}` };
+      }
+      return null;
+    };
+    const probeLinkSlot = async () => {
       const link = await readShowcaseLinkEntry(encodeShowcasePath(`${path}${target}.txt`));
       return link ? { link: await resolveLinkMedia(link), key: target, name: `${target}.txt` } : null;
-    })();
+    };
+    return Promise.all([probeFirstExt(SHOWCASE_IMAGE_EXTS), probeFirstExt(SHOWCASE_VIDEO_EXTS), probeHtmlSlot(), probeLinkSlot()]);
   });
-  return (await Promise.all(jobs)).filter(Boolean);
+  const nested = await Promise.all(jobs);
+  return bundleShowcaseEntries(nested.flat().filter(Boolean));
 };
 
 const showcaseMediaFromLinks = (links, base = '') => links
@@ -4978,9 +4977,11 @@ const createFolderShowcase = ({ key, folder, kicker, title }) => {
   modal.setAttribute('aria-hidden', 'true');
   modal.innerHTML = `<button class="showreel-backdrop" type="button" data-${key}-close aria-label="Close ${title} sample works"></button>`
     + `<div class="showreel-dialog" role="document" tabindex="-1">`
+    + `<div class="showreel-sticky-head">`
     + `<div class="showreel-dialog-bar"><div><span class="showreel-kicker">${kicker}</span><h2 id="${key}-title">Sample Works</h2></div>`
     + `<button class="showreel-close" type="button" data-${key}-close aria-label="Close ${title} sample works modal">Close <span>×</span></button></div>`
     + `<div class="showreel-tabs" role="tablist" aria-label="${title} sample works" hidden></div>`
+    + `</div>`
     + `<div class="showreel-videos auto-orient"><div class="showreel-empty">LOADING SAMPLE WORKS …</div></div></div>`;
   document.body.appendChild(modal);
 
@@ -5033,13 +5034,20 @@ const createFolderShowcase = ({ key, folder, kicker, title }) => {
         tab.entries = tab.needProbe ? await probeShowcaseEntries(tab.path) : [];
       } else {
         const mediaFiles = showcaseMediaFromLinks(links, tab.path);
-        const linkFiles = links.filter((href) => !SHOWCASE_MEDIA_PATTERN.test(href) && /\.txt$/i.test(href) && !/readme\.txt$/i.test(href));
+        const htmlFiles = links
+          .filter((href) => SHOWCASE_HTML_PATTERN.test(href) && !/^(?:index|readme)\.html?$/i.test(safeDecodeShowcase(href).replace(/^.*\//, '')))
+          .sort(showcaseCompare);
+        const linkFiles = links.filter((href) => !SHOWCASE_MEDIA_PATTERN.test(href) && !SHOWCASE_HTML_PATTERN.test(href) && /\.txt$/i.test(href) && !/readme\.txt$/i.test(href));
         const classified = await Promise.all(linkFiles.map(async (href) => {
           const link = await readShowcaseLinkEntry(encodeShowcasePath(tab.path + href));
           return link ? { link: await resolveLinkMedia(link), key: showcaseNumericKey(href), name: href } : null;
         }));
-        tab.entries = [...mediaFiles.map((src) => ({ file: src, key: showcaseNumericKey(src), name: safeDecodeShowcase(src).replace(/^.*\//, '') })), ...classified.filter(Boolean)]
-          .sort((a, b) => (a.key - b.key) || String(a.name || '').localeCompare(String(b.name || ''), undefined, { numeric: true, sensitivity: 'base' }));
+        const rawItems = [
+          ...mediaFiles.map((src) => ({ file: src, key: showcaseNumericKey(src), name: safeDecodeShowcase(src).replace(/^.*\//, '') })),
+          ...htmlFiles.map((href) => ({ htmlFile: encodeShowcasePath(tab.path + href), key: showcaseNumericKey(href), name: safeDecodeShowcase(href).replace(/^.*\//, '') })),
+          ...classified.filter(Boolean)
+        ];
+        tab.entries = bundleShowcaseEntries(rawItems);
       }
     }
     if (token !== renderToken) return;
@@ -5066,10 +5074,10 @@ const createFolderShowcase = ({ key, folder, kicker, title }) => {
     /* re-measure once the dialog's scrollbar exists, so 1:1 tiles stay square */
     requestAnimationFrame(() => requestAnimationFrame(() => layoutMosaicGallery(gallery)));
     gallery.querySelectorAll('video').forEach((video) => {
-      const isDrive = video.closest('.showreel-item')?.dataset.drive === 'true';
-      resumeVideoFromState(video, !isDrive);
-      if (isDrive) video.muted = true;
-      video.play().then(() => { resumeVideoFromState(video, !isDrive); if (isDrive) video.muted = true; }).catch(() => {});
+      const keepMuted = video.closest('.showreel-item')?.dataset.drive === 'true' || video.classList.contains('showreel-web-video');
+      resumeVideoFromState(video, !keepMuted);
+      if (keepMuted) video.muted = true;
+      video.play().then(() => { resumeVideoFromState(video, !keepMuted); if (keepMuted) video.muted = true; }).catch(() => {});
     });
   };
 
@@ -5208,6 +5216,7 @@ const createFolderShowcase = ({ key, folder, kicker, title }) => {
     stopAndMute();
     /* Drive players have no pause API — blank them so hidden tiles never keep speaking */
     parkDriveTiles();
+    deactivateOtherWebPreviews(null);
     parkWebPreviewTiles(modal);
     window.setTimeout(() => { modal.hidden = true; triggerEl?.focus?.({ preventScroll: true }); }, 240);
   };

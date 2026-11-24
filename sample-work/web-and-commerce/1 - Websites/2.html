@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KINETIX — Precision Biometrics. Engineered For Human Velocity.</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            obsidian: '#0B0D10',
+            charcoal: '#111315',
+            surface: '#161A1E',
+            lime: {
+              DEFAULT: '#C8FF00',
+              bright: '#D8FF4D',
+              deep: '#AEE600'
+            },
+            slateHud: '#8A929A'
+          },
+          fontFamily: {
+            sans: ['Space Grotesk', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      --bg-obsidian: #0B0D10;
+      --bg-charcoal: #111315;
+      --lime: #C8FF00;
+      --lime-bright: #D8FF4D;
+      --slate: #8A929A;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      background-color: var(--bg-obsidian);
+      color: #FFFFFF;
+      font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0B0D10;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #232830;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #C8FF00;
+    }
+
+    /* Full-Viewport Persistent Biometric Telemetry Canvas */
+    #telemetry-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      display: block;
+    }
+
+    /* Subtle Film Grain Overlay */
+    .noise-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.035;
+      background-image: radial-gradient(#FFFFFF 0.65px, transparent 0.65px);
+      background-size: 24px 24px;
+    }
+
+    /* Brand Boot Curtain Overlay (Connects directly to Kinetix Logo Animation) */
+    #boot-curtain {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background-color: #0B0D10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      will-change: transform, opacity;
+    }
+
+    .boot-ring {
+      position: absolute;
+      inset: -18%;
+      border-radius: 9999px;
+      border: 1px dashed rgba(200, 255, 0, 0.34);
+      opacity: 0;
+      transform: scale(0.74) rotate(-35deg);
+    }
+
+    /* High-contrast Telemetry Panels (no per-frame GPU backdrop blur over canvas) */
+    .hud-panel {
+      background: linear-gradient(155deg, rgba(22, 26, 30, 0.94) 0%, rgba(11, 13, 16, 0.97) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.52), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    .hud-panel-lime {
+      background: linear-gradient(155deg, rgba(24, 29, 22, 0.94) 0%, rgba(11, 13, 16, 0.98) 100%);
+      border: 1px solid rgba(200, 255, 0, 0.24);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.56), inset 0 1px 0 rgba(200, 255, 0, 0.12);
+    }
+
+    /* 3D Perspective Stage for Hero HUD Card */
+    .perspective-stage {
+      perspective: 1200px;
+    }
+
+    #hero-hud-card {
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: border-color 0.3s ease;
+    }
+
+    #hero-hud-card:hover {
+      border-color: rgba(200, 255, 0, 0.38);
+    }
+
+    .hud-depth-1 {
+      transform: translateZ(22px);
+    }
+
+    .hud-depth-2 {
+      transform: translateZ(38px);
+    }
+
+    /* Word-by-Word Blur Reveal Mask */
+    .word-mask {
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: bottom;
+      padding-bottom: 0.08em;
+      margin-bottom: -0.08em;
+    }
+
+    .word-reveal {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(105%);
+      will-change: transform, opacity;
+    }
+
+    /* Exploded 3D Monogram Schematic Layers (Scrollytelling Stage) */
+    .schematic-stage {
+      perspective: 1100px;
+    }
+
+    .schematic-cube {
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    .schematic-layer {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      will-change: transform, opacity;
+      pointer-events: none;
+    }
+
+    /* Mode Pill Switcher */
+    .mode-pill {
+      position: relative;
+      transition: color 0.25s ease, background-color 0.25s ease, border-color 0.25s ease;
+    }
+
+    .mode-pill.is-active {
+      background-color: rgba(200, 255, 0, 0.16);
+      border-color: rgba(200, 255, 0, 0.65);
+      color: #D8FF4D;
+    }
+
+    /* Magnetic Button */
+    .magnetic-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      will-change: transform;
+    }
+
+    /* Live Status Pulse */
+    @keyframes statusPulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.35); opacity: 1; }
+    }
+
+    .pulse-indicator {
+      animation: statusPulse 1.5s ease-in-out infinite;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .word-reveal {
+        opacity: 1 !important;
+        filter: none !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="selection:bg-lime selection:text-obsidian">
+  <!-- Persistent Interactive Biometric Telemetry Background Canvas -->
+  <canvas id="telemetry-canvas" aria-hidden="true"></canvas>
+  <div class="noise-overlay" aria-hidden="true"></div>
+
+  <!-- ========================================================================
+       1. BRAND BOOT CURTAIN (DIRECTLY CONNECTS TO KINETIX LOGO ANIMATION)
+       ======================================================================== -->
+  <div id="boot-curtain" role="dialog" aria-label="Kinetix Biometric System Initialization">
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 max-w-3xl w-full">
+      <!-- Geometric K Monogram -->
+      <div id="boot-emblem" class="relative w-28 sm:w-36 aspect-[176/180] flex items-center justify-center flex-shrink-0">
+        <div id="boot-ring" class="boot-ring"></div>
+        <svg viewBox="40 38 176 180" fill="none" class="w-full h-full overflow-visible">
+          <defs>
+            <linearGradient id="bootLimeGrad" x1="88" y1="52" x2="202" y2="204" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#D8FF4D" />
+              <stop offset="100%" stop-color="#AEE600" />
+            </linearGradient>
+          </defs>
+          <!-- Crosshair Reticle -->
+          <g id="boot-reticle" stroke="#2D333B" stroke-width="1.25" opacity="0">
+            <line x1="128" y1="40" x2="128" y2="50" />
+            <line x1="128" y1="206" x2="128" y2="216" />
+            <line x1="42" y1="128" x2="52" y2="128" />
+            <line x1="204" y1="128" x2="214" y2="128" />
+          </g>
+          <!-- Left Crisp White Stride Chevron -->
+          <path id="boot-chev-left" d="M62 54H98L114 128L98 202H62L78 128L62 54Z" fill="#FFFFFF" opacity="0" />
+          <!-- Right Electric Lime Biometric Chevron -->
+          <path id="boot-chev-right" d="M196 54H156L110 128L156 202H196L150 128L196 54Z" fill="url(#bootLimeGrad)" opacity="0" />
+          <!-- Sonar Shockwave Ring -->
+          <circle id="boot-shockwave" cx="114" cy="128" r="16" stroke="#C8FF00" stroke-width="2" fill="none" opacity="0" />
+          <!-- Central Biometric Pulse Node -->
+          <circle id="boot-cutout" cx="114" cy="128" r="16" fill="#0B0D10" opacity="0" />
+          <circle id="boot-dot" cx="114" cy="128" r="9.5" fill="#C8FF00" opacity="0" />
+        </svg>
+      </div>
+
+      <!-- Geometric Wordmark & Tagline -->
+      <div class="flex flex-col items-center sm:items-start text-center sm:text-left">
+        <div id="boot-wordmark" class="w-64 sm:w-80 opacity-0">
+          <svg viewBox="0 -2 360 60" fill="none" class="w-full h-auto">
+            <path d="M0 0H12V23L34 0H49L25 25L50 56H35L16 32L12 36V56H0V0Z" fill="#FFFFFF" />
+            <rect x="64" y="0" width="12" height="56" fill="#FFFFFF" />
+            <path d="M94 0H106L132 36V0H144V56H132L106 20V56H94V0Z" fill="#FFFFFF" />
+            <path d="M162 0H202V11H174V22H198V33H174V45H203V56H162V0Z" fill="#FFFFFF" />
+            <path d="M216 0H260V11H244V56H232V11H216V0Z" fill="#FFFFFF" />
+            <rect x="274" y="16" width="12" height="40" fill="#FFFFFF" />
+            <circle cx="280" cy="6" r="6.5" fill="#C8FF00" />
+            <path d="M302 0H316L330 20L344 0H358L337 28L359 56H345L330 36L315 56H301L323 28L302 0Z" fill="#FFFFFF" />
+          </svg>
+        </div>
+
+        <div id="boot-tagline" class="flex items-center gap-3 mt-3 opacity-0">
+          <span class="h-px w-8 bg-gradient-to-r from-transparent to-slateHud"></span>
+          <span class="font-mono text-[11px] sm:text-xs font-semibold tracking-[0.26em] text-zinc-200 uppercase">
+            TECH-ENABLED WELLNESS
+          </span>
+          <span class="h-px w-8 bg-gradient-to-l from-transparent to-slateHud"></span>
+        </div>
+
+        <div id="boot-status" class="mt-4 font-mono text-[11px] text-lime flex items-center gap-2 opacity-0">
+          <span class="w-1.5 h-1.5 rounded-full bg-lime pulse-indicator"></span>
+          <span id="boot-status-text">CALIBRATING BIOMETRIC TELEMETRY...</span>
+        </div>
+      </div>
+    </div>
+
+    <button
+      id="btn-skip-boot"
+      type="button"
+      class="fixed bottom-7 right-7 font-mono text-[11px] tracking-widest uppercase text-slateHud hover:text-lime transition-colors px-3 py-1.5 rounded-full border border-white/10 bg-charcoal/80 cursor-pointer"
+    >
+      Skip Boot [ESC]
+    </button>
+  </div>
+
+  <!-- ========================================================================
+       2. FLOATING GLASSMORPHIC NAVIGATION HEADER
+       ======================================================================== -->
+  <header class="fixed top-0 inset-x-0 z-40 px-4 sm:px-8 pt-4 sm:pt-5 pointer-events-none">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4 pointer-events-auto hud-panel rounded-full px-4 sm:px-6 py-2.5">
+      <!-- Brand Lockup -->
+      <a href="#top" class="flex items-center gap-3 group focus:outline-none">
+        <svg viewBox="40 38 176 180" fill="none" class="w-7 h-7 transition-transform duration-300 group-hover:scale-105">
+          <path d="M62 54H98L114 128L98 202H62L78 128L62 54Z" fill="#FFFFFF" />
+          <path d="M196 54H156L110 128L156 202H196L150 128L196 54Z" fill="#C8FF00" />
+          <circle cx="114" cy="128" r="16" fill="#0B0D10" />
+          <circle cx="114" cy="128" r="9.5" fill="#C8FF00" />
+        </svg>
+        <span class="font-bold tracking-[0.18em] text-sm sm:text-base text-white">KINETIX</span>
+      </a>
+
+      <!-- Center Navigation Links -->
+      <nav class="hidden md:flex items-center gap-7 text-xs font-mono uppercase tracking-widest text-slateHud">
+        <a href="#anatomy" class="hover:text-white transition-colors">Architecture</a>
+        <a href="#telemetry-lab" class="hover:text-white transition-colors">Biometric Lab</a>
+        <a href="#matrix" class="hover:text-white transition-colors">Protocol</a>
+      </nav>
+
+      <!-- Right Live Telemetry Pill + Replay Boot Button -->
+      <div class="flex items-center gap-2.5">
+        <div class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-obsidian/80 border border-white/10 font-mono text-[11px] text-zinc-300">
+          <span class="w-1.5 h-1.5 rounded-full bg-lime pulse-indicator"></span>
+          <span id="nav-bpm-readout" class="text-lime font-semibold">58 BPM</span>
+          <span class="text-white/20">|</span>
+          <span id="nav-scroll-depth" class="tabular-nums text-slateHud">Z: 000%</span>
+        </div>
+
+        <button
+          id="btn-replay-boot"
+          type="button"
+          title="Replay Kinetix Monogram Boot Animation"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-semibold text-lime-bright bg-lime/10 hover:bg-lime/20 border border-lime/35 transition-all cursor-pointer"
+        >
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+          </svg>
+          <span class="hidden sm:inline">Boot</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       3. EDITORIAL HERO STAGE + 3D PERSPECTIVE BIOMETRIC TELEMETRY HUD
+       ======================================================================== -->
+  <main id="top" class="relative z-10">
+    <section class="min-h-screen flex items-center pt-28 pb-16 px-4 sm:px-8">
+      <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <!-- Left 7 Columns: Kinetic Editorial Typography -->
+        <div class="lg:col-span-7 flex flex-col items-start text-left">
+          <div class="hero-stagger inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full hud-panel-lime mb-6">
+            <span class="w-2 h-2 rounded-full bg-lime pulse-indicator"></span>
+            <span class="font-mono text-[11px] font-semibold tracking-[0.22em] uppercase text-lime-bright">
+              OS v4.2 // SUB-MILLISECOND BIOMETRIC ENGINE
+            </span>
+          </div>
+
+          <h1 class="text-4xl sm:text-6xl xl:text-[68px] font-bold tracking-[-0.03em] leading-[1.03] text-white mb-6">
+            <span class="word-mask"><span class="word-reveal">PRECISION</span></span>
+            <span class="word-mask"><span class="word-reveal text-lime">BIOMETRICS.</span></span>
+            <br class="hidden sm:block" />
+            <span class="word-mask"><span class="word-reveal">ENGINEERED</span></span>
+            <span class="word-mask"><span class="word-reveal">FOR</span></span>
+            <span class="word-mask"><span class="word-reveal">HUMAN</span></span>
+            <span class="word-mask"><span class="word-reveal">VELOCITY.</span></span>
+          </h1>
+
+          <p class="hero-stagger text-base sm:text-lg text-slateHud max-w-xl leading-relaxed mb-8">
+            Kinetix fuses optical pulse-wave telemetry, stride kinematics, and neural recovery modeling into a unified dark-mode performance system built for athletes and high-output operators.
+          </p>
+
+          <!-- Magnetic CTA & Secondary Action -->
+          <div class="hero-stagger flex flex-wrap items-center gap-4 mb-10">
+            <a
+              href="#telemetry-lab"
+              id="magnetic-cta"
+              class="magnetic-btn px-7 py-4 rounded-full bg-lime hover:bg-lime-bright text-obsidian font-bold text-sm sm:text-base tracking-tight shadow-[0_0_32px_rgba(200,255,0,0.28)] transition-colors"
+            >
+              <span>Initialize Telemetry</span>
+              <svg class="w-4 h-4 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </a>
+
+            <a
+              href="#anatomy"
+              class="inline-flex items-center gap-2 px-6 py-4 rounded-full hud-panel hover:border-lime/40 text-sm font-semibold text-white transition-all"
+            >
+              <span>Explore K-Architecture</span>
+            </a>
+          </div>
+
+          <!-- Micro-Stats Strip -->
+          <div class="hero-stagger grid grid-cols-3 gap-6 sm:gap-10 pt-6 border-t border-white/10 w-full max-w-lg">
+            <div>
+              <div class="font-mono text-xl sm:text-2xl font-bold text-white">1000<span class="text-lime text-sm">Hz</span></div>
+              <div class="font-mono text-[10px] uppercase tracking-widest text-slateHud mt-0.5">Pulse Sampling</div>
+            </div>
+            <div>
+              <div class="font-mono text-xl sm:text-2xl font-bold text-white">0.4<span class="text-lime text-sm">ms</span></div>
+              <div class="font-mono text-[10px] uppercase tracking-widest text-slateHud mt-0.5">R-R Interval Drift</div>
+            </div>
+            <div>
+              <div class="font-mono text-xl sm:text-2xl font-bold text-white">99.8<span class="text-lime text-sm">%</span></div>
+              <div class="font-mono text-[10px] uppercase tracking-widest text-slateHud mt-0.5">Motion Artifact Lock</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right 5 Columns: Interactive 3D Perspective Biometric HUD Card -->
+        <div class="lg:col-span-5 perspective-stage hero-stagger">
+          <div id="hero-hud-card" class="hud-panel-lime rounded-3xl p-6 sm:p-7 relative overflow-hidden">
+            <!-- Top HUD Header -->
+            <div class="flex items-center justify-between mb-6 hud-depth-1">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-obsidian border border-lime/30 flex items-center justify-center">
+                  <svg viewBox="40 38 176 180" fill="none" class="w-5 h-5">
+                    <path d="M62 54H98L114 128L98 202H62L78 128L62 54Z" fill="#FFFFFF" />
+                    <path d="M196 54H156L110 128L156 202H196L150 128L196 54Z" fill="#C8FF00" />
+                    <circle cx="114" cy="128" r="12" fill="#C8FF00" />
+                  </svg>
+                </div>
+                <div>
+                  <div class="font-mono text-xs font-bold tracking-wider text-white">SUBJECT // KX-09</div>
+                  <div class="font-mono text-[10px] text-lime">BIOMETRIC LOCK ACTIVE</div>
+                </div>
+              </div>
+              <span class="font-mono text-[11px] px-2.5 py-1 rounded-md bg-lime/15 text-lime border border-lime/30">
+                LIVE STREAM
+              </span>
+            </div>
+
+            <!-- Live Mini ECG Oscilloscope inside HUD -->
+            <div class="rounded-2xl bg-obsidian/90 border border-white/10 p-4 mb-5 hud-depth-2">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-mono text-[10px] uppercase tracking-widest text-slateHud">REAL-TIME QRS WAVEFORM</span>
+                <span id="hud-bpm-badge" class="font-mono text-xs font-bold text-lime">58 BPM</span>
+              </div>
+              <canvas id="mini-ecg-canvas" class="w-full h-20 block rounded-lg"></canvas>
+            </div>
+
+            <!-- 3 Telemetry Readout Tiles -->
+            <div class="grid grid-cols-3 gap-3 mb-5 hud-depth-1">
+              <div class="rounded-2xl bg-obsidian/75 border border-white/10 p-3">
+                <div class="font-mono text-[10px] text-slateHud uppercase">HRV (RMSSD)</div>
+                <div id="hud-hrv-val" class="font-mono text-xl font-bold text-white mt-1">114<span class="text-xs text-lime ml-0.5">ms</span></div>
+                <div class="font-mono text-[10px] text-lime mt-0.5">+12% OPTIMAL</div>
+              </div>
+              <div class="rounded-2xl bg-obsidian/75 border border-white/10 p-3">
+                <div class="font-mono text-[10px] text-slateHud uppercase">VO2 KINETICS</div>
+                <div id="hud-vo2-val" class="font-mono text-xl font-bold text-white mt-1">64.8</div>
+                <div class="font-mono text-[10px] text-zinc-400 mt-0.5">mL/kg/min</div>
+              </div>
+              <div class="rounded-2xl bg-obsidian/75 border border-white/10 p-3">
+                <div class="font-mono text-[10px] text-slateHud uppercase">STRAIN LOAD</div>
+                <div id="hud-strain-val" class="font-mono text-xl font-bold text-lime mt-1">14.2</div>
+                <div class="font-mono text-[10px] text-zinc-400 mt-0.5">/ 21.0 TARGET</div>
+              </div>
+            </div>
+
+            <!-- Interactive Intensity Trigger inside Hero Card -->
+            <div class="flex items-center justify-between gap-2 pt-3 border-t border-white/10 hud-depth-1">
+              <span class="font-mono text-[10px] uppercase tracking-wider text-slateHud">SIMULATE STATE:</span>
+              <div class="flex items-center gap-1.5">
+                <button type="button" data-bpm-mode="resting" class="hud-mode-btn mode-pill is-active px-2.5 py-1 rounded-lg border border-white/10 font-mono text-[10px] font-semibold cursor-pointer">
+                  REST 58
+                </button>
+                <button type="button" data-bpm-mode="tempo" class="hud-mode-btn mode-pill px-2.5 py-1 rounded-lg border border-white/10 font-mono text-[10px] font-semibold text-zinc-300 cursor-pointer">
+                  TEMPO 134
+                </button>
+                <button type="button" data-bpm-mode="peak" class="hud-mode-btn mode-pill px-2.5 py-1 rounded-lg border border-white/10 font-mono text-[10px] font-semibold text-zinc-300 cursor-pointer">
+                  PEAK 178
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         4. PINNED SCROLLYTELLING: "ANATOMY OF VELOCITY" (GSAP SCROLLTRIGGER)
+            Explodes the Kinetix Geometric K Monogram into 4 Interactive Layers
+         ======================================================================== -->
+    <section id="anatomy" class="relative py-20 sm:py-28 px-4 sm:px-8 border-t border-white/10">
+      <div class="max-w-7xl mx-auto">
+        <div class="mb-12 sm:mb-16">
+          <div class="font-mono text-xs uppercase tracking-[0.26em] text-lime mb-3">01 // MONOGRAM ARCHITECTURE</div>
+          <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white max-w-2xl">
+            Every vector of the <span class="text-lime">Kinetix</span> mark encodes human motion.
+          </h2>
+        </div>
+
+        <div id="anatomy-pin-wrapper" class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+          <!-- Left Pinned 3D Exploded Schematic Stage -->
+          <div class="lg:col-span-6 lg:sticky lg:top-28">
+            <div class="hud-panel rounded-3xl p-6 sm:p-10 aspect-square max-h-[520px] w-full flex flex-col items-center justify-between relative overflow-hidden schematic-stage">
+              <!-- Top Telemetry Coordinates -->
+              <div class="w-full flex items-center justify-between font-mono text-[11px] text-slateHud z-10">
+                <span id="schematic-layer-tag" class="text-lime font-semibold">LAYER 01 // STRIDE VECTOR</span>
+                <span id="schematic-z-readout">EXPLOSION Z: 0.0px</span>
+              </div>
+
+              <!-- 3D Exploded K Monogram Layers -->
+              <div id="schematic-cube" class="schematic-cube relative w-56 h-56 sm:w-72 sm:h-72 my-auto">
+                <!-- Layer 1: Dashed Kinetic Aperture Ring -->
+                <div id="layer-aperture" class="schematic-layer">
+                  <svg viewBox="40 38 176 180" fill="none" class="w-full h-full overflow-visible">
+                    <circle cx="128" cy="128" r="88" stroke="#C8FF00" stroke-opacity="0.35" stroke-width="1.25" stroke-dasharray="5 5" />
+                    <line x1="128" y1="30" x2="128" y2="44" stroke="#8A929A" stroke-width="1.5" />
+                    <line x1="128" y1="212" x2="128" y2="226" stroke="#8A929A" stroke-width="1.5" />
+                    <line x1="30" y1="128" x2="44" y2="128" stroke="#8A929A" stroke-width="1.5" />
+                    <line x1="212" y1="128" x2="226" y2="128" stroke="#8A929A" stroke-width="1.5" />
+                  </svg>
+                </div>
+
+                <!-- Layer 2: Crisp White Forward-Stride Chevron -->
+                <div id="layer-stride" class="schematic-layer">
+                  <svg viewBox="40 38 176 180" fill="none" class="w-full h-full overflow-visible">
+                    <path d="M62 54H98L114 128L98 202H62L78 128L62 54Z" fill="#FFFFFF" />
+                  </svg>
+                </div>
+
+                <!-- Layer 3: Electric Lime Biometric Waveform Chevron -->
+                <div id="layer-biometric" class="schematic-layer">
+                  <svg viewBox="40 38 176 180" fill="none" class="w-full h-full overflow-visible">
+                    <defs>
+                      <linearGradient id="schemLime" x1="88" y1="52" x2="202" y2="204" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#D8FF4D" />
+                        <stop offset="100%" stop-color="#AEE600" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M196 54H156L110 128L156 202H196L150 128L196 54Z" fill="url(#schemLime)" />
+                  </svg>
+                </div>
+
+                <!-- Layer 4: Central Biometric Pulse Core -->
+                <div id="layer-pulse" class="schematic-layer">
+                  <svg viewBox="40 38 176 180" fill="none" class="w-full h-full overflow-visible">
+                    <circle cx="114" cy="128" r="22" stroke="#C8FF00" stroke-opacity="0.45" stroke-width="1.5" />
+                    <circle cx="114" cy="128" r="16" fill="#0B0D10" />
+                    <circle cx="114" cy="128" r="9.5" fill="#C8FF00" />
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Bottom Step Progress Bar -->
+              <div class="w-full z-10">
+                <div class="flex justify-between font-mono text-[10px] text-slateHud mb-2">
+                  <span>01 STRIDE</span>
+                  <span>02 BIOMETRIC</span>
+                  <span>03 PULSE CORE</span>
+                </div>
+                <div class="w-full h-1 rounded-full bg-white/10 overflow-hidden">
+                  <div id="schematic-progress-bar" class="h-full w-1/3 bg-lime transition-all duration-300"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Scrolling Narrative Chapters -->
+          <div class="lg:col-span-6 space-y-16 sm:space-y-24 py-4">
+            <!-- Chapter 01 -->
+            <article class="anatomy-chapter hud-panel rounded-3xl p-7 sm:p-9 border-l-2 border-l-white" data-chapter="0">
+              <div class="font-mono text-xs text-white/70 tracking-widest uppercase mb-3">CHAPTER 01 // WHITE STRIDE CHEVRON</div>
+              <h3 class="text-2xl sm:text-3xl font-bold text-white mb-4">Forward-Leaning Stride Kinematics</h3>
+              <p class="text-slateHud leading-relaxed mb-6">
+                Represented by the crisp white left stem of the K monogram, our inertial micro-gyroscopes map ground-contact time, vertical oscillation, and asymmetrical force vectors at 1,000 samples per second.
+              </p>
+              <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/10 font-mono text-xs">
+                <div>
+                  <span class="text-slateHud block text-[10px]">CONTACT BALANCE</span>
+                  <span class="text-white font-bold text-base">50.1% L / 49.9% R</span>
+                </div>
+                <div>
+                  <span class="text-slateHud block text-[10px]">CADENCE LOCK</span>
+                  <span class="text-lime font-bold text-base">182 SPM</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Chapter 02 -->
+            <article class="anatomy-chapter hud-panel rounded-3xl p-7 sm:p-9 border-l-2 border-l-lime" data-chapter="1">
+              <div class="font-mono text-xs text-lime tracking-widest uppercase mb-3">CHAPTER 02 // ELECTRIC LIME CHEVRON</div>
+              <h3 class="text-2xl sm:text-3xl font-bold text-white mb-4">Multi-Wavelength Optical Waveform</h3>
+              <p class="text-slateHud leading-relaxed mb-6">
+                The intersecting Electric Lime (<span class="font-mono text-lime">#C8FF00</span>) chevron mirrors a high-amplitude biometric waveform—filtering capillary blood-volume pulses through adaptive noise cancellation even at max sprint velocity.
+              </p>
+              <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/10 font-mono text-xs">
+                <div>
+                  <span class="text-slateHud block text-[10px]">PHOTODIODE ARRAY</span>
+                  <span class="text-white font-bold text-base">8-CHANNEL MULTI-LED</span>
+                </div>
+                <div>
+                  <span class="text-slateHud block text-[10px]">SPO2 PRECISION</span>
+                  <span class="text-lime font-bold text-base">&plusmn;0.8% CLINICAL</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Chapter 03 -->
+            <article class="anatomy-chapter hud-panel rounded-3xl p-7 sm:p-9 border-l-2 border-l-lime-bright" data-chapter="2">
+              <div class="font-mono text-xs text-lime-bright tracking-widest uppercase mb-3">CHAPTER 03 // CENTRAL PULSE NODE</div>
+              <h3 class="text-2xl sm:text-3xl font-bold text-white mb-4">Autonomic Readiness &amp; Recovery Core</h3>
+              <p class="text-slateHud leading-relaxed mb-6">
+                Where stride mechanics and cardiovascular telemetry intersect sits the central pulse node—synthesizing overnight HRV, core thermoregulation, and neuromuscular strain into a single actionable daily velocity target.
+              </p>
+              <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/10 font-mono text-xs">
+                <div>
+                  <span class="text-slateHud block text-[10px]">READINESS INDEX</span>
+                  <span class="text-lime font-bold text-base">94 / 100 PEAK</span>
+                </div>
+                <div>
+                  <span class="text-slateHud block text-[10px]">RECOVERY WINDOW</span>
+                  <span class="text-white font-bold text-base">04H 20M REMAINING</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         5. INTERACTIVE BIOMETRIC WAVEFORM LAB & BENTO TELEMETRY MATRIX
+         ======================================================================== -->
+    <section id="telemetry-lab" class="relative py-20 sm:py-28 px-4 sm:px-8 border-t border-white/10">
+      <div class="max-w-7xl mx-auto">
+        <!-- Section Header + Interactive Mode Switcher -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div>
+            <div class="font-mono text-xs uppercase tracking-[0.26em] text-lime mb-3">02 // LIVE TELEMETRY MATRIX</div>
+            <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white">
+              Adaptive Performance Zones.
+            </h2>
+          </div>
+
+          <!-- Interactive Zone Switcher -->
+          <div class="inline-flex flex-wrap items-center gap-2 p-1.5 rounded-2xl hud-panel">
+            <button type="button" data-bpm-mode="resting" class="lab-mode-btn mode-pill is-active px-4 py-2 rounded-xl border border-transparent font-mono text-xs font-semibold cursor-pointer">
+              01. RECOVERY (58 BPM)
+            </button>
+            <button type="button" data-bpm-mode="tempo" class="lab-mode-btn mode-pill px-4 py-2 rounded-xl border border-transparent font-mono text-xs font-semibold text-zinc-300 cursor-pointer">
+              02. TEMPO (134 BPM)
+            </button>
+            <button type="button" data-bpm-mode="peak" class="lab-mode-btn mode-pill px-4 py-2 rounded-xl border border-transparent font-mono text-xs font-semibold text-zinc-300 cursor-pointer">
+              03. THRESHOLD (178 BPM)
+            </button>
+          </div>
+        </div>
+
+        <!-- Asymmetric Bento Grid -->
+        <div id="matrix" class="grid grid-cols-1 md:grid-cols-12 gap-5">
+          <!-- Card 1 (7 Cols): Live Biometric Readiness Gauge & Zone Summary -->
+          <div class="bento-card md:col-span-7 hud-panel-lime rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-8">
+            <div class="space-y-4 max-w-md">
+              <div class="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-lime">
+                <span class="w-2 h-2 rounded-full bg-lime pulse-indicator"></span>
+                <span id="lab-zone-tag">PARASYMPATHETIC RECOVERY STATE</span>
+              </div>
+              <h3 id="lab-zone-title" class="text-2xl sm:text-3xl font-bold text-white">
+                Deep Neural Restoration
+              </h3>
+              <p id="lab-zone-desc" class="text-sm sm:text-base text-slateHud leading-relaxed">
+                Elevated vagal tone and high heart-rate variability indicate prime CNS readiness for high-output anaerobic intervals.
+              </p>
+              <div class="flex flex-wrap gap-3 pt-2 font-mono text-xs">
+                <span class="px-3 py-1.5 rounded-lg bg-obsidian border border-white/10 text-zinc-200">
+                  LACTATE: <strong id="lab-lactate" class="text-lime">1.1 mmol/L</strong>
+                </span>
+                <span class="px-3 py-1.5 rounded-lg bg-obsidian border border-white/10 text-zinc-200">
+                  O2 SAT: <strong id="lab-spo2" class="text-white">99%</strong>
+                </span>
+              </div>
+            </div>
+
+            <!-- Animated SVG Radial Gauge -->
+            <div class="relative w-40 h-40 sm:w-44 sm:h-44 flex-shrink-0 flex items-center justify-center">
+              <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
+                <circle cx="60" cy="60" r="50" stroke="rgba(255,255,255,0.08)" stroke-width="8" fill="none" />
+                <circle
+                  id="lab-radial-arc"
+                  cx="60"
+                  cy="60"
+                  r="50"
+                  stroke="#C8FF00"
+                  stroke-width="8"
+                  stroke-linecap="round"
+                  fill="none"
+                  stroke-dasharray="314.16"
+                  stroke-dashoffset="22"
+                />
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span id="lab-gauge-score" class="font-mono text-3xl sm:text-4xl font-bold text-white">94</span>
+                <span class="font-mono text-[10px] tracking-widest text-lime uppercase">VELOCITY SCORE</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2 (5 Cols): Stride Power & Ground Contact -->
+          <div class="bento-card md:col-span-5 hud-panel rounded-3xl p-6 sm:p-8 flex flex-col justify-between">
+            <div>
+              <div class="font-mono text-[11px] uppercase tracking-widest text-slateHud mb-2">MECHANICAL OUTPUT</div>
+              <div class="flex items-baseline gap-2">
+                <span id="lab-wattage" class="font-mono text-4xl sm:text-5xl font-bold text-white">145</span>
+                <span class="font-mono text-sm text-lime font-semibold">WATTS</span>
+              </div>
+            </div>
+
+            <div class="my-6 space-y-3">
+              <div>
+                <div class="flex justify-between font-mono text-[11px] text-slateHud mb-1">
+                  <span>AEROBIC EFFICIENCY</span>
+                  <span id="lab-aero-pct" class="text-white">92%</span>
+                </div>
+                <div class="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+                  <div id="lab-aero-bar" class="h-full w-[92%] bg-white rounded-full transition-all duration-500"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between font-mono text-[11px] text-slateHud mb-1">
+                  <span>SYMMETRY INDEX</span>
+                  <span id="lab-sym-pct" class="text-lime">99.4%</span>
+                </div>
+                <div class="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+                  <div id="lab-sym-bar" class="h-full w-[99%] bg-lime rounded-full transition-all duration-500"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="font-mono text-[11px] text-slateHud">
+              REAL-TIME INERTIAL FUSION // ZERO FOOT-POD REQUIRED
+            </div>
+          </div>
+
+          <!-- Card 3 (4 Cols): Thermoregulation -->
+          <div class="bento-card md:col-span-4 hud-panel rounded-3xl p-6 flex flex-col justify-between">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-[11px] uppercase tracking-widest text-slateHud">SKIN TEMP DELTA</span>
+              <span class="font-mono text-xs text-lime">-0.3&deg;C</span>
+            </div>
+            <div class="my-5">
+              <div class="font-mono text-3xl font-bold text-white">36.4&deg;C</div>
+              <p class="text-xs text-slateHud mt-1">Circadian thermal nadir stabilized during REM cycle.</p>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="h-1.5 flex-1 rounded-full bg-lime/30"></span>
+              <span class="h-1.5 flex-1 rounded-full bg-lime/60"></span>
+              <span class="h-1.5 flex-1 rounded-full bg-lime"></span>
+              <span class="h-1.5 flex-1 rounded-full bg-white/10"></span>
+            </div>
+          </div>
+
+          <!-- Card 4 (4 Cols): Autonomic Stress -->
+          <div class="bento-card md:col-span-4 hud-panel rounded-3xl p-6 flex flex-col justify-between">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-[11px] uppercase tracking-widest text-slateHud">AUTONOMIC LOAD</span>
+              <span class="font-mono text-xs text-white">BALANCED</span>
+            </div>
+            <div class="my-5">
+              <div class="font-mono text-3xl font-bold text-lime">LOW // 18</div>
+              <p class="text-xs text-slateHud mt-1">Continuous electrodermal &amp; R-R interval coherence.</p>
+            </div>
+            <div class="font-mono text-[10px] text-slateHud uppercase tracking-wider">
+              NEXT COACHING WINDOW: 17:30
+            </div>
+          </div>
+
+          <!-- Card 5 (4 Cols): Hardware Specs -->
+          <div class="bento-card md:col-span-4 hud-panel rounded-3xl p-6 flex flex-col justify-between">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-[11px] uppercase tracking-widest text-slateHud">CHASSIS // TITANIUM</span>
+              <span class="font-mono text-xs text-lime">14 DAYS</span>
+            </div>
+            <div class="my-5">
+              <div class="font-mono text-3xl font-bold text-white">10 ATM</div>
+              <p class="text-xs text-slateHud mt-1">Grade-5 matte charcoal titanium with sapphire optical dome.</p>
+            </div>
+            <div class="font-mono text-[10px] text-lime uppercase tracking-wider">
+              BLE 5.4 + ULTRA-WIDEBAND SYNC
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         6. CINEMATIC CTA FINALE & MINIMALIST KINETIX FOOTER
+         ======================================================================== -->
+    <section class="relative py-24 sm:py-32 px-4 sm:px-8 border-t border-white/10">
+      <div class="max-w-5xl mx-auto hud-panel-lime rounded-[32px] p-8 sm:p-16 text-center relative overflow-hidden">
+        <!-- Decorative Corner Stride Vectors -->
+        <svg viewBox="40 38 176 180" fill="none" class="w-48 h-48 absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
+          <path d="M62 54H98L114 128L98 202H62L78 128L62 54Z" fill="#FFFFFF" />
+          <path d="M196 54H156L110 128L156 202H196L150 128L196 54Z" fill="#C8FF00" />
+        </svg>
+
+        <div class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.26em] text-lime mb-4">
+          <span>EARLY ACCESS COHORT // 04</span>
+        </div>
+
+        <h2 class="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6">
+          Own every millisecond of your <span class="text-lime">velocity.</span>
+        </h2>
+
+        <p class="text-slateHud text-base sm:text-lg max-w-xl mx-auto mb-9">
+          Reserve your Kinetix Biometric Sensor &amp; OS membership. Includes custom onboarding calibration and lifetime telemetry analytics.
+        </p>
+
+        <form id="reserve-form" class="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
+          <input
+            id="reserve-email"
+            type="email"
+            required
+            placeholder="athlete@domain.com"
+            aria-label="Email address for Kinetix early access"
+            class="w-full sm:flex-1 px-5 py-3.5 rounded-full bg-obsidian border border-white/15 focus:border-lime focus:outline-none font-mono text-xs sm:text-sm text-white placeholder:text-slateHud"
+          />
+          <button
+            type="submit"
+            class="w-full sm:w-auto px-7 py-3.5 rounded-full bg-lime hover:bg-lime-bright text-obsidian font-bold text-sm tracking-tight transition-all cursor-pointer whitespace-nowrap"
+          >
+            Request Access
+          </button>
+        </form>
+
+        <p id="reserve-feedback" class="font-mono text-xs text-lime mt-4 h-4" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <footer class="relative py-10 px-4 sm:px-8 border-t border-white/10 bg-obsidian/90">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+        <!-- Horizontal Kinetix Brand Lockup -->
+        <div class="flex items-center gap-3.5">
+          <svg viewBox="40 38 176 180" fill="none" class="w-8 h-8">
+            <path d="M62 54H98L114 128L98 202H62L78 128L62 54Z" fill="#FFFFFF" />
+            <path d="M196 54H156L110 128L156 202H196L150 128L196 54Z" fill="#C8FF00" />
+            <circle cx="114" cy="128" r="16" fill="#0B0D10" />
+            <circle cx="114" cy="128" r="9.5" fill="#C8FF00" />
+          </svg>
+          <div>
+            <div class="font-bold tracking-[0.2em] text-sm text-white">KINETIX</div>
+            <div class="font-mono text-[10px] tracking-[0.22em] text-slateHud uppercase">TECH-ENABLED WELLNESS</div>
+          </div>
+        </div>
+
+        <div class="font-mono text-[11px] text-slateHud text-center sm:text-right">
+          &copy; 2026 KINETIX BIOMETRIC SYSTEMS INC. ALL VECTORS RESERVED.
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      /* ======================================================================
+         1. BIOMETRIC TELEMETRY MODES & SHARED STATE
+         ====================================================================== */
+      const BIOMETRIC_MODES = {
+        resting: {
+          bpm: 58,
+          hrv: 114,
+          vo2: '64.8',
+          strain: '14.2',
+          waveFreq: 0.42,
+          waveAmp: 1.0,
+          zoneTag: 'PARASYMPATHETIC RECOVERY STATE',
+          zoneTitle: 'Deep Neural Restoration',
+          zoneDesc: 'Elevated vagal tone and high heart-rate variability indicate prime CNS readiness for high-output anaerobic intervals.',
+          lactate: '1.1 mmol/L',
+          spo2: '99%',
+          score: 94,
+          wattage: 145,
+          aero: 92,
+          sym: '99.4%'
+        },
+        tempo: {
+          bpm: 134,
+          hrv: 68,
+          vo2: '68.4',
+          strain: '17.6',
+          waveFreq: 0.85,
+          waveAmp: 1.35,
+          zoneTag: 'ZONE 3 // AEROBIC TEMPO LOCK',
+          zoneTitle: 'Sustained Lactate Clearance',
+          zoneDesc: 'Cardiovascular stroke volume is maximized while oxygen delivery matches mitochondrial demand across fast-twitch fibers.',
+          lactate: '2.8 mmol/L',
+          spo2: '98%',
+          score: 88,
+          wattage: 295,
+          aero: 96,
+          sym: '99.1%'
+        },
+        peak: {
+          bpm: 178,
+          hrv: 29,
+          vo2: '72.1',
+          strain: '20.4',
+          waveFreq: 1.35,
+          waveAmp: 1.75,
+          zoneTag: 'ZONE 5 // ANAEROBIC VO2 PEAK',
+          zoneTitle: 'Maximum Velocity Output',
+          zoneDesc: 'Peak sympathetic drive engaged. Sub-millisecond R-R interval tracking monitors cardiac drift and neuromuscular fatigue.',
+          lactate: '7.4 mmol/L',
+          spo2: '96%',
+          score: 98,
+          wattage: 430,
+          aero: 89,
+          sym: '98.7%'
+        }
+      };
+
+      const telemetryState = {
+        mode: 'resting',
+        currentBpm: 58,
+        targetBpm: 58,
+        waveFreq: 0.42,
+        waveAmp: 1.0,
+        scrollVelocity: 0,
+        scrollProgress: 0,
+        mouseX: 0.5,
+        mouseY: 0.5
+      };
+
+      /* ======================================================================
+         2. FULL-VIEWPORT INTERACTIVE BIOMETRIC CANVAS + MINI HUD OSCILLOSCOPE
+            (Matches Kinetix Logo Animation Visual Language)
+         ====================================================================== */
+      const bgCanvas = document.getElementById('telemetry-canvas');
+      const bgCtx = bgCanvas.getContext('2d', { alpha: false });
+      const miniCanvas = document.getElementById('mini-ecg-canvas');
+      const miniCtx = miniCanvas ? miniCanvas.getContext('2d') : null;
+      const depthEl = document.getElementById('nav-scroll-depth');
+
+      let cw = 0;
+      let ch = 0;
+      let miniDpr = 1;
+      let cachedMaxScroll = 1;
+      let lastPct = '';
+      let scrollRafPending = false;
+      let lastScrollY = window.scrollY;
+
+      function updateCachedScrollBounds() {
+        cachedMaxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      }
+
+      function resizeAllCanvases() {
+        cw = window.innerWidth;
+        ch = window.innerHeight;
+        bgCanvas.width = Math.floor(cw);
+        bgCanvas.height = Math.floor(ch);
+        bgCtx.setTransform(1, 0, 0, 1, 0, 0);
+
+        if (miniCanvas && miniCtx) {
+          miniDpr = Math.min(window.devicePixelRatio || 1, 1.5);
+          const rect = miniCanvas.getBoundingClientRect();
+          if (rect.width > 0 && rect.height > 0) {
+            miniCanvas.width = Math.floor(rect.width * miniDpr);
+            miniCanvas.height = Math.floor(rect.height * miniDpr);
+            miniCtx.setTransform(miniDpr, 0, 0, miniDpr, 0, 0);
+          }
+        }
+        updateCachedScrollBounds();
+      }
+
+      resizeAllCanvases();
+      window.addEventListener('resize', resizeAllCanvases, { passive: true });
+      window.addEventListener('load', updateCachedScrollBounds, { once: true });
+
+      window.addEventListener(
+        'mousemove',
+        (e) => {
+          telemetryState.mouseX = e.clientX / Math.max(1, cw);
+          telemetryState.mouseY = e.clientY / Math.max(1, ch);
+        },
+        { passive: true }
+      );
+
+      window.addEventListener(
+        'scroll',
+        () => {
+          const y = window.scrollY;
+          const dy = Math.abs(y - lastScrollY);
+          lastScrollY = y;
+          telemetryState.scrollVelocity = Math.min(2.5, telemetryState.scrollVelocity + dy * 0.015);
+          if (scrollRafPending) return;
+          scrollRafPending = true;
+          requestAnimationFrame(() => {
+            scrollRafPending = false;
+            telemetryState.scrollProgress = Math.min(1, Math.max(0, lastScrollY / cachedMaxScroll));
+            if (depthEl) {
+              const pct = String(Math.round(telemetryState.scrollProgress * 100)).padStart(3, '0');
+              if (pct !== lastPct) {
+                lastPct = pct;
+                depthEl.textContent = `Z: ${pct}%`;
+              }
+            }
+          });
+        },
+        { passive: true }
+      );
+
+      function renderBackgroundTelemetry(timeSec) {
+        bgCtx.fillStyle = '#0B0D10';
+        bgCtx.fillRect(0, 0, cw, ch);
+
+        const scaleUnit = Math.max(0.65, Math.min(cw, ch) / 1080);
+        const cx = cw * 0.5;
+        const cy = ch * 0.5;
+        const energyBoost = 1 + telemetryState.scrollVelocity * 0.65;
+
+        // 1. Asymmetric Topographic Kinetic Contour Arcs
+        bgCtx.save();
+        const drift = timeSec * 16 * scaleUnit;
+        for (let i = 0; i < 5; i++) {
+          const radius = (240 + i * 110) * scaleUnit + ((drift + i * 22) % (110 * scaleUnit));
+          const alpha = 0.032 - i * 0.0045;
+          if (alpha > 0.002) {
+            bgCtx.strokeStyle = i % 2 === 0
+              ? `rgba(200, 255, 0, ${alpha.toFixed(4)})`
+              : `rgba(255, 255, 255, ${(alpha * 0.65).toFixed(4)})`;
+            bgCtx.lineWidth = 1.1 * scaleUnit;
+
+            bgCtx.beginPath();
+            bgCtx.arc(cw * 0.12, ch * 0.16, radius, 0.05 * Math.PI, 0.65 * Math.PI);
+            bgCtx.stroke();
+
+            bgCtx.beginPath();
+            bgCtx.arc(cw * 0.88, ch * 0.84, radius * 1.05, 1.05 * Math.PI, 1.65 * Math.PI);
+            bgCtx.stroke();
+          }
+        }
+        bgCtx.restore();
+
+        // 2. Forward-Stride Chevron Telemetry Tracks (Repeating K-Angle Vectors)
+        bgCtx.save();
+        const chevronSpacing = 150 * scaleUnit;
+        const chevronHeight = 270 * scaleUnit;
+        const chevronBend = 48 * scaleUnit;
+        const scrollX = (timeSec * 42 * scaleUnit * energyBoost) % chevronSpacing;
+
+        bgCtx.lineWidth = 1.1 * scaleUnit;
+        for (let x = -chevronSpacing + scrollX; x < cw + chevronSpacing; x += chevronSpacing) {
+          const distNorm = Math.abs(x - cx) / Math.max(1, cw * 0.5);
+          const fade = Math.max(0, 1 - distNorm * 0.88);
+          if (fade <= 0.02) continue;
+
+          bgCtx.strokeStyle = `rgba(255, 255, 255, ${(0.026 * fade).toFixed(4)})`;
+          bgCtx.beginPath();
+          bgCtx.moveTo(x - chevronBend, cy - chevronHeight);
+          bgCtx.lineTo(x, cy);
+          bgCtx.lineTo(x - chevronBend, cy + chevronHeight);
+          bgCtx.stroke();
+        }
+        bgCtx.restore();
+
+        // 3. Multi-Harmonic ECG / QRS Biometric Ribbon
+        bgCtx.save();
+        const ribbonY = cy + (telemetryState.mouseY - 0.5) * 34 * scaleUnit;
+        const stepPx = Math.max(8, Math.round(9 * scaleUnit));
+        const packetSpeed = telemetryState.waveFreq * 0.85;
+
+        for (let pass = 0; pass < 2; pass++) {
+          const isLime = pass === 0;
+          bgCtx.beginPath();
+          bgCtx.strokeStyle = isLime
+            ? `rgba(200, 255, 0, ${(0.14 * Math.min(1.6, energyBoost)).toFixed(4)})`
+            : 'rgba(255, 255, 255, 0.045)';
+          bgCtx.lineWidth = (isLime ? 1.5 : 1.0) * scaleUnit;
+
+          for (let x = 0; x <= cw; x += stepPx) {
+            const nx = x / cw;
+            const edgeMask = Math.sin(nx * Math.PI);
+            const packetPhase = ((nx * 2.1 - timeSec * packetSpeed) % 1 + 1) % 1;
+            const packetEnv = Math.exp(-Math.pow((packetPhase - 0.5) / 0.06, 2));
+            const qrs =
+              Math.sin((packetPhase - 0.5) * 95) *
+              packetEnv *
+              46 *
+              telemetryState.waveAmp *
+              energyBoost *
+              scaleUnit;
+
+            const carrier = isLime
+              ? Math.sin(nx * 12 + timeSec * 3.0) * 6 * scaleUnit
+              : Math.cos(nx * 9 - timeSec * 2.2) * 8 * scaleUnit;
+
+            const y = ribbonY + (carrier + (isLime ? qrs : qrs * 0.45)) * edgeMask;
+            if (x === 0) bgCtx.moveTo(x, y);
+            else bgCtx.lineTo(x, y);
+          }
+          bgCtx.stroke();
+        }
+        bgCtx.restore();
+
+        // 4. Corner HUD Telemetry Brackets
+        bgCtx.save();
+        const pad = Math.round(24 * scaleUnit);
+        const tickLen = Math.round(14 * scaleUnit);
+        bgCtx.strokeStyle = 'rgba(138, 146, 154, 0.22)';
+        bgCtx.lineWidth = 1.25;
+        bgCtx.beginPath();
+        bgCtx.moveTo(pad, ch - pad - tickLen);
+        bgCtx.lineTo(pad, ch - pad);
+        bgCtx.lineTo(pad + tickLen, ch - pad);
+        bgCtx.moveTo(cw - pad, ch - pad - tickLen);
+        bgCtx.lineTo(cw - pad, ch - pad);
+        bgCtx.lineTo(cw - pad - tickLen, ch - pad);
+        bgCtx.stroke();
+        bgCtx.restore();
+      }
+
+      function renderMiniHudEcg(timeSec) {
+        if (!miniCanvas || !miniCtx) return;
+        const w = miniCanvas.width / miniDpr;
+        const h = miniCanvas.height / miniDpr;
+        if (w <= 0 || h <= 0) return;
+
+        miniCtx.clearRect(0, 0, w, h);
+
+        // Subtle oscilloscope grid
+        miniCtx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        miniCtx.lineWidth = 1;
+        miniCtx.beginPath();
+        miniCtx.moveTo(0, h * 0.5);
+        miniCtx.lineTo(w, h * 0.5);
+        miniCtx.stroke();
+
+        // Crisp Electric Lime QRS Wave
+        miniCtx.beginPath();
+        miniCtx.strokeStyle = '#C8FF00';
+        miniCtx.lineWidth = 2;
+
+        const speed = telemetryState.waveFreq * 1.3;
+        for (let x = 0; x <= w; x += 3) {
+          const nx = x / w;
+          const phase = ((nx * 1.8 - timeSec * speed) % 1 + 1) % 1;
+          const env = Math.exp(-Math.pow((phase - 0.5) / 0.065, 2));
+          const spike = Math.sin((phase - 0.5) * 90) * env * (h * 0.36) * Math.min(1.2, telemetryState.waveAmp * 0.85);
+          const base = Math.sin(nx * 16 + timeSec * 4) * 2.2;
+          const y = h * 0.52 + spike + base;
+          if (x === 0) miniCtx.moveTo(x, y);
+          else miniCtx.lineTo(x, y);
+        }
+        miniCtx.stroke();
+      }
+
+      let rafId = 0;
+      let lastFrameMs = 0;
+      function animationTick(nowMs) {
+        if (document.hidden) {
+          rafId = 0;
+          return;
+        }
+        if (nowMs - lastFrameMs < 33) {
+          rafId = requestAnimationFrame(animationTick);
+          return;
+        }
+        lastFrameMs = nowMs;
+        const timeSec = nowMs * 0.001;
+        telemetryState.scrollVelocity *= 0.92;
+        telemetryState.currentBpm += (telemetryState.targetBpm - telemetryState.currentBpm) * 0.08;
+
+        renderBackgroundTelemetry(timeSec);
+        if (lastScrollY <= ch * 1.15) renderMiniHudEcg(timeSec);
+        rafId = requestAnimationFrame(animationTick);
+      }
+
+      rafId = requestAnimationFrame(animationTick);
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          if (rafId) {
+            cancelAnimationFrame(rafId);
+            rafId = 0;
+          }
+        } else if (!rafId) {
+          lastFrameMs = 0;
+          rafId = requestAnimationFrame(animationTick);
+        }
+      });
+
+      /* ======================================================================
+         3. SEAMLESS KINETIX MONOGRAM BOOT SEQUENCE (GSAP TIMELINE)
+            Replays exact geometric K chevron interlock + double-beat pulse
+         ====================================================================== */
+      const bootCurtain = document.getElementById('boot-curtain');
+      const btnSkipBoot = document.getElementById('btn-skip-boot');
+      const btnReplayBoot = document.getElementById('btn-replay-boot');
+      let bootTimeline = null;
+
+      function revealHeroStage() {
+        gsap.to('.word-reveal', {
+          y: '0%',
+          opacity: 1,
+          duration: 0.95,
+          stagger: 0.075,
+          ease: 'power4.out'
+        });
+
+        gsap.fromTo(
+          '.hero-stagger',
+          { y: 22, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.85,
+            stagger: 0.1,
+            delay: 0.18,
+            ease: 'power3.out'
+          }
+        );
+      }
+
+      function runBrandBootSequence(isReplay = false) {
+        if (bootTimeline) bootTimeline.kill();
+
+        gsap.set(bootCurtain, { display: 'flex', opacity: 1, yPercent: 0 });
+        gsap.set('#boot-reticle', { opacity: 0 });
+        gsap.set('#boot-chev-left', { opacity: 0, x: -34, y: -14 });
+        gsap.set('#boot-chev-right', { opacity: 0, x: 38, y: 14 });
+        gsap.set('#boot-cutout', { opacity: 0, scale: 0.01, transformOrigin: 'center center' });
+        gsap.set('#boot-dot', { opacity: 0, scale: 0.01, transformOrigin: 'center center' });
+        gsap.set('#boot-shockwave', { opacity: 0, scale: 0.8, transformOrigin: 'center center' });
+        gsap.set('#boot-ring', { opacity: 0, scale: 0.74, rotation: -35 });
+        gsap.set('#boot-wordmark', { opacity: 0, x: -18 });
+        gsap.set('#boot-tagline', { opacity: 0, y: 10 });
+        gsap.set('#boot-status', { opacity: 0 });
+
+        bootTimeline = gsap.timeline({
+          onComplete: () => {
+            gsap.to(bootCurtain, {
+              yPercent: -100,
+              duration: 0.85,
+              ease: 'expo.inOut',
+              onComplete: () => {
+                bootCurtain.style.display = 'none';
+                if (!isReplay) revealHeroStage();
+              }
+            });
+          }
+        });
+
+        // 1. Crosshair reticle & Crisp White Stride Chevron snap-in
+        bootTimeline
+          .to('#boot-reticle', { opacity: 1, duration: 0.35, ease: 'power2.out' }, 0)
+          .to('#boot-chev-left', { opacity: 1, x: 0, y: 0, duration: 0.55, ease: 'expo.out' }, 0.05)
+          // 2. Intersecting Electric Lime Biometric Chevron
+          .to('#boot-chev-right', { opacity: 1, x: 0, y: 0, duration: 0.55, ease: 'expo.out' }, 0.25)
+          // 3. Central Pulse Node Double-Beat + Sonar Shockwave + Aperture Ring
+          .to('#boot-cutout', { opacity: 1, scale: 1, duration: 0.24, ease: 'power2.out' }, 0.68)
+          .to('#boot-dot', { opacity: 1, scale: 1.32, duration: 0.2, ease: 'power2.out' }, 0.70)
+          .to('#boot-dot', { scale: 0.94, duration: 0.12, ease: 'power1.inOut' }, 0.90)
+          .to('#boot-dot', { scale: 1.24, duration: 0.16, ease: 'power2.out' }, 1.02)
+          .to('#boot-dot', { scale: 1.0, duration: 0.22, ease: 'power2.out' }, 1.18)
+          .fromTo(
+            '#boot-shockwave',
+            { opacity: 0.85, scale: 0.85 },
+            { opacity: 0, scale: 3.4, duration: 0.75, ease: 'expo.out' },
+            0.72
+          )
+          .to('#boot-ring', { opacity: 0.85, scale: 1, rotation: 0, duration: 0.65, ease: 'expo.out' }, 0.70)
+          // 4. KINETIX Wordmark horizontal slide-in & Tagline reveal
+          .to('#boot-wordmark', { opacity: 1, x: 0, duration: 0.65, ease: 'expo.out' }, 1.05)
+          .to('#boot-tagline', { opacity: 1, y: 0, duration: 0.55, ease: 'power3.out' }, 1.25)
+          .to('#boot-status', { opacity: 1, duration: 0.35 }, 1.35)
+          .to({}, { duration: 0.45 }); // Brief hold before curtain lifts
+      }
+
+      function dismissBootImmediately() {
+        if (bootTimeline) bootTimeline.kill();
+        gsap.to(bootCurtain, {
+          opacity: 0,
+          duration: 0.35,
+          onComplete: () => {
+            bootCurtain.style.display = 'none';
+            revealHeroStage();
+          }
+        });
+      }
+
+      btnSkipBoot.addEventListener('click', dismissBootImmediately);
+      btnReplayBoot.addEventListener('click', () => runBrandBootSequence(true));
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && bootCurtain.style.display !== 'none') {
+          dismissBootImmediately();
+        }
+      });
+
+      runBrandBootSequence(false);
+
+      /* ======================================================================
+         4. 3D PERSPECTIVE TILT ON HERO HUD CARD & MAGNETIC PRIMARY CTA
+         ====================================================================== */
+      const heroHudCard = document.getElementById('hero-hud-card');
+      if (heroHudCard) {
+        const rotYTo = gsap.quickTo(heroHudCard, 'rotateY', { duration: 0.35, ease: 'power2.out' });
+        const rotXTo = gsap.quickTo(heroHudCard, 'rotateX', { duration: 0.35, ease: 'power2.out' });
+        heroHudCard.addEventListener('mousemove', (e) => {
+          const rect = heroHudCard.getBoundingClientRect();
+          const nx = (e.clientX - rect.left) / rect.width - 0.5;
+          const ny = (e.clientY - rect.top) / rect.height - 0.5;
+          rotYTo(nx * 12);
+          rotXTo(-ny * 12);
+        });
+
+        heroHudCard.addEventListener('mouseleave', () => {
+          rotYTo(0);
+          rotXTo(0);
+        });
+      }
+
+      const magneticCta = document.getElementById('magnetic-cta');
+      if (magneticCta) {
+        const ctaXTo = gsap.quickTo(magneticCta, 'x', { duration: 0.3, ease: 'power2.out' });
+        const ctaYTo = gsap.quickTo(magneticCta, 'y', { duration: 0.3, ease: 'power2.out' });
+        magneticCta.addEventListener('mousemove', (e) => {
+          const rect = magneticCta.getBoundingClientRect();
+          const dx = (e.clientX - (rect.left + rect.width * 0.5)) * 0.28;
+          const dy = (e.clientY - (rect.top + rect.height * 0.5)) * 0.28;
+          ctaXTo(dx);
+          ctaYTo(dy);
+        });
+        magneticCta.addEventListener('mouseleave', () => {
+          ctaXTo(0);
+          ctaYTo(0);
+        });
+      }
+
+      /* ======================================================================
+         5. SCROLL-DRIVEN 3D EXPLODED MONOGRAM SCHEMATIC ("ANATOMY OF VELOCITY")
+         ====================================================================== */
+      const chapters = document.querySelectorAll('.anatomy-chapter');
+      const layerTag = document.getElementById('schematic-layer-tag');
+      const zReadout = document.getElementById('schematic-z-readout');
+      const progressBar = document.getElementById('schematic-progress-bar');
+
+      const CHAPTER_CONFIGS = [
+        {
+          tag: 'LAYER 01 // STRIDE VECTOR',
+          zText: 'EXPLOSION Z: 24.0px',
+          progress: '33.33%',
+          cubeRotY: -14,
+          cubeRotX: 8,
+          aperture: { z: -20, scale: 0.95, opacity: 0.45 },
+          stride: { z: 36, x: -12, scale: 1.06, opacity: 1 },
+          biometric: { z: 0, x: 8, scale: 0.94, opacity: 0.38 },
+          pulse: { z: 14, scale: 0.92, opacity: 0.65 }
+        },
+        {
+          tag: 'LAYER 02 // OPTICAL BIOMETRIC WAVE',
+          zText: 'EXPLOSION Z: 48.0px',
+          progress: '66.66%',
+          cubeRotY: 16,
+          cubeRotX: -6,
+          aperture: { z: -24, scale: 1.0, opacity: 0.55 },
+          stride: { z: -10, x: -8, scale: 0.94, opacity: 0.38 },
+          biometric: { z: 44, x: 12, scale: 1.08, opacity: 1 },
+          pulse: { z: 22, scale: 1.05, opacity: 0.85 }
+        },
+        {
+          tag: 'LAYER 03 // AUTONOMIC PULSE CORE',
+          zText: 'EXPLOSION Z: 64.0px',
+          progress: '100%',
+          cubeRotY: 0,
+          cubeRotX: 12,
+          aperture: { z: -16, scale: 1.06, opacity: 0.85 },
+          stride: { z: 12, x: 0, scale: 1.0, opacity: 0.9 },
+          biometric: { z: 24, x: 0, scale: 1.0, opacity: 0.9 },
+          pulse: { z: 62, scale: 1.28, opacity: 1 }
+        }
+      ];
+
+      function activateSchematicChapter(idx) {
+        const cfg = CHAPTER_CONFIGS[idx] || CHAPTER_CONFIGS[0];
+        if (layerTag) layerTag.textContent = cfg.tag;
+        if (zReadout) zReadout.textContent = cfg.zText;
+        if (progressBar) progressBar.style.width = cfg.progress;
+
+        gsap.to('#schematic-cube', {
+          rotateY: cfg.cubeRotY,
+          rotateX: cfg.cubeRotX,
+          duration: 0.85,
+          ease: 'power3.out'
+        });
+
+        gsap.to('#layer-aperture', { ...cfg.aperture, duration: 0.75, ease: 'power3.out' });
+        gsap.to('#layer-stride', { ...cfg.stride, duration: 0.75, ease: 'power3.out' });
+        gsap.to('#layer-biometric', { ...cfg.biometric, duration: 0.75, ease: 'power3.out' });
+        gsap.to('#layer-pulse', { ...cfg.pulse, duration: 0.75, ease: 'power3.out' });
+      }
+
+      chapters.forEach((chapter, idx) => {
+        ScrollTrigger.create({
+          trigger: chapter,
+          start: 'top 58%',
+          end: 'bottom 42%',
+          onEnter: () => activateSchematicChapter(idx),
+          onEnterBack: () => activateSchematicChapter(idx)
+        });
+      });
+
+      // Bento Grid Staggered Entrance
+      gsap.from('.bento-card', {
+        scrollTrigger: {
+          trigger: '#matrix',
+          start: 'top 80%',
+          once: true
+        },
+        y: 32,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: 'power3.out'
+      });
+
+      /* ======================================================================
+         6. INTERACTIVE BIOMETRIC MODE SWITCHER (HERO HUD + WAVEFORM LAB)
+         ====================================================================== */
+      function setBiometricMode(modeKey) {
+        const data = BIOMETRIC_MODES[modeKey];
+        if (!data) return;
+
+        telemetryState.mode = modeKey;
+        telemetryState.targetBpm = data.bpm;
+        telemetryState.waveFreq = data.waveFreq;
+        telemetryState.waveAmp = data.waveAmp;
+
+        // Update active button states across both Hero HUD and Lab
+        document.querySelectorAll('[data-bpm-mode]').forEach((btn) => {
+          btn.classList.toggle('is-active', btn.dataset.bpmMode === modeKey);
+        });
+
+        // Update Nav & Hero HUD readouts
+        document.getElementById('nav-bpm-readout').textContent = `${data.bpm} BPM`;
+        document.getElementById('hud-bpm-badge').textContent = `${data.bpm} BPM`;
+        document.getElementById('hud-hrv-val').innerHTML = `${data.hrv}<span class="text-xs text-lime ml-0.5">ms</span>`;
+        document.getElementById('hud-vo2-val').textContent = data.vo2;
+        document.getElementById('hud-strain-val').textContent = data.strain;
+
+        // Update Telemetry Lab Bento Cards
+        document.getElementById('lab-zone-tag').textContent = data.zoneTag;
+        document.getElementById('lab-zone-title').textContent = data.zoneTitle;
+        document.getElementById('lab-zone-desc').textContent = data.zoneDesc;
+        document.getElementById('lab-lactate').textContent = data.lactate;
+        document.getElementById('lab-spo2').textContent = data.spo2;
+        document.getElementById('lab-gauge-score').textContent = data.score;
+        document.getElementById('lab-wattage').textContent = data.wattage;
+        document.getElementById('lab-aero-pct').textContent = `${data.aero}%`;
+        document.getElementById('lab-aero-bar').style.width = `${data.aero}%`;
+        document.getElementById('lab-sym-pct').textContent = data.sym;
+        document.getElementById('lab-sym-bar').style.width = data.sym;
+
+        // Animate SVG Radial Gauge Arc (circumference = 314.16)
+        const circumference = 314.16;
+        const offset = circumference * (1 - data.score / 100);
+        gsap.to('#lab-radial-arc', {
+          strokeDashoffset: offset,
+          duration: 0.75,
+          ease: 'power3.out'
+        });
+      }
+
+      document.querySelectorAll('[data-bpm-mode]').forEach((btn) => {
+        btn.addEventListener('click', () => setBiometricMode(btn.dataset.bpmMode));
+      });
+
+      // Early Access Form Handler (No alert())
+      const reserveForm = document.getElementById('reserve-form');
+      const reserveEmail = document.getElementById('reserve-email');
+      const reserveFeedback = document.getElementById('reserve-feedback');
+
+      if (reserveForm) {
+        reserveForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const email = reserveEmail.value.trim();
+          if (!email) return;
+          reserveFeedback.textContent = `TELEMETRY INVITATION QUEUED FOR ${email.toUpperCase()}`;
+          reserveEmail.value = '';
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
