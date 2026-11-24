@@ -2478,38 +2478,6 @@ html[data-theme="light"] .nav-channel:hover, html[data-theme="light"] .nav-chann
           <span aria-hidden="true">GoHighLevel</span><span aria-hidden="true">WordPress</span><span aria-hidden="true">Shopify</span><span aria-hidden="true">Adobe Premiere Pro</span><span aria-hidden="true">After Effects</span><span aria-hidden="true">Photoshop</span><span aria-hidden="true">Blender</span><span aria-hidden="true">HTML / CSS</span><span aria-hidden="true">Tailwind</span><span aria-hidden="true">Make / AI Workflows</span>
         </div></div>
       </section>
-
-      <section class="contact section-wrap" id="contact">
-        <div class="contact-heading reveal">
-          <div class="section-label"><span>04</span> INITIATE CONTACT</div>
-          <p class="contact-pre">Have a complex idea, a creative vision, or a system ready to perform?</p>
-          <h2>Let’s build your<br /><em>next advantage.</em></h2>
-          <div class="contact-actions">
-            <button class="contact-open-btn" type="button" data-contact-open><span class="status-dot"></span> Start a project</button>
-                        <div class="contact-channels" aria-label="Direct contact channels">
-              <a class="contact-channel" href="mailto:jayaganglampara@gmail.com" aria-label="Email jayaganglampara@gmail.com" title="Email">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <rect x="3" y="5" width="18" height="14" rx="3"></rect>
-                  <path d="m4 7 8 6 8-6"></path>
-                </svg>
-              </a>
-              <a class="contact-channel" href="https://instagram.com/jxlampara" target="_blank" rel="noopener noreferrer" aria-label="Instagram @jxlamp" title="Instagram @jxlamp">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <rect x="3" y="3" width="18" height="18" rx="5"></rect>
-                  <circle cx="12" cy="12" r="4"></circle>
-                  <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle>
-                </svg>
-              </a>
-              <a class="contact-channel" href="https://wa.me/639949126026" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp 09949126026" title="WhatsApp 09949126026">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M20 11.5a8.5 8.5 0 0 1-12.5 7.5L3 20l1.1-4.3A8.5 8.5 0 1 1 20 11.5Z"></path>
-                  <path d="M9.4 9.2c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.6 1.5c.1.2.1.4-.1.6l-.4.5c-.1.1-.1.3 0 .5.4.7 1 1.3 1.7 1.7.2.1.4.1.5 0l.5-.4c.2-.2.4-.2.6-.1l1.5.6c.3.1.4.3.4.5v.5c0 .3-.1.6-.4.7-.5.3-1.4.4-2.5 0-1.6-.6-3.1-2-3.7-3.7-.4-1.1-.3-2 0-2.5Z"></path>
-                </svg>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
 
     <div class="contact-modal" id="contact-modal" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title" aria-hidden="true" hidden>
@@ -2522,10 +2490,7 @@ html[data-theme="light"] .nav-channel:hover, html[data-theme="light"] .nav-chann
           </div>
           <button class="contact-close" type="button" data-contact-close aria-label="Close contact form">Close <span>×</span></button>
         </div>
-        <form class="contact-form" action="https://formsubmit.co/jayaganglampara@gmail.com" method="POST" accept-charset="UTF-8">
-          <input type="hidden" name="_subject" value="Project inquiry — Jay Lampara portfolio" />
-          <input type="hidden" name="_template" value="table" />
-          <input type="hidden" name="_captcha" value="false" />
+        <form class="contact-form">
           <input class="inquiry-honey" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" />
           <label><span>YOUR NAME</span><input required name="name" type="text" autocomplete="name" maxlength="80" placeholder="Enter your name" /></label>
           <label><span>EMAIL ADDRESS</span><input required name="email" type="email" autocomplete="email" maxlength="120" placeholder="you@company.com" /></label>
@@ -2569,6 +2534,7 @@ const applyTheme = (mode, persist = true) => {
   themeToggle?.setAttribute('aria-pressed', String(mode === 'light'));
   document.querySelectorAll('[data-theme-icon]').forEach((el) => { el.textContent = mode === 'light' ? '☀' : '☾'; });
   document.querySelectorAll('[data-theme-label]').forEach((el) => { el.textContent = mode === 'light' ? 'LIGHT MODE' : 'DARK MODE'; });
+  if (window.$crisp) { window.$crisp.push(['config', 'color:theme', [mode === 'light' ? 'green' : 'light_green']]); }
   if (persist) { try { localStorage.setItem('jl-theme', mode); } catch (error) { /* private browsing: choice stays per-visit */ } }
 };
 let savedTheme = null;
@@ -5823,63 +5789,27 @@ if (contactForm) {
     }
   };
 
-  contactForm.addEventListener('submit', async (event) => {
+  contactForm.addEventListener('submit', (event) => {
     event.preventDefault();
     if (submitButton?.disabled || !contactForm.reportValidity()) return;
     const data = new FormData(contactForm);
+    if ((data.get('_honey') || '').toString().trim()) return;
     const name = (data.get('name') || '').toString().trim();
     const email = (data.get('email') || '').toString().trim();
     const project = (data.get('project') || '').toString().trim();
     const message = (data.get('message') || '').toString().trim();
     const mailto = buildInquiryMailto(name, email, project, message);
-    const subject = `Project inquiry — ${project || 'General'}${name ? ` — ${name}` : ''}`;
 
-    if (submitButton) {
-      submitButton.disabled = true;
-      submitButton.setAttribute('aria-busy', 'true');
-      submitButton.innerHTML = 'SENDING <span>…</span>';
-    }
-    setStatus('pending', 'Sending your inquiry…');
-
-    const controller = new AbortController();
-    const timer = window.setTimeout(() => controller.abort(), 20000);
-    try {
-      const response = await fetch('https://formsubmit.co/ajax/jayaganglampara@gmail.com', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-          name,
-          email,
-          project,
-          message,
-          _subject: subject,
-          _template: 'table',
-          _captcha: 'false',
-          _honey: (data.get('_honey') || '').toString()
-        }),
-        signal: controller.signal
-      });
-      const payload = await response.json().catch(() => ({}));
-      const needsActivation = /activat/i.test(payload.message || '');
-      if (!response.ok || payload.success === false || payload.success === 'false') {
-        if (needsActivation) {
-          /* first-ever submission: FormSubmit mails an activation link to the owner */
-          setStatus('notice', 'One-time form activation needed — check jayaganglampara@gmail.com, click the activation link, then send this inquiry again. ', mailto);
-          return;
-        }
-        throw new Error(payload.message || 'Request failed');
-      }
-      setStatus('success', `Thank you${name ? `, ${name}` : ''} — your inquiry has been sent. I’ll reply within 1–2 business days.`);
+    if (window.$crisp) {
+      if (name) window.$crisp.push(['set', 'user:nickname', [name]]);
+      if (email) window.$crisp.push(['set', 'user:email', [email]]);
+      if (project) window.$crisp.push(['set', 'session:data', [[['project_type', project]]]]);
+      window.$crisp.push(['set', 'session:segments', [['portfolio-inquiry']]]);
+      window.$crisp.push(['do', 'message:send', ['text', `[Project Inquiry — ${project || 'General'}]\n${message}`]]);
+      setStatus('success', `Thank you${name ? `, ${name}` : ''} — your inquiry has been sent to live chat. I’ll reply shortly.`);
       contactForm.reset();
-    } catch (error) {
-      setStatus('error', 'Could not send right now. ', mailto);
-    } finally {
-      window.clearTimeout(timer);
-      if (submitButton) {
-        submitButton.disabled = false;
-        submitButton.removeAttribute('aria-busy');
-        submitButton.innerHTML = submitLabel;
-      }
+    } else {
+      setStatus('error', 'Live chat is unavailable right now. ', mailto);
     }
   });
 }
@@ -7481,5 +7411,16 @@ if (!reducedMotion && !isEmbeddedFrame) {
 })();
 </script>
     <!-- Self-contained export: portrait, résumé, CSS, and JavaScript are embedded. -->
+    <script type="text/javascript">
+      window.$crisp = window.$crisp || [];
+      window.CRISP_WEBSITE_ID = "9be0d2f4-70bf-4a55-bcd3-ac79e73bc7fb";
+      window.$crisp.push(["config", "color:theme", [document.documentElement.dataset.theme === "light" ? "green" : "light_green"]]);
+      (function () {
+        var d = document, s = d.createElement("script");
+        s.src = "https://client.crisp.chat/l.js";
+        s.async = 1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      })();
+    </script>
   </body>
 </html>

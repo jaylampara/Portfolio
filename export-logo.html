@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Export Exact JL Logo (DM Mono)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@500&display=swap" />
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #080909;
+      color: #edf5f1;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      padding: 24px;
+    }
+    .card {
+      width: min(460px, 100%);
+      padding: 28px;
+      border-radius: 20px;
+      border: 1px solid rgba(218, 250, 242, 0.16);
+      background: #0d0f10;
+      text-align: center;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.15rem;
+    }
+    p {
+      margin: 0 0 20px;
+      color: #8e9896;
+      font-size: 0.9rem;
+    }
+    canvas {
+      width: 240px;
+      height: 240px;
+      display: block;
+      margin: 0 auto 22px;
+      background-image:
+        linear-gradient(45deg, #161a1b 25%, transparent 25%),
+        linear-gradient(-45deg, #161a1b 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #161a1b 75%),
+        linear-gradient(-45deg, transparent 75%, #161a1b 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+      border-radius: 14px;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    a, button {
+      appearance: none;
+      border: 1px solid rgba(200, 255, 52, 0.45);
+      background: #c8ff34;
+      color: #080909;
+      padding: 11px 18px;
+      border-radius: 999px;
+      font: 600 12px 'DM Mono', monospace;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .secondary {
+      background: transparent;
+      color: #edf5f1;
+      border-color: rgba(218, 250, 242, 0.25);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Exact JL Logo (DM Mono)</h1>
+    <p id="status">Loading DM Mono font…</p>
+    <canvas id="c" width="512" height="512"></canvas>
+    <div class="actions">
+      <a id="dlPng" download="logo.png" href="#">Download logo.png (512×512)</a>
+      <a class="secondary" download="logo.svg" href="logo.svg">Download logo.svg</a>
+    </div>
+  </div>
+  <script>
+    async function render() {
+      await document.fonts.load("500 131px 'DM Mono'");
+      await document.fonts.ready;
+
+      const canvas = document.getElementById("c");
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, 512, 512);
+
+      ctx.save();
+      ctx.translate(256, 256);
+      ctx.transform(1, 0, Math.tan(-9 * Math.PI / 180), 1, 0, 0);
+      ctx.translate(-256, -256);
+
+      ctx.fillStyle = "#c8ff34";
+      ctx.fillRect(66, 66, 380, 380);
+
+      ctx.fillStyle = "#080909";
+      ctx.font = "500 131px 'DM Mono', monospace";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      if ("letterSpacing" in ctx) {
+        ctx.letterSpacing = "-0.1em";
+      }
+      ctx.fillText("JL", 256, 260);
+      ctx.restore();
+
+      document.getElementById("dlPng").href = canvas.toDataURL("image/png");
+      document.getElementById("status").textContent = "Ready — rendered with the exact DM Mono font from your site.";
+    }
+    render();
+  </script>
+</body>
+</html>

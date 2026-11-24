@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="JL — Jay Lampara logo">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@500&amp;display=swap');
+      .jl-text {
+        font-family: 'DM Mono', monospace;
+        font-weight: 500;
+        font-size: 131px;
+        letter-spacing: -0.1em;
+        fill: #080909;
+      }
+    </style>
+  </defs>
+  <g transform="translate(256 256) skewX(-9) translate(-256 -256)">
+    <rect x="66" y="66" width="380" height="380" fill="#c8ff34" />
+    <text class="jl-text" x="256" y="256" text-anchor="middle" dominant-baseline="central">JL</text>
+  </g>
+</svg>
