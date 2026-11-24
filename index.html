@@ -589,7 +589,9 @@ html[data-theme="light"] .showreel-ext { color: #10161a; background: #e2e6df; bo
 }
 .showreel-web-activate { position: absolute; inset: 0; z-index: 3; display: grid; place-items: end center; padding: 10px; border: 0; background: transparent; cursor: pointer; }
 .showreel-web-activate span { padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(200,255,52,.5); background: rgba(7,16,8,.82); color: var(--acid); font: 8px var(--mono); letter-spacing: .09em; opacity: 0; transform: translateY(4px); transition: opacity .2s ease, transform .2s ease; }
-.showreel-web-activate:hover span,
+@media (hover: hover) and (pointer: fine) {
+  .showreel-item.is-hovered .showreel-web-activate span { opacity: 1; transform: translateY(0); }
+}
 .showreel-web-activate:focus-visible span { opacity: 1; transform: translateY(0); }
 .showreel-web.is-lightbox .showreel-web-activate { display: none; }
 .showreel-web-loading { position: absolute; inset: 0; z-index: 2; display: grid; place-content: center; gap: 6px; text-align: center; padding: 14px; background: rgba(10,16,14,.86); color: #b7cbc1; font: 9px var(--mono); letter-spacing: .09em; pointer-events: none; transition: opacity .3s ease; }
@@ -670,19 +672,6 @@ html[data-theme="light"] .showreel-videos.auto-orient .showreel-item img { borde
   pointer-events: none;
   z-index: 2;
 }
-.showreel-videos:has(.showreel-item:hover) .showreel-item:not(:hover) {
-  opacity: .46;
-  filter: saturate(.76);
-  transform: scale(.97);
-}
-.showreel-videos .showreel-item:hover {
-  z-index: 2;
-  box-shadow: 0 20px 38px -14px rgba(0,0,0,.72), 0 0 22px -6px rgba(200,255,52,.35);
-}
-.showreel-videos .showreel-item:hover::before { opacity: 1; }
-.showreel-videos .showreel-item:hover::after { animation: showreel-tile-sheen .85s cubic-bezier(.3,.6,.35,1) forwards; }
-.showreel-videos .showreel-item:hover img,
-.showreel-videos .showreel-item:hover video { border-color: rgba(200,255,52,.72); }
 .showreel-mute::after {
   content: '';
   position: absolute;
@@ -692,19 +681,34 @@ html[data-theme="light"] .showreel-videos.auto-orient .showreel-item img { borde
   opacity: 0;
   pointer-events: none;
 }
-.showreel-videos .showreel-item:hover .showreel-mute {
-  background: var(--acid);
-  color: #071008;
-  border-color: var(--acid);
-  transform: scale(1.08);
+@media (hover: hover) and (pointer: fine) {
+  .showreel-videos.has-hover .showreel-item:not(.is-hovered) {
+    opacity: .46;
+    filter: saturate(.76);
+    transform: scale(.97);
+  }
+  .showreel-videos .showreel-item.is-hovered {
+    z-index: 2;
+    box-shadow: 0 20px 38px -14px rgba(0,0,0,.72), 0 0 22px -6px rgba(200,255,52,.35);
+  }
+  .showreel-videos .showreel-item.is-hovered::before { opacity: 1; }
+  .showreel-videos .showreel-item.is-hovered::after { animation: showreel-tile-sheen .85s cubic-bezier(.3,.6,.35,1) forwards; }
+  .showreel-videos .showreel-item.is-hovered img,
+  .showreel-videos .showreel-item.is-hovered video { border-color: rgba(200,255,52,.72); }
+  .showreel-videos .showreel-item.is-hovered .showreel-mute {
+    background: var(--acid);
+    color: #071008;
+    border-color: var(--acid);
+    transform: scale(1.08);
+  }
+  .showreel-videos .showreel-item.is-hovered .showreel-mute::after {
+    animation: showreel-audio-pulse 1.15s ease-out infinite;
+  }
+  html[data-theme="light"] .showreel-videos .showreel-item.is-hovered {
+    box-shadow: 0 20px 36px -14px rgba(16,23,18,.28), 0 0 18px -6px rgba(77,107,0,.28);
+  }
+  html[data-theme="light"] .showreel-videos .showreel-item.is-hovered .showreel-mute { color: #f2f5f1; }
 }
-.showreel-videos .showreel-item:hover .showreel-mute::after {
-  animation: showreel-audio-pulse 1.15s ease-out infinite;
-}
-html[data-theme="light"] .showreel-videos .showreel-item:hover {
-  box-shadow: 0 20px 36px -14px rgba(16,23,18,.28), 0 0 18px -6px rgba(77,107,0,.28);
-}
-html[data-theme="light"] .showreel-videos .showreel-item:hover .showreel-mute { color: #f2f5f1; }
 @keyframes showreel-tile-sheen {
   from { transform: translateX(-200%) skewX(-18deg); }
   to { transform: translateX(360%) skewX(-18deg); }
@@ -715,7 +719,7 @@ html[data-theme="light"] .showreel-videos .showreel-item:hover .showreel-mute { 
 }
 @media (prefers-reduced-motion: reduce) {
   .showreel-videos .showreel-item, .showreel-videos .showreel-item::before { transition: none; }
-  .showreel-videos .showreel-item:hover::after, .showreel-videos .showreel-item:hover .showreel-mute::after { animation: none; }
+  .showreel-videos .showreel-item.is-hovered::after, .showreel-videos .showreel-item.is-hovered .showreel-mute::after { animation: none; }
 }
 
 html[data-theme="light"] .showreel-tab { color: #3c4842; border-color: rgba(10,30,20,.25); }
@@ -3814,24 +3818,70 @@ const attachShowcaseTilt = (gallery) => {
   if (!gallery || gallery.dataset.tiltBound) return;
   gallery.dataset.tiltBound = 'true';
   const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (rm) return;
+  const dialog = gallery.closest('.showreel-dialog');
   let activeTile = null;
+  let isScrolling = false;
+  let scrollTimer = 0;
+  let lastX = null;
+  let lastY = null;
+  let requireMoveFrom = null;
+
   const clearTile = () => {
-    if (activeTile) { activeTile.style.transform = ''; activeTile = null; }
+    if (activeTile) {
+      activeTile.classList.remove('is-hovered');
+      activeTile.style.transform = '';
+      activeTile = null;
+    }
+    gallery.classList.remove('has-hover');
   };
+  gallery._clearHover = clearTile;
+
+  const markScrolling = (e) => {
+    clearTile();
+    isScrolling = true;
+    if (e && typeof e.clientX === 'number' && typeof e.clientY === 'number') {
+      lastX = e.clientX;
+      lastY = e.clientY;
+    }
+    requireMoveFrom = { x: lastX, y: lastY };
+    window.clearTimeout(scrollTimer);
+    scrollTimer = window.setTimeout(() => { isScrolling = false; }, 140);
+  };
+
+  if (dialog) {
+    dialog.addEventListener('wheel', markScrolling, { passive: true });
+    dialog.addEventListener('scroll', markScrolling, { passive: true });
+    dialog.addEventListener('touchstart', clearTile, { passive: true });
+    dialog.addEventListener('pointerleave', clearTile);
+  }
+
   gallery.addEventListener('pointermove', (e) => {
     if (e.pointerType === 'touch') return;
+    lastX = e.clientX;
+    lastY = e.clientY;
+    if (isScrolling) return;
+    if (requireMoveFrom) {
+      if (requireMoveFrom.x != null && Math.hypot(e.clientX - requireMoveFrom.x, e.clientY - requireMoveFrom.y) < 4) return;
+      requireMoveFrom = null;
+    }
     const tile = e.target.closest('.showreel-item');
     if (!tile || !gallery.contains(tile) || tile.querySelector('.showreel-web.is-interactive')) { clearTile(); return; }
-    if (activeTile && activeTile !== tile) activeTile.style.transform = '';
+    if (activeTile && activeTile !== tile) {
+      activeTile.classList.remove('is-hovered');
+      activeTile.style.transform = '';
+    }
     activeTile = tile;
+    tile.classList.add('is-hovered');
+    gallery.classList.add('has-hover');
     const r = tile.getBoundingClientRect();
     if (!r.width || !r.height) return;
     const x = (e.clientX - r.left) / r.width;
     const y = (e.clientY - r.top) / r.height;
     tile.style.setProperty('--gx', `${(x * 100).toFixed(1)}%`);
     tile.style.setProperty('--gy', `${(y * 100).toFixed(1)}%`);
-    tile.style.transform = `translateY(-4px) rotateX(${((0.5 - y) * 10).toFixed(2)}deg) rotateY(${((x - 0.5) * 10).toFixed(2)}deg) scale(1.03)`;
+    if (!rm) {
+      tile.style.transform = `translateY(-4px) rotateX(${((0.5 - y) * 10).toFixed(2)}deg) rotateY(${((x - 0.5) * 10).toFixed(2)}deg) scale(1.03)`;
+    }
   });
   gallery.addEventListener('pointerleave', clearTile);
 };
@@ -5026,6 +5076,7 @@ const createFolderShowcase = ({ key, folder, kicker, title }) => {
     rememberGalleryVideos(gallery);
     stopAndMute();
     attachShowcaseTilt(gallery);
+    gallery._clearHover?.();
     gallery.innerHTML = '<div class="showreel-empty">LOADING SAMPLE WORKS …</div>';
     if (!tab.entries) {
       const links = await listShowcaseDirectory(tab.path);
@@ -5214,6 +5265,7 @@ const createFolderShowcase = ({ key, folder, kicker, title }) => {
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
     stopAndMute();
+    gallery._clearHover?.();
     /* Drive players have no pause API — blank them so hidden tiles never keep speaking */
     parkDriveTiles();
     deactivateOtherWebPreviews(null);

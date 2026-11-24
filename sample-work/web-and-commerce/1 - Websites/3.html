@@ -1,0 +1,2431 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Lamp Solutions | Bright Ideas. Engineered to Scale.</title>
+  <meta name="description" content="Full-stack web engineering, retention-driven video production, and US-aligned digital operations for brands ready to stand out in the dark." />
+
+  <!-- Google Fonts: Geometric Display (Syne & Space Grotesk) + Clean UI Body (Plus Jakarta Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            lamp: {
+              black: '#000000',
+              surface: '#0A0A0B',
+              elevated: '#111113',
+              slate: '#7A7A7B',
+              gold: '#FFD600',
+              volt: '#F6EB16',
+              core: '#FFF799',
+            }
+          },
+          fontFamily: {
+            display: ['"Space Grotesk"', 'sans-serif'],
+            hero: ['"Syne"', '"Space Grotesk"', 'sans-serif'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          transitionTimingFunction: {
+            tactile: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- GSAP 3 + ScrollTrigger CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+
+  <style>
+    /* ==========================================================================
+       THE LAMP SOLUTIONS — DESIGN TOKENS & NEON-TUBE VECTOR GLOW SYSTEM
+       ========================================================================== */
+    :root {
+      --bg-canvas: #000000;
+      --bg-surface: #0A0A0B;
+      --border-subtle: rgba(122, 122, 123, 0.22);
+      --accent-gold: #FFD600;
+      --accent-volt: #F6EB16;
+      --accent-core: #FFF799;
+      --slate-muted: #7A7A7B;
+      --ease-tactile: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      background-color: var(--bg-canvas);
+      color: #FFFFFF;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #000000;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #27272A;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #FFD600;
+    }
+
+    /* Fluid Display Typography */
+    .font-brand-display {
+      font-family: 'Space Grotesk', sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .hero-headline {
+      font-family: 'Syne', 'Space Grotesk', sans-serif;
+      font-size: clamp(1.55rem, 6vw, 5.25rem);
+      line-height: 1.06;
+      letter-spacing: -0.02em;
+      overflow-wrap: break-word;
+    }
+
+    .section-headline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.85rem, 4vw, 3.15rem);
+      line-height: 1.1;
+      letter-spacing: -0.015em;
+    }
+
+    /* Architectural Micro-Grid Background */
+    .bg-architectural-grid {
+      background-image: 
+        linear-gradient(to right, rgba(122, 122, 123, 0.07) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(122, 122, 123, 0.07) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(ellipse 80% 65% at 50% 35%, #000 40%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 65% at 50% 35%, #000 40%, transparent 100%);
+    }
+
+    /* Neon-Tube SVG Glow System (Dynamic CSS drop-shadow, zero raster blur) */
+    .neon-bulb-glow {
+      filter: drop-shadow(0 0 18px rgba(246, 235, 22, 0.55)) drop-shadow(0 0 42px rgba(255, 214, 0, 0.28));
+      transition: filter 280ms var(--ease-tactile), transform 280ms var(--ease-tactile), opacity 280ms var(--ease-tactile);
+    }
+
+    .bulb-hero-stage:hover .neon-bulb-glow,
+    body.lamp-overdrive .neon-bulb-glow {
+      filter: drop-shadow(0 0 28px rgba(246, 235, 22, 0.9)) drop-shadow(0 0 68px rgba(255, 214, 0, 0.55));
+      transform: scale(1.035);
+    }
+
+    body.lamp-dimmed .neon-bulb-glow {
+      filter: drop-shadow(0 0 5px rgba(246, 235, 22, 0.22));
+      opacity: 0.62;
+    }
+
+    .nav-neon-icon {
+      filter: drop-shadow(0 0 8px rgba(246, 235, 22, 0.55));
+      transition: filter 220ms var(--ease-tactile);
+    }
+
+    .group:hover .nav-neon-icon {
+      filter: drop-shadow(0 0 14px rgba(246, 235, 22, 0.85));
+    }
+
+    .wordmark-neon-glow {
+      filter: drop-shadow(0 0 6px rgba(255, 214, 0, 0.42));
+      transition: filter 220ms var(--ease-tactile);
+    }
+
+    .group:hover .wordmark-neon-glow {
+      filter: drop-shadow(0 0 11px rgba(246, 235, 22, 0.72));
+    }
+
+    /* Radial Ambient Halo behind Hero Bulb */
+    .hero-ambient-halo {
+      background: radial-gradient(
+        circle,
+        rgba(246, 235, 22, 0.26) 0%,
+        rgba(255, 214, 0, 0.1) 38%,
+        rgba(0, 0, 0, 0) 70%
+      );
+      pointer-events: none;
+      transition: opacity 320ms var(--ease-tactile), filter 320ms var(--ease-tactile);
+    }
+
+    body.lamp-dimmed .hero-ambient-halo {
+      opacity: 0.18 !important;
+    }
+
+    body.lamp-overdrive .hero-ambient-halo {
+      background: radial-gradient(
+        circle,
+        rgba(246, 235, 22, 0.42) 0%,
+        rgba(255, 214, 0, 0.18) 44%,
+        rgba(0, 0, 0, 0) 74%
+      );
+    }
+
+    /* Cursor-Tracking Spotlight Cards (Emil Kowalski tactile precision) */
+    .spotlight-card {
+      position: relative;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      transition: border-color 180ms var(--ease-tactile), transform 180ms var(--ease-tactile), box-shadow 180ms var(--ease-tactile);
+      overflow: hidden;
+    }
+
+    .spotlight-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: radial-gradient(
+        420px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(255, 214, 0, 0.48),
+        transparent 60%
+      );
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 220ms var(--ease-tactile);
+      pointer-events: none;
+    }
+
+    .spotlight-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(
+        520px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(246, 235, 22, 0.065),
+        transparent 60%
+      );
+      opacity: 0;
+      transition: opacity 220ms var(--ease-tactile);
+      pointer-events: none;
+    }
+
+    .spotlight-card:hover::before,
+    .spotlight-card:hover::after {
+      opacity: 1;
+    }
+
+    .spotlight-card:hover {
+      border-color: rgba(255, 214, 0, 0.36);
+      transform: translateY(-2px);
+    }
+
+    /* Featured Pricing Card Glow */
+    .pricing-featured {
+      overflow: visible;
+      border-color: rgba(255, 214, 0, 0.58);
+      box-shadow: 0 0 48px -12px rgba(255, 214, 0, 0.2);
+    }
+
+    /* Tactile Buttons (180ms cubic-bezier + active:scale-[0.98]) */
+    .btn-electric {
+      background: linear-gradient(135deg, #F6EB16 0%, #FFD600 100%);
+      color: #000000;
+      font-weight: 700;
+      transition: transform 180ms var(--ease-tactile), box-shadow 180ms var(--ease-tactile), filter 180ms var(--ease-tactile);
+      box-shadow: 0 0 24px rgba(255, 214, 0, 0.25);
+    }
+
+    .btn-electric:hover {
+      box-shadow: 0 0 36px rgba(246, 235, 22, 0.58);
+      filter: brightness(1.04);
+      transform: translateY(-1px);
+    }
+
+    .btn-electric:active {
+      transform: scale(0.98);
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(122, 122, 123, 0.35);
+      color: #FFFFFF;
+      transition: transform 180ms var(--ease-tactile), border-color 180ms var(--ease-tactile), background-color 180ms var(--ease-tactile);
+    }
+
+    .btn-ghost:hover {
+      border-color: #FFD600;
+      background: rgba(255, 214, 0, 0.06);
+    }
+
+    .btn-ghost:active {
+      transform: scale(0.98);
+    }
+
+    /* Hardware Switch Toggle Visual inside Pillars */
+    .lamp-switch-dot {
+      transition: transform 220ms var(--ease-tactile), background-color 220ms var(--ease-tactile), box-shadow 220ms var(--ease-tactile);
+    }
+    .spotlight-card:hover .lamp-switch-dot {
+      transform: translateX(14px);
+      background-color: #F6EB16;
+      box-shadow: 0 0 12px #F6EB16;
+    }
+
+    /* Modal Backdrop Transition */
+    .modal-backdrop {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 200ms var(--ease-tactile);
+    }
+    .modal-backdrop.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-panel {
+      transform: scale(0.96) translateY(8px);
+      transition: transform 220ms var(--ease-tactile);
+    }
+    .modal-backdrop.is-open .modal-panel {
+      transform: scale(1) translateY(0);
+    }
+
+    /* Custom Text Selection */
+    ::selection {
+      background-color: #FFD600;
+      color: #000000;
+    }
+
+    /* Top Scroll-Linked Electric Progress Filament */
+    #scroll-filament-bar {
+      transform-origin: left center;
+      transform: scaleX(0);
+      background: linear-gradient(90deg, #FFD600 0%, #F6EB16 65%, #FFF799 100%);
+      box-shadow: 0 0 12px rgba(246, 235, 22, 0.85), 0 0 24px rgba(255, 214, 0, 0.45);
+      will-change: transform;
+    }
+
+    /* 3D Perspective Stage for Hero Bulb Parallax */
+    .bulb-hero-stage {
+      perspective: 900px;
+    }
+    #hero-bulb-container {
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    /* Tactile Sliding Pill Indicator for Work Filter Tabs */
+    #work-filter-pill {
+      transition: transform 240ms var(--ease-tactile), width 240ms var(--ease-tactile);
+      will-change: transform, width;
+    }
+
+    /* GPU-Composited Smooth Transitions for Work Cards & Add-Ons */
+    .work-card {
+      will-change: transform, opacity;
+    }
+    #addons-panel {
+      overflow: hidden;
+      will-change: height, opacity;
+    }
+
+    /* Founder Portrait Studio Rim & Edge Blend */
+    .founder-portrait-stage {
+      perspective: 950px;
+    }
+    #founder-portrait-wrap {
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+    .founder-cutout-glow {
+      filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 22px rgba(246, 235, 22, 0.16));
+      transition: transform 320ms var(--ease-tactile), filter 320ms var(--ease-tactile);
+    }
+    .founder-portrait-stage:hover .founder-cutout-glow {
+      filter: drop-shadow(0 16px 34px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 32px rgba(255, 214, 0, 0.28));
+    }
+  </style>
+</head>
+<body class="bg-black text-white selection:bg-lamp-gold selection:text-black">
+
+  <!-- ========================================================================
+       SHARED SVG DEFS — REUSABLE EXACT BRAND ICON & CUSTOM NEON WORDMARK
+       ======================================================================== -->
+  <svg width="0" height="0" class="hidden" aria-hidden="true">
+    <defs>
+      <!-- 1. Official Lightbulb Emblem (Final logo.svg) -->
+      <symbol id="tls-bulb-symbol" viewBox="398 303 434 668">
+        <!-- Outer Neon Gold Tube Layer (#FFD600) -->
+        <g fill="none" stroke="#FFD600" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 590.5 688 V 756 H 532 C 524 756 522 749 520 736 C 516 711 510 692 492 672 C 468 646 444 618 431 581 C 424 560 423 541 423 522 C 423 414 503 331 612 331 C 721 331 801 414 801 522 C 801 541 800 560 793 581 C 780 618 756 646 732 672 C 714 692 708 711 704 736 C 700 764 696 781 666 787 L 542 808 C 523 811 523 849 544 849 H 688 C 709 849 709 895 688 895 H 551" />
+          <path d="M 638 755 V 634 C 638 615 651 607 666 607 C 681 607 688 616 688 626 C 688 637 680 644 666 644 H 584 C 562 644 552 632 552 611 V 479 C 552 457 589.5 457 589.5 479 V 628" />
+          <path d="M 571 919 H 669 C 664 942 644 955 620 955 C 596 955 576 942 571 919 Z" fill="#FFD600" stroke="none" />
+        </g>
+        <!-- Inner Neon Core Highlight Layer (#FFF799) -->
+        <g fill="none" stroke="#FFF799" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 590.5 688 V 756 H 532 C 524 756 522 749 520 736 C 516 711 510 692 492 672 C 468 646 444 618 431 581 C 424 560 423 541 423 522 C 423 414 503 331 612 331 C 721 331 801 414 801 522 C 801 541 800 560 793 581 C 780 618 756 646 732 672 C 714 692 708 711 704 736 C 700 764 696 781 666 787 L 542 808 C 523 811 523 849 544 849 H 688 C 709 849 709 895 688 895 H 551" />
+          <path d="M 638 755 V 634 C 638 615 651 607 666 607 C 681 607 688 616 688 626 C 688 637 680 644 666 644 H 584 C 562 644 552 632 552 611 V 479 C 552 457 589.5 457 589.5 479 V 628" />
+          <path d="M 581 925 H 659 C 654 939 639 947 620 947 C 601 947 586 939 581 925 Z" fill="#FFF799" stroke="none" />
+        </g>
+      </symbol>
+
+      <!-- 2. Official Wordmark Asset (final logo name.svg) -->
+      <symbol id="tls-wordmark-symbol" viewBox="130 490 965 225">
+        <!-- Outer Neon Gold Tube Layer (#FFD600) -->
+        <g fill="none" stroke="#FFD600" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 152 516 H 240" />
+          <path d="M 180.5 536 V 590" />
+          <path d="M 212 516 V 590" />
+          <path d="M 270 510 V 590" />
+          <path d="M 377 510 V 590" />
+          <path d="M 270 551 H 377" />
+          <path d="M 524 511.5 H 421 V 589.5 H 524" />
+          <path d="M 421 549.5 H 524" />
+          <path d="M 614.5 574 V 516 C 614.5 504 592 504 592 516 V 581 C 592 587 596 590 603 590 H 663" />
+          <path d="M 692.5 590 V 512 H 793 V 590" />
+          <path d="M 692.5 552 H 793" />
+          <path d="M 834 590 V 512 L 884 567 L 933.5 512 V 590" />
+          <path d="M 971.5 590 V 510.5 H 1073 V 550.5 H 971.5" />
+        </g>
+        <g fill="none" stroke="#FFD600" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 252 634 L 154 644 C 149 645 149 668 156 669 L 250 674 C 256 675 256 697 248 697.5 H 153" />
+          <path d="M 276.5 632.5 H 358 V 696.5 H 276.5 Z" />
+          <path d="M 390 631 V 697.5 H 468" />
+          <path d="M 502 631 V 696.5 H 582.5 V 631" />
+          <path d="M 611 632.5 H 693" />
+          <path d="M 654.5 632.5 V 697" />
+          <path d="M 734 631 V 697" />
+          <path d="M 773 632.5 H 854.5 V 697 H 773 Z" />
+          <path d="M 883.5 697 V 632.5 L 963 697 V 632.5" />
+          <path d="M 1072 631.5 H 996 V 662.5 H 1074 V 696.5 H 996" />
+        </g>
+        <!-- Inner Neon Core Highlight Layer (#FFF799) -->
+        <g fill="none" stroke="#FFF799" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 152 516 H 240" />
+          <path d="M 180.5 536 V 590" />
+          <path d="M 212 516 V 590" />
+          <path d="M 270 510 V 590" />
+          <path d="M 377 510 V 590" />
+          <path d="M 270 551 H 377" />
+          <path d="M 524 511.5 H 421 V 589.5 H 524" />
+          <path d="M 421 549.5 H 524" />
+          <path d="M 614.5 574 V 516 C 614.5 504 592 504 592 516 V 581 C 592 587 596 590 603 590 H 663" />
+          <path d="M 692.5 590 V 512 H 793 V 590" />
+          <path d="M 692.5 552 H 793" />
+          <path d="M 834 590 V 512 L 884 567 L 933.5 512 V 590" />
+          <path d="M 971.5 590 V 510.5 H 1073 V 550.5 H 971.5" />
+        </g>
+        <g fill="none" stroke="#FFF799" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 252 634 L 154 644 C 149 645 149 668 156 669 L 250 674 C 256 675 256 697 248 697.5 H 153" />
+          <path d="M 276.5 632.5 H 358 V 696.5 H 276.5 Z" />
+          <path d="M 390 631 V 697.5 H 468" />
+          <path d="M 502 631 V 696.5 H 582.5 V 631" />
+          <path d="M 611 632.5 H 693" />
+          <path d="M 654.5 632.5 V 697" />
+          <path d="M 734 631 V 697" />
+          <path d="M 773 632.5 H 854.5 V 697 H 773 Z" />
+          <path d="M 883.5 697 V 632.5 L 963 697 V 632.5" />
+          <path d="M 1072 631.5 H 996 V 662.5 H 1074 V 696.5 H 996" />
+        </g>
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- ========================================================================
+       STICKY GLASSMORPHIC NAVIGATION BAR
+       ======================================================================== -->
+  <header id="navbar" class="fixed top-0 inset-x-0 z-40 transition-all duration-300 border-b border-transparent">
+    <!-- Top Electric Scroll-Progress Filament Bar -->
+    <div id="scroll-filament-bar" class="absolute top-0 left-0 right-0 h-[2px] pointer-events-none z-50" aria-hidden="true"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Brand Lockup: Exact Custom Neon Lightbulb Icon + Custom Two-Line Wordmark SVG -->
+      <a href="#top" class="flex items-center gap-2.5 sm:gap-3 group focus:outline-none" aria-label="The Lamp Solutions Home">
+        <div class="w-9 h-11 flex items-center justify-center shrink-0">
+          <svg class="w-full h-full nav-neon-icon" aria-hidden="true">
+            <use href="#tls-bulb-symbol" />
+          </svg>
+        </div>
+        <div class="w-32 sm:w-48 h-8 sm:h-9 flex items-center">
+          <svg class="w-full h-full wordmark-neon-glow" preserveAspectRatio="xMinYMid meet" role="img" aria-label="The Lamp Solutions">
+            <use href="#tls-wordmark-symbol" />
+          </svg>
+        </div>
+      </a>
+
+      <!-- Desktop Center Navigation -->
+      <nav class="hidden md:flex items-center gap-8" aria-label="Primary Navigation">
+        <a href="#services" class="text-sm font-medium text-white/75 hover:text-lamp-gold transition-colors">Services</a>
+        <a href="#work" class="text-sm font-medium text-white/75 hover:text-lamp-gold transition-colors">Work</a>
+        <a href="#process" class="text-sm font-medium text-white/75 hover:text-lamp-gold transition-colors">Process</a>
+        <a href="#founder" class="text-sm font-medium text-white/75 hover:text-lamp-gold transition-colors">Founder</a>
+        <a href="#packages" class="text-sm font-medium text-white/75 hover:text-lamp-gold transition-colors">Pricing</a>
+      </nav>
+
+      <!-- Right Actions: Electric CTA + Mobile Menu Button -->
+      <div class="flex items-center gap-3">
+        <button
+          type="button"
+          data-open-modal="Discovery Call"
+          class="btn-electric hidden sm:inline-flex px-4 sm:px-5 py-2.5 rounded-full text-xs sm:text-sm font-display tracking-wide cursor-pointer"
+        >
+          Book a Discovery Call
+        </button>
+
+        <!-- Mobile Menu Toggle -->
+        <button
+          id="mobile-menu-btn"
+          type="button"
+          aria-label="Toggle Menu"
+          aria-expanded="false"
+          class="md:hidden p-2.5 rounded-xl border border-white/15 bg-white/5 text-white hover:border-lamp-gold/50 transition-colors"
+        >
+          <svg id="menu-icon-open" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+          <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Dropdown Drawer -->
+    <div id="mobile-menu" class="hidden md:hidden bg-black/95 backdrop-blur-xl border-b border-white/10 px-6 py-6 space-y-4">
+      <a href="#services" class="mobile-nav-link block py-2 text-base font-medium text-white/85 hover:text-lamp-gold">01 / Services</a>
+      <a href="#work" class="mobile-nav-link block py-2 text-base font-medium text-white/85 hover:text-lamp-gold">02 / Selected Work</a>
+      <a href="#process" class="mobile-nav-link block py-2 text-base font-medium text-white/85 hover:text-lamp-gold">03 / How We Work</a>
+      <a href="#founder" class="mobile-nav-link block py-2 text-base font-medium text-white/85 hover:text-lamp-gold">04 / Founder</a>
+      <a href="#packages" class="mobile-nav-link block py-2 text-base font-medium text-white/85 hover:text-lamp-gold">05 / Pricing &amp; Packages</a>
+      <div class="pt-2 border-t border-white/10">
+        <button
+          type="button"
+          data-open-modal="Discovery Call"
+          class="btn-electric w-full py-3 rounded-xl text-sm font-display tracking-wider"
+        >
+          Book a Discovery Call
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ======================================================================
+         HERO SECTION — EXACT MONOLINE BULB SVG + INTERACTIVE POWER SWITCH
+         ====================================================================== -->
+    <section class="relative min-h-screen flex flex-col justify-center items-center pt-24 pb-16 sm:pt-28 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <!-- Architectural Grid Overlay -->
+      <div class="absolute inset-0 bg-architectural-grid pointer-events-none"></div>
+
+      <!-- Scroll-Linked Radial Ambient Light Halo -->
+      <div id="hero-halo" class="hero-ambient-halo absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[58%] w-[360px] h-[360px] sm:w-[580px] sm:h-[580px] rounded-full"></div>
+
+      <div class="relative z-10 w-full min-w-0 max-w-5xl mx-auto text-center flex flex-col items-center">
+        
+        <!-- Centered Large Glowing Custom SVG Lightbulb Emblem (Final logo.svg) -->
+        <div class="bulb-hero-stage relative mb-4 w-full max-w-full cursor-pointer select-none flex flex-col items-center">
+          <div id="hero-bulb-container" class="w-24 h-32 sm:w-32 sm:h-40 flex items-center justify-center">
+            <svg id="hero-bulb-svg" class="w-full h-full neon-bulb-glow" viewBox="398 303 434 668" fill="none" overflow="visible" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The Lamp Solutions glowing lightbulb emblem">
+              <!-- Outer Neon Gold Tube Layer (#FFD600) -->
+              <g fill="none" stroke="#FFD600" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  id="hero-bulb-outer-gold"
+                  d="M 590.5 688 V 756 H 532 C 524 756 522 749 520 736 C 516 711 510 692 492 672 C 468 646 444 618 431 581 C 424 560 423 541 423 522 C 423 414 503 331 612 331 C 721 331 801 414 801 522 C 801 541 800 560 793 581 C 780 618 756 646 732 672 C 714 692 708 711 704 736 C 700 764 696 781 666 787 L 542 808 C 523 811 523 849 544 849 H 688 C 709 849 709 895 688 895 H 551"
+                />
+                <path
+                  id="hero-filament-gold"
+                  d="M 638 755 V 634 C 638 615 651 607 666 607 C 681 607 688 616 688 626 C 688 637 680 644 666 644 H 584 C 562 644 552 632 552 611 V 479 C 552 457 589.5 457 589.5 479 V 628"
+                />
+                <path
+                  id="hero-cap-gold"
+                  d="M 571 919 H 669 C 664 942 644 955 620 955 C 596 955 576 942 571 919 Z"
+                  fill="#FFD600"
+                  stroke="none"
+                />
+              </g>
+
+              <!-- Inner Neon Core Highlight Layer (#FFF799) -->
+              <g fill="none" stroke="#FFF799" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  id="hero-bulb-outer-core"
+                  d="M 590.5 688 V 756 H 532 C 524 756 522 749 520 736 C 516 711 510 692 492 672 C 468 646 444 618 431 581 C 424 560 423 541 423 522 C 423 414 503 331 612 331 C 721 331 801 414 801 522 C 801 541 800 560 793 581 C 780 618 756 646 732 672 C 714 692 708 711 704 736 C 700 764 696 781 666 787 L 542 808 C 523 811 523 849 544 849 H 688 C 709 849 709 895 688 895 H 551"
+                />
+                <path
+                  id="hero-filament-core"
+                  d="M 638 755 V 634 C 638 615 651 607 666 607 C 681 607 688 616 688 626 C 688 637 680 644 666 644 H 584 C 562 644 552 632 552 611 V 479 C 552 457 589.5 457 589.5 479 V 628"
+                />
+                <path
+                  id="hero-cap-core"
+                  d="M 581 925 H 659 C 654 939 639 947 620 947 C 601 947 586 939 581 925 Z"
+                  fill="#FFF799"
+                  stroke="none"
+                />
+              </g>
+            </svg>
+          </div>
+
+          <!-- Interactive Dim / Full Power Hardware Toggle Pill -->
+          <div class="inline-flex max-w-full flex-wrap justify-center items-center gap-1 p-1 rounded-full bg-lamp-surface/90 border border-lamp-slate/30 backdrop-blur-md mt-2" role="group" aria-label="Lamp illumination mode">
+            <button type="button" data-lamp-mode="dim" class="lamp-mode-btn px-2.5 py-0.5 rounded-full text-[10px] font-brand-display tracking-widest text-lamp-slate hover:text-white transition-colors cursor-pointer">
+              DIM
+            </button>
+            <button type="button" data-lamp-mode="normal" class="lamp-mode-btn active px-2.5 py-0.5 rounded-full text-[10px] font-brand-display tracking-widest bg-lamp-gold text-black font-bold transition-colors cursor-pointer">
+              ON
+            </button>
+            <button type="button" data-lamp-mode="overdrive" class="lamp-mode-btn px-2.5 py-0.5 rounded-full text-[10px] font-brand-display tracking-widest text-lamp-slate hover:text-lamp-volt transition-colors cursor-pointer">
+              FULL POWER
+            </button>
+          </div>
+        </div>
+
+        <!-- Eyebrow Pill Tag -->
+        <div class="hero-stagger inline-flex max-w-full items-center justify-center gap-2 sm:gap-2.5 px-3 sm:px-4 py-1.5 rounded-full bg-white/[0.04] border border-lamp-slate/30 mb-5 sm:mb-6 mt-3">
+          <span class="w-2 h-2 shrink-0 rounded-full bg-lamp-volt animate-pulse shadow-[0_0_8px_#F6EB16]"></span>
+          <span class="font-brand-display text-[10px] sm:text-xs font-semibold tracking-[0.1em] sm:tracking-[0.16em] leading-snug text-white/85">
+            WEB ENGINEERING • VIDEO PRODUCTION • GROWTH OPERATIONS
+          </span>
+        </div>
+
+        <!-- Main Display Headline (H1) -->
+        <h1 class="hero-stagger hero-headline w-full max-w-full font-extrabold tracking-tight text-white mb-5 sm:mb-6">
+          BRIGHT IDEAS.<br />
+          ENGINEERED <span class="text-transparent bg-clip-text bg-gradient-to-r from-lamp-volt via-lamp-gold to-amber-300">TO SCALE.</span>
+        </h1>
+
+        <!-- Subheadline -->
+        <p class="hero-stagger max-w-2xl text-sm sm:text-lg md:text-xl text-white/70 leading-relaxed mb-8 sm:mb-10 px-1 font-normal">
+          We build high-converting websites, scroll-stopping video content, and streamlined digital operations for brands ready to stand out in the dark.
+        </p>
+
+        <!-- Primary & Secondary CTAs -->
+        <div class="hero-stagger flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
+          <button
+            type="button"
+            data-open-modal="Start Your Project"
+            class="btn-electric w-full sm:w-auto px-8 py-4 rounded-full text-sm sm:text-base font-display tracking-wider cursor-pointer"
+          >
+            Start Your Project
+          </button>
+          <a
+            href="#packages"
+            class="btn-ghost w-full sm:w-auto px-8 py-4 rounded-full text-sm sm:text-base font-display tracking-wider inline-flex items-center justify-center gap-2"
+          >
+            Explore Packages
+            <span aria-hidden="true" class="text-lamp-gold">→</span>
+          </a>
+        </div>
+
+        <!-- Operating Alignment Micro-Proof Strip -->
+        <div class="hero-stagger mt-10 sm:mt-14 pt-6 sm:pt-8 border-t border-white/10 w-full max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 text-center">
+          <div>
+            <p class="font-brand-display text-xs text-lamp-slate tracking-widest">OPERATING HOURS</p>
+            <p class="text-sm font-semibold text-white mt-1">US Business Hours Aligned</p>
+          </div>
+          <div>
+            <p class="font-brand-display text-xs text-lamp-slate tracking-widest">DELIVERY MODEL</p>
+            <p class="text-sm font-semibold text-white mt-1">Unified Web + Video + Ops</p>
+          </div>
+          <div>
+            <p class="font-brand-display text-xs text-lamp-slate tracking-widest">AGREEMENTS</p>
+            <p class="text-sm font-semibold text-lamp-gold mt-1">30-Day Flexible Retainers</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SECTION 01 — THE THREE CORE PILLARS (INTERACTIVE BENTO GRID)
+         ====================================================================== -->
+    <section id="services" class="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 relative border-t border-white/[0.08]">
+      <div class="max-w-7xl mx-auto">
+        
+        <!-- Section Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6 reveal-up">
+          <div>
+            <div class="inline-flex items-center gap-2 text-xs font-brand-display tracking-[0.18em] text-lamp-gold mb-3">
+              <span>01 / SERVICES</span>
+              <span class="w-8 h-[1px] bg-lamp-gold/50"></span>
+            </div>
+            <h2 class="section-headline font-bold text-white">
+              Everything Your Brand Needs to Switch On.
+            </h2>
+          </div>
+          <p class="text-white/65 max-w-md text-sm sm:text-base leading-relaxed">
+            Stop stitching together disconnected freelancers. One cohesive team designs, produces, and operates your growth engine end-to-end.
+          </p>
+        </div>
+
+        <!-- 3-Column Bento Grid -->
+        <div class="bento-batch-grid grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Pillar Card 01: Web Design & Front-End Engineering -->
+          <article class="spotlight-card batch-card rounded-3xl p-7 sm:p-8 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-8">
+                <div class="w-12 h-12 rounded-2xl bg-lamp-gold/10 border border-lamp-gold/25 flex items-center justify-center text-lamp-gold">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                  </svg>
+                </div>
+                <!-- Hardware Toggle Visual -->
+                <div class="w-10 h-5 rounded-full bg-white/10 p-1 flex items-center border border-white/10" aria-hidden="true">
+                  <span class="lamp-switch-dot w-3 h-3 rounded-full bg-lamp-slate"></span>
+                </div>
+              </div>
+
+              <span class="font-brand-display text-xs tracking-widest text-lamp-slate">PILLAR 01</span>
+              <h3 class="font-display text-xl sm:text-2xl font-bold text-white mt-1.5 mb-4">
+                Web Design &amp; Front-End Engineering
+              </h3>
+              <p class="text-white/70 text-sm sm:text-base leading-relaxed mb-8">
+                Custom, responsive web experiences built for speed, visual storytelling, and conversion. From interactive scroll animations to edge-deployed web apps, we engineer digital storefronts that leave a lasting impression.
+              </p>
+            </div>
+
+            <div class="flex flex-wrap gap-2 pt-4 border-t border-white/[0.08]">
+              <span class="px-3 py-1 rounded-full text-xs font-medium bg-white/[0.04] border border-white/10 text-white/80">Custom UI/UX</span>
+              <span class="px-3 py-1 rounded-full text-xs font-medium bg-white/[0.04] border border-white/10 text-white/80">GSAP Motion</span>
+              <span class="px-3 py-1 rounded-full text-xs font-medium bg-white/[0.04] border border-white/10 text-white/80">Edge Hosting</span>
+              <span class="px-3 py-1 rounded-full text-xs font-medium bg-white/[0.04] border border-white/10 text-white/80">Technical SEO</span>
+            </div>
+          </article>
+
+          <!-- Pillar Card 02: Video Production & Motion Design -->
+          <article class="spotlight-card batch-card rounded-3xl p-7 sm:p-8 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-8">
+                <div class="w-12 h-12 rounded-2xl bg-lamp-gold/10 border border-lamp-gold/25 flex items-center justify-center text-lamp-gold">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div class="w-10 h-5 rounded-full bg-white/10 p-1 flex items-center border border-white/10" aria-hidden="true">
+                  <span class="lamp-switch-dot w-3 h-3 rounded-full bg-lamp-slate"></span>
+                </div>
+              </div>
+
+              <span class="font-brand-display text-xs tracking-widest text-lamp-slate">PILLAR 02</span>
+              <h3 class="font-display text-xl sm:text-2xl font-bold text-white mt-1.5 mb-4">
+                Video Production &amp; Motion Design
+              </h3>
+              <p class="text-white/70 text-sm sm:text-base leading-relaxed mb-8">
+                Retention-driven video editing built for modern algorithms and buyer psychology. Whether you need high-converting Video Sales Letters (VSLs), daily short-form reels, or 3D motion graphics, we turn raw footage into revenue.
+              </p>
+            </div>
+
+            <div class="flex flex-wrap gap-2 pt-4 border-t border-white/[0.08]">
+              <span class="px-3 py-1 rounded-full text-xs font-medium bg-white/[0.04] border border-white/10 text-white/80">Short-Form Reels/Shorts</span>
+              <span class="px-3 py-1 rounded-full text-xs font-medium bg-white/[0.04] border border-white/10 text-white/80">VSLs &amp; YouTube</span>
+              <span class="px-3 py-1 rounded-full text-xs font-medium bg-white/[0.04] border border-white/10 text-white/80">Motion Graphics</span>
+              <span class="px-3 py-1 rounded-full text-xs font-medium bg-white/[0.04] border border-white/10 text-white/80">3D Animation</span>
+            </div>
+          </article>
+
+          <!-- Pillar Card 03: Digital Marketing & VA Operations -->
+          <article class="spotlight-card batch-card rounded-3xl p-7 sm:p-8 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-8">
+                <div class="w-12 h-12 rounded-2xl bg-lamp-gold/10 border border-lamp-gold/25 flex items-center justify-center text-lamp-gold">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  </svg>
+                </div>
+                <div class="w-10 h-5 rounded-full bg-white/10 p-1 flex items-center border border-white/10" aria-hidden="true">
+                  <span class="lamp-switch-dot w-3 h-3 rounded-full bg-lamp-slate"></span>
+                </div>
+              </div>
+
+              <span class="font-brand-display text-xs tracking-widest text-lamp-slate">PILLAR 03</span>
+              <h3 class="font-display text-xl sm:text-2xl font-bold text-white mt-1.5 mb-4">
+                Digital Marketing &amp; VA Operations
+              </h3>
+              <p class="text-white/70 text-sm sm:text-base leading-relaxed mb-8">
+                Consistent execution without the overhead. Our US-hours operational team manages your publishing pipelines, YouTube &amp; search SEO, social channels, and backend workflows so nothing falls through the cracks.
+              </p>
+            </div>
+
+            <div class="flex flex-wrap gap-2 pt-4 border-t border-white/[0.08]">
+              <span class="px-3 py-1 rounded-full text-xs font-medium bg-white/[0.04] border border-white/10 text-white/80">Search &amp; YouTube SEO</span>
+              <span class="px-3 py-1 rounded-full text-xs font-medium bg-white/[0.04] border border-white/10 text-white/80">Social Media Mgmt</span>
+              <span class="px-3 py-1 rounded-full text-xs font-medium bg-white/[0.04] border border-white/10 text-white/80">US-Hours VA Ops</span>
+              <span class="px-3 py-1 rounded-full text-xs font-medium bg-white/[0.04] border border-white/10 text-white/80">Content Pipelines</span>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SECTION 02 — SELECTED WORK / PROOF OF CRAFT (INTERACTIVE FILTERS)
+         ====================================================================== -->
+    <section id="work" class="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 relative border-t border-white/[0.08] bg-gradient-to-b from-black via-[#060607] to-black">
+      <div class="max-w-7xl mx-auto">
+        
+        <!-- Header & Interactive Filter Tabs -->
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-12 gap-6 reveal-up">
+          <div>
+            <div class="inline-flex items-center gap-2 text-xs font-brand-display tracking-[0.18em] text-lamp-gold mb-3">
+              <span>02 / SELECTED WORK</span>
+              <span class="w-8 h-[1px] bg-lamp-gold/50"></span>
+            </div>
+            <h2 class="section-headline font-bold text-white">
+              Built for Impact.
+            </h2>
+          </div>
+
+          <!-- Filter Pill Bar -->
+          <div id="work-filter-bar" class="relative inline-flex flex-wrap items-center gap-1 p-1.5 rounded-2xl bg-lamp-surface border border-white/10" role="tablist" aria-label="Filter projects by category">
+            <!-- Sliding Tactile Active Pill -->
+            <span id="work-filter-pill" class="absolute top-1.5 left-1.5 h-[calc(100%-12px)] rounded-xl bg-lamp-gold shadow-[0_0_16px_rgba(255,214,0,0.4)] pointer-events-none" aria-hidden="true"></span>
+            <button type="button" data-filter="all" class="work-filter-btn active relative z-10 px-4 py-2 rounded-xl text-xs sm:text-sm font-display tracking-wider transition-colors text-black font-bold cursor-pointer">
+              All
+            </button>
+            <button type="button" data-filter="web" class="work-filter-btn relative z-10 px-4 py-2 rounded-xl text-xs sm:text-sm font-display tracking-wider transition-colors text-white/75 hover:text-white cursor-pointer">
+              Web &amp; UI
+            </button>
+            <button type="button" data-filter="video" class="work-filter-btn relative z-10 px-4 py-2 rounded-xl text-xs sm:text-sm font-display tracking-wider transition-colors text-white/75 hover:text-white cursor-pointer">
+              Video &amp; Motion
+            </button>
+            <button type="button" data-filter="growth" class="work-filter-btn relative z-10 px-4 py-2 rounded-xl text-xs sm:text-sm font-display tracking-wider transition-colors text-white/75 hover:text-white cursor-pointer">
+              Growth &amp; SEO
+            </button>
+          </div>
+        </div>
+
+        <!-- 2x2 Case Study Grid -->
+        <div id="work-grid" class="bento-batch-grid grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Case Study 01: Web & UI -->
+          <article data-category="web" class="work-card batch-card spotlight-card rounded-3xl overflow-hidden flex flex-col justify-between group">
+            <div class="relative h-56 sm:h-64 bg-[#0D0D10] border-b border-white/10 p-6 flex flex-col justify-between overflow-hidden">
+              <div class="absolute inset-0 bg-[radial-gradient(circle_at_75%_25%,rgba(246,235,22,0.18),transparent_60%)] group-hover:scale-110 transition-transform duration-500"></div>
+              <div class="relative z-10 flex items-center justify-between">
+                <span class="px-3 py-1 rounded-full text-[11px] font-brand-display tracking-widest bg-black/70 border border-lamp-gold/40 text-lamp-gold">
+                  WEB &amp; INTERACTIVE UI
+                </span>
+                <span class="text-xs font-mono text-white/60">99/100 LIGHTHOUSE</span>
+              </div>
+              <div class="relative z-10 mt-4 rounded-xl bg-black/80 border border-white/15 p-4 transform group-hover:-translate-y-1 transition-transform duration-300">
+                <div class="flex items-center gap-1.5 mb-3">
+                  <span class="w-2.5 h-2.5 rounded-full bg-lamp-gold"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-white/20"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-white/20"></span>
+                  <span class="ml-2 text-[10px] font-mono text-white/40">vortexcloud.io — Edge Storefront</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                  <div class="col-span-2 h-12 rounded-lg bg-gradient-to-r from-lamp-gold/20 to-transparent border border-lamp-gold/20 p-2 flex items-center">
+                    <span class="text-xs font-display font-bold text-white">+44% Demo Conversion</span>
+                  </div>
+                  <div class="h-12 rounded-lg bg-white/[0.04] border border-white/10 flex items-center justify-center">
+                    <span class="text-xs font-mono text-lamp-volt">0.4s LCP</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-7">
+              <div class="flex items-start justify-between gap-4 mb-3">
+                <h3 class="font-display text-xl font-bold text-white group-hover:text-lamp-gold transition-colors">
+                  VortexCloud SaaS Platform Launch
+                </h3>
+                <span class="px-2.5 py-1 rounded-lg bg-lamp-gold/10 text-lamp-gold text-xs font-bold shrink-0">
+                  <span class="stat-counter" data-target="44" data-prefix="+" data-suffix="%">+44%</span> CVR
+                </span>
+              </div>
+              <p class="text-white/70 text-sm leading-relaxed mb-5">
+                Engineered a scroll-driven dark-mode marketing site with interactive product demos, sub-second edge caching, and conversion-focused funnel architecture.
+              </p>
+              <div class="flex flex-wrap gap-2">
+                <span class="text-xs text-lamp-slate font-mono">#GSAPScrollTrigger</span>
+                <span class="text-xs text-lamp-slate font-mono">#TailwindCSS</span>
+                <span class="text-xs text-lamp-slate font-mono">#EdgeHosting</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Case Study 02: Video & Motion -->
+          <article data-category="video" class="work-card batch-card spotlight-card rounded-3xl overflow-hidden flex flex-col justify-between group">
+            <div class="relative h-56 sm:h-64 bg-[#0D0D10] border-b border-white/10 p-6 flex flex-col justify-between overflow-hidden">
+              <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,214,0,0.18),transparent_60%)] group-hover:scale-110 transition-transform duration-500"></div>
+              <div class="relative z-10 flex items-center justify-between">
+                <span class="px-3 py-1 rounded-full text-[11px] font-brand-display tracking-widest bg-black/70 border border-lamp-gold/40 text-lamp-gold">
+                  VIDEO &amp; 3D MOTION
+                </span>
+                <span class="text-xs font-mono text-white/60">68% AVG RETENTION</span>
+              </div>
+              <div class="relative z-10 mt-4 rounded-xl bg-black/80 border border-white/15 p-4 transform group-hover:-translate-y-1 transition-transform duration-300">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-full bg-lamp-gold text-black flex items-center justify-center">
+                      <svg class="w-3.5 h-3.5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </span>
+                    <span class="text-xs font-semibold text-white">High-Ticket VSL + 30 Reels Engine</span>
+                  </div>
+                  <span class="text-[11px] font-mono text-lamp-volt">3.4M+ Views</span>
+                </div>
+                <div class="w-full h-3 rounded-full bg-white/10 overflow-hidden flex gap-1 p-0.5">
+                  <div class="w-1/3 h-full rounded-full bg-lamp-volt"></div>
+                  <div class="w-1/4 h-full rounded-full bg-lamp-gold/70"></div>
+                  <div class="w-1/5 h-full rounded-full bg-white/30"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-7">
+              <div class="flex items-start justify-between gap-4 mb-3">
+                <h3 class="font-display text-xl font-bold text-white group-hover:text-lamp-gold transition-colors">
+                  Apex Founder VSL &amp; Short-Form Engine
+                </h3>
+                <span class="px-2.5 py-1 rounded-lg bg-lamp-gold/10 text-lamp-gold text-xs font-bold shrink-0">
+                  <span class="stat-counter" data-target="3.8" data-decimals="1" data-suffix="x">3.8x</span> ROAS
+                </span>
+              </div>
+              <p class="text-white/70 text-sm leading-relaxed mb-5">
+                Produced a 4-minute motion-heavy Video Sales Letter paired with 30 monthly vertical short-form clips featuring custom 3D callouts and hook optimization.
+              </p>
+              <div class="flex flex-wrap gap-2">
+                <span class="text-xs text-lamp-slate font-mono">#VSLProduction</span>
+                <span class="text-xs text-lamp-slate font-mono">#3DMotionGraphics</span>
+                <span class="text-xs text-lamp-slate font-mono">#RetentionEditing</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Case Study 03: Growth & SEO -->
+          <article data-category="growth" class="work-card batch-card spotlight-card rounded-3xl overflow-hidden flex flex-col justify-between group">
+            <div class="relative h-56 sm:h-64 bg-[#0D0D10] border-b border-white/10 p-6 flex flex-col justify-between overflow-hidden">
+              <div class="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(246,235,22,0.16),transparent_60%)] group-hover:scale-110 transition-transform duration-500"></div>
+              <div class="relative z-10 flex items-center justify-between">
+                <span class="px-3 py-1 rounded-full text-[11px] font-brand-display tracking-widest bg-black/70 border border-lamp-gold/40 text-lamp-gold">
+                  GROWTH &amp; YOUTUBE SEO
+                </span>
+                <span class="text-xs font-mono text-white/60">US-HOURS OPS</span>
+              </div>
+              <div class="relative z-10 mt-4 rounded-xl bg-black/80 border border-white/15 p-4 transform group-hover:-translate-y-1 transition-transform duration-300">
+                <div class="flex items-end justify-between h-14 gap-2 px-2">
+                  <div class="w-full bg-white/10 rounded-t h-4"></div>
+                  <div class="w-full bg-white/15 rounded-t h-6"></div>
+                  <div class="w-full bg-white/20 rounded-t h-8"></div>
+                  <div class="w-full bg-lamp-gold/50 rounded-t h-10"></div>
+                  <div class="w-full bg-lamp-gold/80 rounded-t h-12"></div>
+                  <div class="w-full bg-lamp-volt rounded-t h-14 shadow-[0_0_14px_rgba(246,235,22,0.6)]"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-7">
+              <div class="flex items-start justify-between gap-4 mb-3">
+                <h3 class="font-display text-xl font-bold text-white group-hover:text-lamp-gold transition-colors">
+                  ScaleOps Omni-Channel Pipeline
+                </h3>
+                <span class="px-2.5 py-1 rounded-lg bg-lamp-gold/10 text-lamp-gold text-xs font-bold shrink-0">
+                  <span class="stat-counter" data-target="210" data-prefix="+" data-suffix="%">+210%</span> Organic
+                </span>
+              </div>
+              <p class="text-white/70 text-sm leading-relaxed mb-5">
+                Deployed a dedicated US-aligned VA &amp; SEO operations workflow managing daily multi-platform publishing, YouTube search ranking, and inbound lead routing.
+              </p>
+              <div class="flex flex-wrap gap-2">
+                <span class="text-xs text-lamp-slate font-mono">#YouTubeSEO</span>
+                <span class="text-xs text-lamp-slate font-mono">#DedicatedVAOps</span>
+                <span class="text-xs text-lamp-slate font-mono">#ContentPipeline</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Case Study 04: Full-Stack Web + Video -->
+          <article data-category="web video" class="work-card batch-card spotlight-card rounded-3xl overflow-hidden flex flex-col justify-between group">
+            <div class="relative h-56 sm:h-64 bg-[#0D0D10] border-b border-white/10 p-6 flex flex-col justify-between overflow-hidden">
+              <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,214,0,0.18),transparent_60%)] group-hover:scale-110 transition-transform duration-500"></div>
+              <div class="relative z-10 flex items-center justify-between">
+                <span class="px-3 py-1 rounded-full text-[11px] font-brand-display tracking-widest bg-black/70 border border-lamp-gold/40 text-lamp-gold">
+                  FULL-STACK REBRAND &amp; LAUNCH
+                </span>
+                <span class="text-xs font-mono text-white/60">21-DAY SPRINT</span>
+              </div>
+              <div class="relative z-10 mt-4 rounded-xl bg-black/80 border border-white/15 p-4 transform group-hover:-translate-y-1 transition-transform duration-300 flex items-center justify-between">
+                <div>
+                  <p class="text-xs font-mono text-lamp-slate">COMPLETE SYSTEM</p>
+                  <p class="text-sm font-display font-bold text-white mt-0.5">Site + Brand Film + Funnel</p>
+                </div>
+                <span class="px-3 py-1.5 rounded-lg bg-lamp-volt text-black font-display font-bold text-xs">
+                  $180K Pipeline
+                </span>
+              </div>
+            </div>
+
+            <div class="p-7">
+              <div class="flex items-start justify-between gap-4 mb-3">
+                <h3 class="font-display text-xl font-bold text-white group-hover:text-lamp-gold transition-colors">
+                  Lumina FinTech Brand &amp; Funnel Overhaul
+                </h3>
+                <span class="px-2.5 py-1 rounded-lg bg-lamp-gold/10 text-lamp-gold text-xs font-bold shrink-0">
+                  3 Weeks
+                </span>
+              </div>
+              <p class="text-white/70 text-sm leading-relaxed mb-5">
+                Unified custom web engineering, product explainer motion graphics, and technical SEO into a single 3-week launch sprint for a B2B fintech startup.
+              </p>
+              <div class="flex flex-wrap gap-2">
+                <span class="text-xs text-lamp-slate font-mono">#FullStackLaunch</span>
+                <span class="text-xs text-lamp-slate font-mono">#BrandMotion</span>
+                <span class="text-xs text-lamp-slate font-mono">#ConversionDesign</span>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SECTION 03 — HOW WE WORK (3-STEP SCROLL-ILLUMINATED PROCESS)
+         ====================================================================== -->
+    <section id="process" class="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 relative border-t border-white/[0.08]">
+      <div class="max-w-7xl mx-auto">
+        
+        <div class="max-w-2xl mb-16 reveal-up">
+          <div class="inline-flex items-center gap-2 text-xs font-brand-display tracking-[0.18em] text-lamp-gold mb-3">
+            <span>03 / PROCESS</span>
+            <span class="w-8 h-[1px] bg-lamp-gold/50"></span>
+          </div>
+          <h2 class="section-headline font-bold text-white mb-4">
+            How We Turn Ideas On.
+          </h2>
+          <p class="text-white/65 text-base leading-relaxed">
+            A streamlined, transparent three-stage sprint workflow engineered to eliminate bottlenecks and ship high-craft assets fast.
+          </p>
+        </div>
+
+        <!-- Horizontal Connecting Line (Desktop Scroll-Scrubbed Electric Yellow Progress Filament) -->
+        <div class="relative">
+          <div class="hidden lg:block absolute top-9 left-8 right-8 h-[2px] bg-white/10 rounded-full overflow-hidden">
+            <div id="process-progress-line" class="h-full w-0 bg-gradient-to-r from-lamp-gold via-lamp-volt to-lamp-gold shadow-[0_0_12px_#F6EB16]"></div>
+          </div>
+
+          <div class="bento-batch-grid grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
+            
+            <!-- Step 01 -->
+            <div class="spotlight-card batch-card rounded-3xl p-8">
+              <div class="w-12 h-12 rounded-2xl bg-black border-2 border-lamp-gold text-lamp-gold font-brand-display font-bold text-base flex items-center justify-center shadow-[0_0_20px_rgba(255,214,0,0.3)] mb-6">
+                01
+              </div>
+              <span class="font-brand-display text-xs tracking-widest text-lamp-gold">AUDIT &amp; STRATEGY</span>
+              <h3 class="font-display text-2xl font-bold text-white mt-1 mb-3">Illuminate</h3>
+              <p class="text-white/70 text-sm sm:text-base leading-relaxed">
+                We map your bottlenecks, audit your current web and content footprint, and build a clear execution roadmap tailored to your revenue goals.
+              </p>
+            </div>
+
+            <!-- Step 02 -->
+            <div class="spotlight-card batch-card rounded-3xl p-8">
+              <div class="w-12 h-12 rounded-2xl bg-black border-2 border-lamp-gold text-lamp-gold font-brand-display font-bold text-base flex items-center justify-center shadow-[0_0_20px_rgba(255,214,0,0.3)] mb-6">
+                02
+              </div>
+              <span class="font-brand-display text-xs tracking-widest text-lamp-gold">DESIGN &amp; PRODUCTION</span>
+              <h3 class="font-display text-2xl font-bold text-white mt-1 mb-3">Engineer</h3>
+              <p class="text-white/70 text-sm sm:text-base leading-relaxed">
+                Our web developers, video editors, and creative leads build your websites, VSLs, and short-form content engines in rapid, transparent sprints.
+              </p>
+            </div>
+
+            <!-- Step 03 -->
+            <div class="spotlight-card batch-card rounded-3xl p-8">
+              <div class="w-12 h-12 rounded-2xl bg-lamp-gold text-black font-brand-display font-bold text-base flex items-center justify-center shadow-[0_0_24px_rgba(246,235,22,0.5)] mb-6">
+                03
+              </div>
+              <span class="font-brand-display text-xs tracking-widest text-lamp-gold">LAUNCH &amp; SCALE</span>
+              <h3 class="font-display text-2xl font-bold text-white mt-1 mb-3">Amplify</h3>
+              <p class="text-white/70 text-sm sm:text-base leading-relaxed">
+                We deploy your site, run your daily publishing and VA pipelines, and optimize conversion and search performance continuously through live data.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SECTION 04 — FOUNDER SPOTLIGHT (JAY AGANG LAMPARA)
+         ====================================================================== -->
+    <section id="founder" class="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 relative border-t border-white/[0.08]">
+      <div class="max-w-7xl mx-auto">
+        <div class="spotlight-card rounded-[2rem] p-7 sm:p-10 lg:p-12 border border-lamp-gold/25 reveal-up">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            
+            <!-- Left Column: Automatic Cutout Portrait Stage with Golden Studio Backlight -->
+            <div class="lg:col-span-5 flex flex-col items-center">
+              <div class="founder-portrait-stage relative w-full max-w-[350px] aspect-[4/5] rounded-3xl bg-[#070709] border border-lamp-gold/45 p-3 shadow-[0_0_50px_-12px_rgba(246,235,22,0.3)] group overflow-hidden">
+                <!-- Subtle Corner Filament Accents -->
+                <span class="absolute top-2.5 left-2.5 w-3 h-3 border-t-2 border-l-2 border-lamp-volt rounded-tl-md pointer-events-none z-30"></span>
+                <span class="absolute top-2.5 right-2.5 w-3 h-3 border-t-2 border-r-2 border-lamp-volt rounded-tr-md pointer-events-none z-30"></span>
+                <span class="absolute bottom-2.5 left-2.5 w-3 h-3 border-b-2 border-l-2 border-lamp-volt rounded-bl-md pointer-events-none z-30"></span>
+                <span class="absolute bottom-2.5 right-2.5 w-3 h-3 border-b-2 border-r-2 border-lamp-volt rounded-br-md pointer-events-none z-30"></span>
+
+                <!-- Inner Studio Portrait Frame -->
+                <div class="relative w-full h-full rounded-2xl bg-gradient-to-b from-[#131316] via-[#0B0B0D] to-[#050506] border border-white/10 overflow-hidden flex items-end justify-center">
+                  <!-- Architectural Micro-Grid Texture Behind Portrait -->
+                  <div class="absolute inset-0 bg-architectural-grid opacity-55 pointer-events-none"></div>
+
+                  <!-- Warm Electric Yellow Studio Backlight Halo Behind Shoulders & Head -->
+                  <div
+                    id="founder-studio-halo"
+                    class="absolute top-[16%] left-1/2 -translate-x-1/2 w-64 h-64 sm:w-72 sm:h-72 rounded-full pointer-events-none"
+                    style="background: radial-gradient(circle, rgba(246, 235, 22, 0.34) 0%, rgba(255, 214, 0, 0.14) 44%, rgba(0, 0, 0, 0) 74%);"
+                  ></div>
+
+                  <!-- Subtle Watermark Bulb Silhouette Behind Backlight -->
+                  <svg class="absolute top-8 right-4 w-24 h-32 opacity-[0.12] pointer-events-none" aria-hidden="true">
+                    <use href="#tls-bulb-symbol" />
+                  </svg>
+
+                  <!-- Automatic Portrait Cutout Container (Loads Founder/Jay Lampara.webp & alpha-cleans white edges via Canvas) -->
+                  <div id="founder-portrait-wrap" class="relative z-10 w-full h-[94%] flex items-end justify-center px-2 pt-4">
+                    <img
+                      id="founder-portrait-img"
+                      src="Founder/Jay%20Lampara.webp"
+                      width="2380"
+                      height="2380"
+                      loading="lazy"
+                      alt="Jay Agang Lampara — Founder & Creative Lead at The Lamp Solutions"
+                      class="founder-cutout-glow w-full h-full object-contain object-bottom select-none"
+                    />
+                  </div>
+
+                  <!-- Subtle Bottom Vignette Fade for Seamless Dark Stage Integration -->
+                  <div
+                    class="absolute inset-x-0 bottom-0 h-24 z-20 pointer-events-none"
+                    style="background: linear-gradient(to top, rgba(5, 5, 6, 0.96) 0%, rgba(5, 5, 6, 0.55) 48%, rgba(5, 5, 6, 0) 100%);"
+                  ></div>
+
+                  <!-- Top Live US-Hours Status Pill -->
+                  <div class="absolute top-3.5 left-3.5 right-3.5 z-30 flex items-center justify-between gap-2">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-lamp-gold/40 text-[10px] font-brand-display tracking-widest text-white shadow-[0_0_16px_rgba(0,0,0,0.65)]">
+                      <span class="w-2 h-2 rounded-full bg-lamp-volt animate-pulse shadow-[0_0_8px_#F6EB16]"></span>
+                      US-HOURS ACTIVE
+                    </span>
+                    <span class="px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-[10px] font-mono text-lamp-gold">
+                      FOUNDER
+                    </span>
+                  </div>
+
+                  <!-- Bottom Identity Caption Bar -->
+                  <div class="absolute bottom-3 left-3 right-3 z-30 px-3.5 py-2.5 rounded-xl bg-black/85 backdrop-blur-md border border-lamp-gold/25 flex items-center justify-between">
+                    <div>
+                      <p class="font-brand-display text-[11px] font-bold tracking-wider text-white">JAY AGANG LAMPARA</p>
+                      <p class="text-[10px] font-mono text-lamp-slate">thelampsolutions.com</p>
+                    </div>
+                    <span class="px-2 py-0.5 rounded-md bg-lamp-gold/15 border border-lamp-gold/35 text-[10px] font-brand-display tracking-widest text-lamp-gold">
+                      DIRECT LEAD
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Narrative, Stat Pills & Direct Portfolio/Social/Booking Links -->
+            <div class="lg:col-span-7 flex flex-col justify-center">
+              <div class="inline-flex items-center gap-2 text-xs font-brand-display tracking-[0.18em] text-lamp-gold mb-3">
+                <span>04 / FOUNDER &amp; CREATIVE LEAD</span>
+                <span class="w-8 h-[1px] bg-lamp-gold/50"></span>
+              </div>
+
+              <h2 class="section-headline font-bold text-white mb-5">
+                Led by Builders, Not Account Managers.
+              </h2>
+
+              <p class="text-white/80 text-base sm:text-lg leading-relaxed mb-4">
+                Hi, I'm <strong class="text-white font-semibold">Jay Agang Lampara</strong>, Founder of <span class="text-lamp-gold font-medium">The Lamp Solutions</span>. With 5+ years leading front-end web engineering, retention-driven video production, and digital growth operations on US business hours, I built this agency to solve a simple problem: eliminating the friction between creative craft and technical execution.
+              </p>
+
+              <p class="text-white/65 text-sm sm:text-base leading-relaxed mb-7">
+                When you partner with us, you never get passed off to junior middle-management. Every website architecture, VSL edit, and daily VA workflow is overseen directly to ensure speed, conversion clarity, and measurable ROI.
+              </p>
+
+              <!-- Key Stat Pills -->
+              <div class="flex flex-wrap gap-2.5 mb-8">
+                <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-brand-display tracking-wider bg-lamp-gold/10 border border-lamp-gold/30 text-lamp-gold">
+                  <span>✦</span> 5+ Yrs Production &amp; Web
+                </span>
+                <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-brand-display tracking-wider bg-white/[0.04] border border-white/15 text-white/90">
+                  <span>✦</span> US Business Hours
+                </span>
+                <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-brand-display tracking-wider bg-white/[0.04] border border-white/15 text-white/90">
+                  <span>✦</span> Direct US-Hours Access
+                </span>
+              </div>
+
+              <!-- Direct Interactive Links to Live Portfolio, Instagram & Strategy Call -->
+              <div class="flex flex-wrap items-center gap-3.5 pt-6 border-t border-white/10">
+                <a
+                  href="https://portfolio.jaylampara.workers.dev"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn-electric px-6 py-3 rounded-full text-xs sm:text-sm font-display tracking-wider inline-flex items-center gap-2"
+                >
+                  <span>Explore Founder Portfolio</span>
+                  <span aria-hidden="true">↗</span>
+                </a>
+
+                <a
+                  href="https://instagram.com/jxlampara"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn-ghost px-4 py-3 rounded-full text-xs sm:text-sm font-display tracking-wider inline-flex items-center gap-2"
+                >
+                  <svg class="w-4 h-4 text-lamp-gold" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                  </svg>
+                  <span>@jxlampara</span>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SECTION 05 — TIERED SERVICE PACKAGES & TRANSPARENT PRICING
+         ====================================================================== -->
+    <section id="packages" class="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 relative border-t border-white/[0.08] bg-gradient-to-b from-black via-[#070708] to-black">
+      <div class="max-w-7xl mx-auto">
+        
+        <!-- Pricing Header -->
+        <div class="text-center max-w-3xl mx-auto mb-16 reveal-up">
+          <div class="inline-flex items-center gap-2 text-xs font-brand-display tracking-[0.18em] text-lamp-gold mb-3">
+            <span>05 / TRANSPARENT PRICING</span>
+          </div>
+          <h2 class="section-headline font-bold text-white mb-4">
+            Agency-Grade Output.<br class="hidden sm:inline" /> Without the Agency Bloat.
+          </h2>
+          <p class="text-white/70 text-base sm:text-lg leading-relaxed">
+            Whether you need a high-converting launchpad or an entire creative and operations team running in sync, pick the plan that matches your current stage of growth.
+          </p>
+        </div>
+
+        <!-- 3-Tier Pricing Grid -->
+        <div class="bento-batch-grid grid grid-cols-1 lg:grid-cols-3 gap-7 items-stretch">
+          
+          <!-- TIER 01: SPARK -->
+          <div class="spotlight-card batch-card rounded-3xl p-7 sm:p-8 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="font-brand-display text-xs font-bold tracking-[0.16em] text-lamp-slate">01. SPARK</span>
+                <span class="px-3 py-1 rounded-full text-[11px] font-medium bg-white/[0.05] border border-white/10 text-white/75">
+                  One-Time Sprint
+                </span>
+              </div>
+              <h3 class="font-display text-2xl font-bold text-white">Foundation &amp; Launch</h3>
+              <p class="text-xs sm:text-sm text-white/60 mt-1 mb-6">
+                Best for startups, coaches, and businesses needing a fast, high-converting web &amp; video launch.
+              </p>
+
+              <div class="pb-6 mb-6 border-b border-white/10">
+                <div class="flex items-baseline gap-2">
+                  <span class="stat-counter font-display text-4xl sm:text-5xl font-extrabold text-white" data-target="1250" data-prefix="$" data-comma="true">$1,250</span>
+                  <span class="text-sm text-lamp-slate">one-time</span>
+                </div>
+                <p class="text-xs text-lamp-gold mt-1.5 font-medium">or 2 split payments of $650</p>
+              </div>
+
+              <ul class="space-y-3.5 text-sm text-white/80 mb-8">
+                <li class="flex items-start gap-3">
+                  <span class="text-lamp-gold mt-0.5">✦</span>
+                  <span>Custom 5-Page Site or High-Converting Landing Page</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="text-lamp-gold mt-0.5">✦</span>
+                  <span>Interactive Scroll Animations &amp; Mobile Speed Optimization</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="text-lamp-gold mt-0.5">✦</span>
+                  <span>Technical On-Page SEO &amp; Analytics Pixel Setup</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="text-lamp-gold mt-0.5">✦</span>
+                  <span>1 Flagship Brand Video or VSL (up to 3 mins)</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="text-lamp-gold mt-0.5">✦</span>
+                  <span>Custom Motion Title &amp; Thumbnail Kit + 14-Day Support</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <p class="text-xs italic text-lamp-slate mb-4 text-center">"Launch with authority."</p>
+              <button
+                type="button"
+                data-open-modal="01. SPARK ($1,250 One-Time)"
+                class="btn-ghost w-full py-3.5 rounded-xl text-sm font-display tracking-wider font-semibold cursor-pointer"
+              >
+                Select Spark Package
+              </button>
+            </div>
+          </div>
+
+          <!-- TIER 02: IGNITE -->
+          <div class="spotlight-card batch-card rounded-3xl p-7 sm:p-8 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="font-brand-display text-xs font-bold tracking-[0.16em] text-lamp-gold">02. IGNITE</span>
+                <span class="px-3 py-1 rounded-full text-[11px] font-medium bg-lamp-gold/10 border border-lamp-gold/30 text-lamp-gold">
+                  Monthly Retainer
+                </span>
+              </div>
+              <h3 class="font-display text-2xl font-bold text-white">Content &amp; Growth Engine</h3>
+              <p class="text-xs sm:text-sm text-white/60 mt-1 mb-6">
+                Best for creators and growing brands scaling inbound leads through consistent short-form video &amp; SEO.
+              </p>
+
+              <div class="pb-6 mb-6 border-b border-white/10">
+                <div class="flex items-baseline gap-2">
+                  <span class="stat-counter font-display text-4xl sm:text-5xl font-extrabold text-white" data-target="1850" data-prefix="$" data-comma="true">$1,850</span>
+                  <span class="text-sm text-lamp-slate">/ mo</span>
+                </div>
+                <p class="text-xs text-white/55 mt-1.5">30-day rolling agreement • No long-term lock-in</p>
+              </div>
+
+              <ul class="space-y-3.5 text-sm text-white/80 mb-8">
+                <li class="flex items-start gap-3">
+                  <span class="text-lamp-gold mt-0.5">✦</span>
+                  <span><strong class="text-white">12 Short-Form Videos/mo</strong> (Reels, TikTok, Shorts)</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="text-lamp-gold mt-0.5">✦</span>
+                  <span><strong class="text-white">2 Long-Form YouTube / VSL Edits/mo</strong></span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="text-lamp-gold mt-0.5">✦</span>
+                  <span>Monthly Funnel &amp; CRO Updates + CMS Maintenance</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="text-lamp-gold mt-0.5">✦</span>
+                  <span>Multi-Platform Scheduling, Thumbnails &amp; YouTube SEO</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="text-lamp-gold mt-0.5">✦</span>
+                  <span>Bi-Weekly Growth &amp; Retention Analytics Report</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <p class="text-xs italic text-lamp-slate mb-4 text-center">"Turn attention into pipeline."</p>
+              <button
+                type="button"
+                data-open-modal="02. IGNITE ($1,850/mo)"
+                class="btn-ghost w-full py-3.5 rounded-xl text-sm font-display tracking-wider font-semibold cursor-pointer"
+              >
+                Select Ignite Retainer
+              </button>
+            </div>
+          </div>
+
+          <!-- TIER 03: ILLUMINATE (MOST POPULAR WITH #FFD600 GLOW BORDER) -->
+          <div class="spotlight-card batch-card pricing-featured rounded-3xl p-7 sm:p-8 flex flex-col justify-between relative bg-gradient-to-b from-[#121210] to-[#0A0A0B]">
+            <!-- Top Electric Badge -->
+            <div class="absolute -top-3.5 right-6 z-10 px-3.5 py-1 rounded-full bg-lamp-volt text-black font-brand-display font-bold text-[11px] tracking-widest shadow-[0_0_20px_rgba(246,235,22,0.6)]">
+              MOST POPULAR
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="font-brand-display text-xs font-bold tracking-[0.16em] text-lamp-volt">03. ILLUMINATE</span>
+                <span class="px-3 py-1 rounded-full text-[11px] font-medium bg-lamp-volt/15 border border-lamp-volt/40 text-lamp-volt">
+                  Priority Partner
+                </span>
+              </div>
+              <h3 class="font-display text-2xl font-bold text-white">Full-Stack Agency Partner</h3>
+              <p class="text-xs sm:text-sm text-white/65 mt-1 mb-6">
+                Best for established companies wanting an outsourced web, video, and daily VA operations department.
+              </p>
+
+              <div class="pb-6 mb-6 border-b border-lamp-gold/25">
+                <div class="flex items-baseline gap-2">
+                  <span class="stat-counter font-display text-4xl sm:text-5xl font-extrabold text-lamp-volt" data-target="3400" data-prefix="$" data-comma="true">$3,400</span>
+                  <span class="text-sm text-white/70">/ mo</span>
+                </div>
+                <p class="text-xs text-lamp-gold mt-1.5 font-medium">All-in-one web, video &amp; US-hours VA department</p>
+              </div>
+
+              <ul class="space-y-3.5 text-sm text-white/90 mb-8">
+                <li class="flex items-start gap-3">
+                  <span class="text-lamp-volt mt-0.5">✦</span>
+                  <span>Full Custom Website + Monthly Feature &amp; UI Sprints</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="text-lamp-volt mt-0.5">✦</span>
+                  <span><strong class="text-lamp-volt">25 Short-Form Videos/mo</strong> + <strong class="text-lamp-volt">4 Long-Form / VSLs/mo</strong></span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="text-lamp-volt mt-0.5">✦</span>
+                  <span>Custom 3D / Motion Assets &amp; Full Technical SEO</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="text-lamp-volt mt-0.5">✦</span>
+                  <span><strong class="text-white">Dedicated US-Hours VA &amp; Social Media Manager</strong></span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="text-lamp-volt mt-0.5">✦</span>
+                  <span>End-to-End Content/CRM Ops &amp; Weekly Strategy Syncs</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <p class="text-xs italic text-lamp-gold/80 mb-4 text-center">"Your entire digital department."</p>
+              <button
+                type="button"
+                data-open-modal="03. ILLUMINATE ($3,400/mo)"
+                class="btn-electric w-full py-3.5 rounded-xl text-sm font-display tracking-wider font-bold cursor-pointer"
+              >
+                Partner With Illuminate
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Expandable À La Carte Add-Ons Drawer -->
+        <div class="mt-12 rounded-3xl bg-lamp-surface border border-white/10 p-6 sm:p-8 reveal-up">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <span class="font-brand-display text-xs tracking-widest text-lamp-gold">MODULAR ADD-ONS</span>
+              <h3 class="font-display text-lg sm:text-xl font-bold text-white mt-1">
+                À La Carte Sprints &amp; Specialist Add-Ons
+              </h3>
+            </div>
+            <button
+              id="toggle-addons-btn"
+              type="button"
+              aria-expanded="true"
+              class="btn-ghost px-4 py-2.5 rounded-xl text-xs font-display tracking-wider inline-flex items-center justify-center gap-2 cursor-pointer self-start sm:self-auto"
+            >
+              <span id="addons-btn-label">Hide Add-Ons</span>
+              <svg id="addons-chevron" class="w-4 h-4 transition-transform duration-200 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+
+          <div id="addons-panel" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6 pt-6 border-t border-white/10">
+            
+            <div class="p-4 rounded-2xl bg-black/70 border border-white/10 hover:border-lamp-gold/40 transition-colors flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between gap-2 mb-2">
+                  <span class="text-xs font-mono text-lamp-slate">7-DAY TURNAROUND</span>
+                  <span class="font-display font-bold text-lamp-gold text-base">$650</span>
+                </div>
+                <h4 class="font-display font-bold text-sm text-white mb-1.5">Landing Page Sprint</h4>
+                <p class="text-xs text-white/65 leading-relaxed">Custom design, responsive build, and interactive motion polish.</p>
+              </div>
+              <button type="button" data-open-modal="Add-On: Landing Page Sprint ($650)" class="mt-4 text-left text-xs font-display text-lamp-gold hover:underline cursor-pointer">
+                Book Sprint →
+              </button>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-black/70 border border-white/10 hover:border-lamp-gold/40 transition-colors flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between gap-2 mb-2">
+                  <span class="text-xs font-mono text-lamp-slate">8 EDITS / MONTH</span>
+                  <span class="font-display font-bold text-lamp-gold text-base">$550/mo</span>
+                </div>
+                <h4 class="font-display font-bold text-sm text-white mb-1.5">Short-Form Starter Pack</h4>
+                <p class="text-xs text-white/65 leading-relaxed">8 edited Reels/TikToks/Shorts with dynamic captions &amp; hooks.</p>
+              </div>
+              <button type="button" data-open-modal="Add-On: Short-Form Starter Pack ($550/mo)" class="mt-4 text-left text-xs font-display text-lamp-gold hover:underline cursor-pointer">
+                Start Pack →
+              </button>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-black/70 border border-white/10 hover:border-lamp-gold/40 transition-colors flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between gap-2 mb-2">
+                  <span class="text-xs font-mono text-lamp-slate">PER VIDEO</span>
+                  <span class="font-display font-bold text-lamp-gold text-base">$250–$450</span>
+                </div>
+                <h4 class="font-display font-bold text-sm text-white mb-1.5">VSL / YouTube Edit</h4>
+                <p class="text-xs text-white/65 leading-relaxed">High-retention narrative cut with custom motion/3D graphics.</p>
+              </div>
+              <button type="button" data-open-modal="Add-On: VSL / YouTube Edit ($250–$450)" class="mt-4 text-left text-xs font-display text-lamp-gold hover:underline cursor-pointer">
+                Request Quote →
+              </button>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-black/70 border border-white/10 hover:border-lamp-gold/40 transition-colors flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between gap-2 mb-2">
+                  <span class="text-xs font-mono text-lamp-slate">20 HRS / WEEK (US)</span>
+                  <span class="font-display font-bold text-lamp-gold text-base">$750/mo</span>
+                </div>
+                <h4 class="font-display font-bold text-sm text-white mb-1.5">Part-Time Creative/Ops VA</h4>
+                <p class="text-xs text-white/65 leading-relaxed">Social scheduling, YouTube SEO, and daily admin workflows.</p>
+              </div>
+              <button type="button" data-open-modal="Add-On: Part-Time Creative/Ops VA ($750/mo)" class="mt-4 text-left text-xs font-display text-lamp-gold hover:underline cursor-pointer">
+                Hire VA →
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Trust Note -->
+        <p class="text-center text-xs sm:text-sm text-white/60 mt-8">
+          All monthly retainers operate on a simple 30-day rolling agreement—scale up, pause, or customize your deliverables anytime. Need a custom scope?
+          <button type="button" data-open-modal="Custom Scope" class="text-lamp-gold font-semibold hover:underline cursor-pointer">
+            Book a 15-minute strategy call →
+          </button>
+        </p>
+
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SECTION 05 — FINAL CTA BANNER
+         ====================================================================== -->
+    <section class="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 relative border-t border-white/[0.08] overflow-hidden">
+      <div class="max-w-5xl mx-auto relative">
+        <div class="relative rounded-[2rem] bg-lamp-surface border border-lamp-gold/35 p-10 sm:p-16 text-center overflow-hidden shadow-[0_0_80px_-20px_rgba(246,235,22,0.2)] reveal-up">
+          
+          <!-- Ambient Radial Glow -->
+          <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-lamp-volt/15 blur-3xl pointer-events-none"></div>
+
+          <!-- Background Glowing Filament Watermark (Exact Custom Bulb Mark) -->
+          <svg class="absolute right-6 bottom-2 w-48 h-60 opacity-[0.09] pointer-events-none" aria-hidden="true">
+            <use href="#tls-bulb-symbol" />
+          </svg>
+
+          <div class="relative z-10 max-w-2xl mx-auto">
+            <span class="inline-block font-brand-display text-xs tracking-[0.2em] text-lamp-gold mb-4">
+              READY TO SWITCH ON?
+            </span>
+            <h2 class="section-headline font-bold text-white mb-5">
+              Ready to Light Up Your Next Stage of Growth?
+            </h2>
+            <p class="text-white/70 text-base sm:text-lg leading-relaxed mb-9">
+              Partner with a creative and technical team operating on your schedule. Let’s map out your next website, video engine, or operational sprint.
+            </p>
+            <button
+              type="button"
+              data-open-modal="Discovery Call"
+              class="btn-electric px-8 sm:px-10 py-4 rounded-full text-sm sm:text-base font-display tracking-wider cursor-pointer"
+            >
+              Schedule Your Free Strategy Call
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================================
+       MINIMALIST FOOTER WITH EXACT CUSTOM SVG BRAND LOCKUP
+       ======================================================================== -->
+  <footer class="border-t border-white/10 bg-black py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+      
+      <!-- Brand Lockup: Exact Bulb Icon + Custom Two-Line Wordmark SVG -->
+      <div class="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
+        <div class="flex items-center gap-2.5 group">
+          <div class="w-8 h-10 flex items-center justify-center shrink-0">
+            <svg class="w-full h-full nav-neon-icon" aria-hidden="true">
+              <use href="#tls-bulb-symbol" />
+            </svg>
+          </div>
+          <div class="w-44 h-8 flex items-center">
+            <svg class="w-full h-full wordmark-neon-glow" preserveAspectRatio="xMinYMid meet" role="img" aria-label="The Lamp Solutions">
+              <use href="#tls-wordmark-symbol" />
+            </svg>
+          </div>
+        </div>
+        <span class="hidden sm:inline text-white/20">|</span>
+        <p class="text-xs text-lamp-slate">thelampsolutions.com • Operating on US Business Hours</p>
+      </div>
+
+      <!-- Footer Links -->
+      <div class="flex flex-wrap items-center justify-center gap-6 text-xs sm:text-sm text-white/65">
+        <a href="#services" class="hover:text-lamp-gold transition-colors">Services</a>
+        <a href="#work" class="hover:text-lamp-gold transition-colors">Work</a>
+        <a href="#process" class="hover:text-lamp-gold transition-colors">Process</a>
+        <a href="#founder" class="hover:text-lamp-gold transition-colors">Founder</a>
+        <a href="#packages" class="hover:text-lamp-gold transition-colors">Pricing</a>
+        <button type="button" data-open-modal="Discovery Call" class="hover:text-lamp-gold transition-colors cursor-pointer">
+          Contact
+        </button>
+      </div>
+
+      <!-- Copyright -->
+      <p class="text-xs text-lamp-slate">
+        © <span id="current-year">2026</span> The Lamp Solutions. All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       INTERACTIVE DISCOVERY CALL & PROJECT BRIEF MODAL
+       ======================================================================== -->
+  <div id="booking-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-panel relative w-full max-w-lg rounded-3xl bg-[#0B0B0D] border border-lamp-gold/40 p-6 sm:p-8 shadow-[0_0_60px_rgba(246,235,22,0.18)]">
+      
+      <!-- Close Button -->
+      <button id="close-modal-btn" type="button" aria-label="Close modal" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/5 border border-white/10 text-white/75 hover:text-lamp-gold hover:border-lamp-gold/50 flex items-center justify-center transition-colors cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <!-- Form View -->
+      <div id="modal-form-view">
+        <div class="flex items-center gap-2.5 mb-3">
+          <span class="w-2.5 h-2.5 rounded-full bg-lamp-volt shadow-[0_0_10px_#F6EB16]"></span>
+          <span class="font-brand-display text-xs tracking-[0.18em] text-lamp-gold">THE LAMP SOLUTIONS</span>
+        </div>
+        <h3 id="modal-title" class="font-display text-2xl font-bold text-white mb-2">
+          Book Your Strategy Call
+        </h3>
+        <p class="text-xs sm:text-sm text-white/65 mb-6">
+          Tell us what you're building. Our team responds within 4 US business hours with a tailored roadmap.
+        </p>
+
+        <form id="discovery-form" class="space-y-4">
+          <div>
+            <label for="lead-name" class="block text-xs font-brand-display tracking-wider text-white/80 mb-1.5">YOUR NAME *</label>
+            <input id="lead-name" name="name" type="text" required placeholder="Alex Morgan" class="w-full px-4 py-3 rounded-xl bg-black border border-white/15 text-sm text-white placeholder-white/30 focus:outline-none focus:border-lamp-gold transition-colors" />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="lead-email" class="block text-xs font-brand-display tracking-wider text-white/80 mb-1.5">WORK EMAIL *</label>
+              <input id="lead-email" name="email" type="email" required placeholder="alex@company.com" class="w-full px-4 py-3 rounded-xl bg-black border border-white/15 text-sm text-white placeholder-white/30 focus:outline-none focus:border-lamp-gold transition-colors" />
+            </div>
+            <div>
+              <label for="lead-package" class="block text-xs font-brand-display tracking-wider text-white/80 mb-1.5">INTERESTED IN</label>
+              <select id="lead-package" name="package" class="w-full px-4 py-3 rounded-xl bg-black border border-white/15 text-sm text-white focus:outline-none focus:border-lamp-gold transition-colors">
+                <option value="Discovery Call">General Discovery Call</option>
+                <option value="Direct Call with Jay (Founder)">Direct Strategy Call with Jay (Founder)</option>
+                <option value="Start Your Project">Start Your Project</option>
+                <option value="01. SPARK ($1,250 One-Time)">01. SPARK — $1,250 One-Time</option>
+                <option value="02. IGNITE ($1,850/mo)">02. IGNITE — $1,850 / mo</option>
+                <option value="03. ILLUMINATE ($3,400/mo)">03. ILLUMINATE — $3,400 / mo</option>
+                <option value="Custom Scope">Custom Scope</option>
+                <option value="Add-On: Landing Page Sprint ($650)">Add-On: Landing Page Sprint ($650)</option>
+                <option value="Add-On: Short-Form Starter Pack ($550/mo)">Add-On: Short-Form Pack ($550/mo)</option>
+                <option value="Add-On: VSL / YouTube Edit ($250–$450)">Add-On: VSL / YouTube Edit ($250–$450)</option>
+                <option value="Add-On: Part-Time Creative/Ops VA ($750/mo)">Add-On: Part-Time VA ($750/mo)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label for="lead-notes" class="block text-xs font-brand-display tracking-wider text-white/80 mb-1.5">PROJECT GOALS OR CURRENT URL</label>
+            <textarea id="lead-notes" name="notes" rows="3" placeholder="Share your website URL, video targets, or bottlenecks you want solved..." class="w-full px-4 py-3 rounded-xl bg-black border border-white/15 text-sm text-white placeholder-white/30 focus:outline-none focus:border-lamp-gold transition-colors resize-none"></textarea>
+          </div>
+
+          <button type="submit" class="btn-electric w-full py-3.5 rounded-xl text-sm font-display tracking-wider font-bold cursor-pointer mt-2">
+            Confirm Strategy Request →
+          </button>
+        </form>
+      </div>
+
+      <!-- Instant Tactile Confirmation State -->
+      <div id="modal-success-view" class="hidden text-center py-6">
+        <div class="w-16 h-16 rounded-2xl bg-lamp-volt/15 border border-lamp-volt/40 text-lamp-volt flex items-center justify-center mx-auto mb-5 shadow-[0_0_30px_rgba(246,235,22,0.3)]">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h3 class="font-display text-2xl font-bold text-white mb-2">Transmission Received.</h3>
+        <p id="confirmation-summary" class="text-sm text-white/75 leading-relaxed mb-6">
+          We've locked in your brief and sent calendar options to your inbox. Speak soon!
+        </p>
+        <button id="reset-modal-btn" type="button" class="btn-ghost px-6 py-2.5 rounded-full text-xs font-display tracking-wider cursor-pointer">
+          Back to Website
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       INTERACTION, SPOTLIGHT & GSAP SCROLLTRIGGER CHOREOGRAPHY
+       ======================================================================== -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Set Dynamic Copyright Year
+      const yearEl = document.getElementById('current-year');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+      // 1B. Automatic Founder Portrait Flood-Fill Alpha Extraction & Edge-Feathering
+      //     Removes exterior white background matte from Founder/Jay Lampara.webp while preserving
+      //     the white Barong Tagalog embroidery & crisp hair/shoulder edges on dark UI.
+      const founderPortraitImg = document.getElementById('founder-portrait-img');
+      const founderStage = document.querySelector('.founder-portrait-stage');
+      const founderPortraitWrap = document.getElementById('founder-portrait-wrap');
+
+      const extractPortraitAlpha = (imgEl) => {
+        if (!imgEl || imgEl.dataset.alphaProcessed === 'true') return;
+        const w = imgEl.naturalWidth;
+        const h = imgEl.naturalHeight;
+        if (!w || !h) return;
+
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d', { willReadFrequently: true });
+          ctx.drawImage(imgEl, 0, 0, w, h);
+
+          const imageData = ctx.getImageData(0, 0, w, h);
+          const data = imageData.data;
+
+          // Check top-left, top-right, and mid-top border pixels to see if exterior matte is solid white
+          const sampleCoords = [
+            0,
+            (w - 1) * 4,
+            Math.floor(w * 0.25) * 4,
+            Math.floor(w * 0.75) * 4
+          ];
+          const hasWhiteExterior = sampleCoords.some(idx =>
+            data[idx + 3] > 240 && data[idx] > 242 && data[idx + 1] > 242 && data[idx + 2] > 242
+          );
+
+          if (hasWhiteExterior) {
+            // Flood-fill from all 4 image edges so interior white Barong embroidery stays 100% opaque
+            const totalPixels = w * h;
+            const visited = new Uint8Array(totalPixels);
+            const queue = new Int32Array(totalPixels);
+            let head = 0;
+            let tail = 0;
+
+            const isExteriorWhite = (pIdx) => {
+              const o = pIdx * 4;
+              const r = data[o], g = data[o + 1], b = data[o + 2], a = data[o + 3];
+              if (a < 15) return true;
+              const minC = Math.min(r, g, b);
+              const spread = Math.max(r, g, b) - minC;
+              return minC >= 238 && spread <= 18;
+            };
+
+            const enqueue = (x, y) => {
+              if (x < 0 || x >= w || y < 0 || y >= h) return;
+              const pIdx = y * w + x;
+              if (visited[pIdx]) return;
+              visited[pIdx] = 1;
+              if (isExteriorWhite(pIdx)) {
+                queue[tail++] = pIdx;
+              }
+            };
+
+            for (let x = 0; x < w; x++) {
+              enqueue(x, 0);
+              enqueue(x, h - 1);
+            }
+            for (let y = 1; y < h - 1; y++) {
+              enqueue(0, y);
+              enqueue(w - 1, y);
+            }
+
+            while (head < tail) {
+              const curr = queue[head++];
+              data[curr * 4 + 3] = 0; // Set exterior white pixel to transparent
+
+              const cx = curr % w;
+              const cy = (curr - cx) / w;
+              if (cx > 0) enqueue(cx - 1, cy);
+              if (cx < w - 1) enqueue(cx + 1, cy);
+              if (cy > 0) enqueue(cx, cy - 1);
+              if (cy < h - 1) enqueue(cx, cy + 1);
+            }
+
+            // 1-pass anti-aliased edge feathering along silhouette boundary to eliminate white fringe
+            const alphaCopy = new Uint8ClampedArray(totalPixels);
+            for (let i = 0; i < totalPixels; i++) alphaCopy[i] = data[i * 4 + 3];
+
+            for (let y = 1; y < h - 1; y++) {
+              for (let x = 1; x < w - 1; x++) {
+                const idx = y * w + x;
+                const a = alphaCopy[idx];
+                if (a === 0) continue;
+
+                const neighborZeros =
+                  (alphaCopy[idx - 1] === 0 ? 1 : 0) +
+                  (alphaCopy[idx + 1] === 0 ? 1 : 0) +
+                  (alphaCopy[idx - w] === 0 ? 1 : 0) +
+                  (alphaCopy[idx + w] === 0 ? 1 : 0);
+
+                if (neighborZeros > 0) {
+                  const o = idx * 4;
+                  const lum = (data[o] + data[o + 1] + data[o + 2]) / 3;
+                  // Soften bright white fringe pixels right on the silhouette boundary
+                  if (lum > 210) {
+                    data[o + 3] = Math.round(a * (1 - neighborZeros * 0.16));
+                  }
+                }
+              }
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+            imgEl.dataset.alphaProcessed = 'true';
+            imgEl.src = canvas.toDataURL('image/png');
+          }
+        } catch (err) {
+          // Graceful fallback: keep direct Founder/Jay Lampara.webp <img> rendering untouched
+          console.warn('Founder portrait direct render mode:', err);
+        }
+      };
+
+      if (founderPortraitImg) {
+        founderPortraitImg.addEventListener('error', () => {
+          const fallbackSrc = founderPortraitImg.getAttribute('data-fallback-src');
+          if (fallbackSrc && founderPortraitImg.getAttribute('src') !== fallbackSrc) {
+            founderPortraitImg.src = fallbackSrc;
+          }
+        }, { once: true });
+
+        if (founderPortraitImg.complete && founderPortraitImg.naturalWidth > 0) {
+          extractPortraitAlpha(founderPortraitImg);
+        } else {
+          founderPortraitImg.addEventListener('load', () => extractPortraitAlpha(founderPortraitImg), { once: true });
+        }
+      }
+
+      // Subtle 3D Hover Tilt Depth on Founder Portrait Card
+      if (founderStage && founderPortraitWrap) {
+        founderStage.addEventListener('mousemove', (e) => {
+          if (typeof gsap === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          const rect = founderStage.getBoundingClientRect();
+          const relX = (e.clientX - rect.left) / rect.width - 0.5;
+          const relY = (e.clientY - rect.top) / rect.height - 0.5;
+          gsap.to(founderPortraitWrap, {
+            rotateY: relX * 8,
+            rotateX: -relY * 6,
+            y: -4,
+            duration: 0.35,
+            ease: 'power2.out',
+            overwrite: 'auto'
+          });
+        });
+
+        founderStage.addEventListener('mouseleave', () => {
+          if (typeof gsap === 'undefined') return;
+          gsap.to(founderPortraitWrap, {
+            rotateY: 0,
+            rotateX: 0,
+            y: 0,
+            duration: 0.45,
+            ease: 'power3.out',
+            overwrite: 'auto'
+          });
+        });
+      }
+
+      // 2. Sticky Glassmorphic Navbar on Scroll
+      const navbar = document.getElementById('navbar');
+      const handleNavbarScroll = () => {
+        if (window.scrollY > 24) {
+          navbar.classList.add('bg-black/80', 'backdrop-blur-xl', 'border-white/10');
+          navbar.classList.remove('border-transparent');
+        } else {
+          navbar.classList.remove('bg-black/80', 'backdrop-blur-xl', 'border-white/10');
+          navbar.classList.add('border-transparent');
+        }
+      };
+      window.addEventListener('scroll', handleNavbarScroll, { passive: true });
+      handleNavbarScroll();
+
+      // 3. Mobile Navigation Drawer Toggle
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const iconOpen = document.getElementById('menu-icon-open');
+      const iconClose = document.getElementById('menu-icon-close');
+
+      const toggleMobileMenu = (forceClose = false) => {
+        const isCurrentlyOpen = !mobileMenu.classList.contains('hidden');
+        const shouldOpen = forceClose ? false : !isCurrentlyOpen;
+        mobileMenu.classList.toggle('hidden', !shouldOpen);
+        iconOpen.classList.toggle('hidden', shouldOpen);
+        iconClose.classList.toggle('hidden', !shouldOpen);
+        mobileMenuBtn.setAttribute('aria-expanded', String(shouldOpen));
+      };
+
+      mobileMenuBtn.addEventListener('click', () => toggleMobileMenu());
+      document.querySelectorAll('.mobile-nav-link').forEach(link => {
+        link.addEventListener('click', () => toggleMobileMenu(true));
+      });
+
+      // 4. Interactive Hero Lamp Power-Mode Switch (DIM / ON / FULL POWER)
+      const lampModeBtns = document.querySelectorAll('.lamp-mode-btn');
+      const heroBulbSvg = document.getElementById('hero-bulb-svg');
+      const heroHaloEl = document.getElementById('hero-halo');
+
+      const setLampMode = (mode) => {
+        document.body.classList.remove('lamp-dimmed', 'lamp-overdrive');
+        if (mode === 'dim') document.body.classList.add('lamp-dimmed');
+        if (mode === 'overdrive') document.body.classList.add('lamp-overdrive');
+
+        lampModeBtns.forEach(btn => {
+          const isMatch = btn.getAttribute('data-lamp-mode') === mode;
+          btn.classList.toggle('bg-lamp-gold', isMatch);
+          btn.classList.toggle('text-black', isMatch);
+          btn.classList.toggle('font-bold', isMatch);
+          btn.classList.toggle('text-lamp-slate', !isMatch);
+        });
+
+        // Smooth GSAP power surge / dim transition when motion is enabled
+        if (typeof gsap !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          if (heroBulbSvg) {
+            const targetScale = mode === 'overdrive' ? 1.05 : mode === 'dim' ? 0.97 : 1;
+            const targetOpacity = mode === 'dim' ? 0.62 : 1;
+            gsap.to(heroBulbSvg, {
+              scale: targetScale,
+              opacity: targetOpacity,
+              duration: 0.36,
+              ease: 'power2.out',
+              overwrite: 'auto'
+            });
+          }
+          if (heroHaloEl) {
+            const haloOpacity = mode === 'overdrive' ? 1 : mode === 'dim' ? 0.18 : 0.85;
+            const haloScale = mode === 'overdrive' ? 1.18 : mode === 'dim' ? 0.88 : 1;
+            gsap.to(heroHaloEl, {
+              opacity: haloOpacity,
+              scale: haloScale,
+              duration: 0.42,
+              ease: 'power2.out',
+              overwrite: 'auto'
+            });
+          }
+        }
+      };
+
+      lampModeBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setLampMode(btn.getAttribute('data-lamp-mode'));
+        });
+      });
+
+      // Clicking the hero bulb cycles power modes tactically + 3D mouse-tilt parallax
+      const heroBulbContainer = document.getElementById('hero-bulb-container');
+      const heroStage = document.querySelector('.bulb-hero-stage');
+      if (heroBulbContainer) {
+        heroBulbContainer.addEventListener('click', () => {
+          if (document.body.classList.contains('lamp-overdrive')) {
+            setLampMode('dim');
+          } else if (document.body.classList.contains('lamp-dimmed')) {
+            setLampMode('normal');
+          } else {
+            setLampMode('overdrive');
+          }
+        });
+      }
+
+      if (heroStage && heroBulbContainer) {
+        heroStage.addEventListener('mousemove', (e) => {
+          if (typeof gsap === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          const rect = heroStage.getBoundingClientRect();
+          const relX = (e.clientX - rect.left) / rect.width - 0.5;
+          const relY = (e.clientY - rect.top) / rect.height - 0.5;
+          gsap.to(heroBulbContainer, {
+            rotateY: relX * 18,
+            rotateX: -relY * 18,
+            x: relX * 6,
+            y: relY * 6,
+            duration: 0.32,
+            ease: 'power2.out',
+            overwrite: 'auto'
+          });
+        });
+
+        heroStage.addEventListener('mouseleave', () => {
+          if (typeof gsap === 'undefined') return;
+          gsap.to(heroBulbContainer, {
+            rotateY: 0,
+            rotateX: 0,
+            x: 0,
+            y: 0,
+            duration: 0.5,
+            ease: 'power3.out',
+            overwrite: 'auto'
+          });
+        });
+      }
+
+      // 5. Cursor-Tracking Radial Spotlight Across Bento & Pricing Cards
+      const spotlightCards = document.querySelectorAll('.spotlight-card');
+      spotlightCards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          card.style.setProperty('--mouse-x', `${x}px`);
+          card.style.setProperty('--mouse-y', `${y}px`);
+        });
+      });
+
+      // 5B. Tactile Magnetic Pull Micro-Interactions (max 4px displacement) on Primary .btn-electric
+      document.querySelectorAll('.btn-electric').forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+          if (typeof gsap === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          const rect = btn.getBoundingClientRect();
+          const relX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+          const relY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+          gsap.to(btn, {
+            x: Math.max(-4, Math.min(4, relX * 4)),
+            y: Math.max(-4, Math.min(4, relY * 4)),
+            duration: 0.22,
+            ease: 'power2.out',
+            overwrite: 'auto'
+          });
+        });
+
+        btn.addEventListener('mouseleave', () => {
+          if (typeof gsap === 'undefined') return;
+          gsap.to(btn, {
+            x: 0,
+            y: 0,
+            duration: 0.35,
+            ease: 'power3.out',
+            overwrite: 'auto'
+          });
+        });
+      });
+
+      // 6. Selected Work Interactive Filter Tabs + Tactile Sliding Pill + Smooth FLIP-Style Grid Choreography
+      const filterBar = document.getElementById('work-filter-bar');
+      const filterPill = document.getElementById('work-filter-pill');
+      const filterBtns = document.querySelectorAll('.work-filter-btn');
+      const workCards = document.querySelectorAll('.work-card');
+      let activeFilter = 'all';
+
+      const positionFilterPill = (targetBtn) => {
+        if (!filterBar || !filterPill || !targetBtn) return;
+        const barRect = filterBar.getBoundingClientRect();
+        const btnRect = targetBtn.getBoundingClientRect();
+        const offsetX = btnRect.left - barRect.left - 6;
+        const offsetY = btnRect.top - barRect.top - 6;
+        filterPill.style.width = `${btnRect.width}px`;
+        filterPill.style.height = `${btnRect.height}px`;
+        filterPill.style.transform = `translate3d(${offsetX}px, ${offsetY}px, 0)`;
+      };
+
+      const initialActiveBtn = document.querySelector('.work-filter-btn.active');
+      if (initialActiveBtn) {
+        requestAnimationFrame(() => positionFilterPill(initialActiveBtn));
+        window.addEventListener('resize', () => {
+          const currentBtn = document.querySelector('.work-filter-btn.active');
+          if (currentBtn) positionFilterPill(currentBtn);
+        }, { passive: true });
+      }
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const filter = btn.getAttribute('data-filter');
+          if (filter === activeFilter) return;
+          activeFilter = filter;
+
+          filterBtns.forEach(b => {
+            b.classList.remove('active', 'text-black', 'font-bold');
+            b.classList.add('text-white/75');
+          });
+          btn.classList.add('active', 'text-black', 'font-bold');
+          btn.classList.remove('text-white/75');
+          positionFilterPill(btn);
+
+          const hasGsap = typeof gsap !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+          if (!hasGsap) {
+            workCards.forEach(card => {
+              const categories = (card.getAttribute('data-category') || '').split(' ');
+              const matches = filter === 'all' || categories.includes(filter);
+              card.style.display = matches ? 'flex' : 'none';
+              card.style.opacity = matches ? '1' : '0';
+              card.style.transform = 'none';
+            });
+            return;
+          }
+
+          const toHide = [];
+          const toShow = [];
+
+          workCards.forEach(card => {
+            const categories = (card.getAttribute('data-category') || '').split(' ');
+            const matches = filter === 'all' || categories.includes(filter);
+            if (matches) {
+              toShow.push(card);
+            } else if (card.style.display !== 'none') {
+              toHide.push(card);
+            }
+          });
+
+          const revealMatchingCards = () => {
+            toShow.forEach(card => {
+              card.style.display = 'flex';
+            });
+            gsap.fromTo(toShow,
+              { opacity: 0, scale: 0.96, y: 14 },
+              {
+                opacity: 1,
+                scale: 1,
+                y: 0,
+                duration: 0.36,
+                stagger: 0.06,
+                ease: 'power3.out',
+                clearProps: 'transform'
+              }
+            );
+          };
+
+          if (toHide.length > 0) {
+            gsap.to(toHide, {
+              opacity: 0,
+              scale: 0.96,
+              y: 10,
+              duration: 0.2,
+              ease: 'power2.in',
+              onComplete: () => {
+                toHide.forEach(card => { card.style.display = 'none'; });
+                revealMatchingCards();
+              }
+            });
+          } else {
+            revealMatchingCards();
+          }
+        });
+      });
+
+      // 7. Expandable À La Carte Add-Ons Drawer (Smooth GSAP Height + Opacity Animation)
+      const toggleAddonsBtn = document.getElementById('toggle-addons-btn');
+      const addonsPanel = document.getElementById('addons-panel');
+      const addonsBtnLabel = document.getElementById('addons-btn-label');
+      const addonsChevron = document.getElementById('addons-chevron');
+      let addonsExpanded = true;
+
+      if (toggleAddonsBtn && addonsPanel) {
+        toggleAddonsBtn.addEventListener('click', () => {
+          addonsExpanded = !addonsExpanded;
+          addonsBtnLabel.textContent = addonsExpanded ? 'Hide Add-Ons' : 'View Add-Ons';
+          addonsChevron.classList.toggle('rotate-180', addonsExpanded);
+          toggleAddonsBtn.setAttribute('aria-expanded', String(addonsExpanded));
+
+          const hasGsap = typeof gsap !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (!hasGsap) {
+            addonsPanel.classList.toggle('hidden', !addonsExpanded);
+            return;
+          }
+
+          gsap.killTweensOf(addonsPanel);
+
+          if (addonsExpanded) {
+            addonsPanel.classList.remove('hidden');
+            const targetHeight = addonsPanel.scrollHeight;
+            gsap.fromTo(addonsPanel,
+              { height: 0, opacity: 0, y: -6 },
+              {
+                height: targetHeight,
+                opacity: 1,
+                y: 0,
+                duration: 0.34,
+                ease: 'power2.out',
+                onComplete: () => {
+                  addonsPanel.style.height = 'auto';
+                }
+              }
+            );
+          } else {
+            const currentHeight = addonsPanel.offsetHeight;
+            gsap.fromTo(addonsPanel,
+              { height: currentHeight, opacity: 1, y: 0 },
+              {
+                height: 0,
+                opacity: 0,
+                y: -6,
+                duration: 0.3,
+                ease: 'power2.out',
+                onComplete: () => {
+                  addonsPanel.classList.add('hidden');
+                }
+              }
+            );
+          }
+        });
+      }
+
+      // 8. Interactive Discovery Call & Booking Modal
+      const bookingModal = document.getElementById('booking-modal');
+      const closeModalBtn = document.getElementById('close-modal-btn');
+      const packageSelect = document.getElementById('lead-package');
+      const discoveryForm = document.getElementById('discovery-form');
+      const formView = document.getElementById('modal-form-view');
+      const successView = document.getElementById('modal-success-view');
+      const confirmationSummary = document.getElementById('confirmation-summary');
+      const resetModalBtn = document.getElementById('reset-modal-btn');
+
+      const openBookingModal = (presetPackage = 'Discovery Call') => {
+        formView.classList.remove('hidden');
+        successView.classList.add('hidden');
+        if (packageSelect) {
+          const optionExists = Array.from(packageSelect.options).some(opt => opt.value === presetPackage);
+          if (optionExists) packageSelect.value = presetPackage;
+        }
+        bookingModal.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+      };
+
+      const closeBookingModal = () => {
+        bookingModal.classList.remove('is-open');
+        document.body.style.overflow = '';
+      };
+
+      document.querySelectorAll('[data-open-modal]').forEach(trigger => {
+        trigger.addEventListener('click', () => {
+          const pkg = trigger.getAttribute('data-open-modal');
+          openBookingModal(pkg);
+        });
+      });
+
+      closeModalBtn.addEventListener('click', closeBookingModal);
+      resetModalBtn.addEventListener('click', closeBookingModal);
+      bookingModal.addEventListener('click', (e) => {
+        if (e.target === bookingModal) closeBookingModal();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && bookingModal.classList.contains('is-open')) {
+          closeBookingModal();
+        }
+      });
+
+      discoveryForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('lead-name').value.trim() || 'Partner';
+        const email = document.getElementById('lead-email').value.trim();
+        const selectedPkg = packageSelect.value;
+
+        confirmationSummary.textContent = `Thanks, ${name}! We've logged your inquiry for "${selectedPkg}" and sent US-hours strategy call slots to ${email}.`;
+        formView.classList.add('hidden');
+        successView.classList.remove('hidden');
+        discoveryForm.reset();
+      });
+
+      // 9. GSAP + ScrollTrigger Motion Choreography (Wrapped in gsap.context & matchMedia)
+      const initMotion = () => {
+        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+        gsap.registerPlugin(ScrollTrigger);
+
+        const mm = gsap.matchMedia();
+
+        mm.add('(prefers-reduced-motion: no-preference)', () => {
+          const ctx = gsap.context(() => {
+            // A. Scroll-Linked Top Electric Scroll-Progress Filament Bar
+            const scrollFilament = document.getElementById('scroll-filament-bar');
+            if (scrollFilament) {
+              gsap.to(scrollFilament, {
+                scaleX: 1,
+                ease: 'none',
+                scrollTrigger: {
+                  trigger: document.documentElement,
+                  start: 'top top',
+                  end: 'bottom bottom',
+                  scrub: 0.15
+                }
+              });
+            }
+
+            // B. Hero Double-Layer Neon Filament Stroke-Dashoffset Draw-In + Electrical Surge Flicker Ignition
+            const outerGold = document.getElementById('hero-bulb-outer-gold');
+            const outerCore = document.getElementById('hero-bulb-outer-core');
+            const filamentGold = document.getElementById('hero-filament-gold');
+            const filamentCore = document.getElementById('hero-filament-core');
+            const capGold = document.getElementById('hero-cap-gold');
+            const capCore = document.getElementById('hero-cap-core');
+
+            if (outerGold && filamentGold) {
+              const outerLen = outerGold.getTotalLength();
+              const filamentLen = filamentGold.getTotalLength();
+
+              gsap.set([outerGold, outerCore], {
+                strokeDasharray: outerLen,
+                strokeDashoffset: outerLen
+              });
+              gsap.set([filamentGold, filamentCore], {
+                strokeDasharray: filamentLen,
+                strokeDashoffset: filamentLen,
+                opacity: 0
+              });
+              gsap.set([capGold, capCore], {
+                opacity: 0,
+                scale: 0.7,
+                transformOrigin: 'center center'
+              });
+
+              const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+              heroTl
+                .to([outerGold, outerCore], { strokeDashoffset: 0, duration: 1.05 })
+                .set([filamentGold, filamentCore], { opacity: 1 }, '-=0.5')
+                .to([filamentGold, filamentCore], { strokeDashoffset: 0, duration: 0.78 }, '<')
+                .to([capGold, capCore], { opacity: 1, scale: 1, duration: 0.28 }, '-=0.28')
+                // Realistic electrical surge flicker micro-sequence upon ignition
+                .to('#hero-bulb-svg', { opacity: 0.35, duration: 0.05, ease: 'none' })
+                .to('#hero-bulb-svg', { opacity: 1, scale: 1.04, duration: 0.07, ease: 'none' })
+                .to('#hero-bulb-svg', { opacity: 0.55, duration: 0.04, ease: 'none' })
+                .to('#hero-bulb-svg', { opacity: 1, scale: 1, duration: 0.22, ease: 'power2.out' })
+                .from('.hero-stagger', {
+                  y: 22,
+                  opacity: 0,
+                  duration: 0.65,
+                  stagger: 0.09,
+                }, '-=0.55');
+            }
+
+            // C. Subtle Parallax Depth Drift on Architectural Grid (.bg-architectural-grid)
+            const archGrid = document.querySelector('.bg-architectural-grid');
+            if (archGrid) {
+              gsap.to(archGrid, {
+                y: 90,
+                ease: 'none',
+                scrollTrigger: {
+                  trigger: '#top',
+                  start: 'top top',
+                  end: 'bottom top',
+                  scrub: 0.8
+                }
+              });
+            }
+
+            // D. Ambient Halo Gentle Pulse + Scroll-Linked Scrub Expansion
+            gsap.to('#hero-halo', {
+              scale: 1.08,
+              opacity: 0.92,
+              duration: 2.8,
+              repeat: -1,
+              yoyo: true,
+              ease: 'sine.inOut'
+            });
+
+            gsap.to('#hero-halo', {
+              scale: 1.5,
+              opacity: 0.25,
+              scrollTrigger: {
+                trigger: '#top',
+                start: 'top top',
+                end: 'bottom top',
+                scrub: true
+              }
+            });
+
+            // E. Section Header & Banner Scroll Reveals
+            gsap.utils.toArray('.reveal-up').forEach((el) => {
+              gsap.from(el, {
+                y: 26,
+                opacity: 0,
+                duration: 0.72,
+                ease: 'power3.out',
+                scrollTrigger: {
+                  trigger: el,
+                  start: 'top 86%',
+                  once: true
+                }
+              });
+            });
+
+            // F. Staggered Batch Choreography Across Bento, Case Study, Process & Pricing Grids
+            gsap.set('.batch-card', { opacity: 0, y: 26 });
+            ScrollTrigger.batch('.batch-card', {
+              start: 'top 87%',
+              once: true,
+              onEnter: (batch) => {
+                gsap.to(batch, {
+                  opacity: 1,
+                  y: 0,
+                  duration: 0.68,
+                  stagger: 0.09,
+                  ease: 'power3.out',
+                  clearProps: 'transform'
+                });
+              }
+            });
+
+            // G. Smooth Number Counter Roll-Ups ($1,250, $1,850, $3,400, +44%, 3.8x, +210%)
+            gsap.utils.toArray('.stat-counter').forEach((counterEl) => {
+              const target = parseFloat(counterEl.getAttribute('data-target') || '0');
+              const prefix = counterEl.getAttribute('data-prefix') || '';
+              const suffix = counterEl.getAttribute('data-suffix') || '';
+              const decimals = parseInt(counterEl.getAttribute('data-decimals') || '0', 10);
+              const useComma = counterEl.getAttribute('data-comma') === 'true';
+
+              const proxy = { val: 0 };
+
+              ScrollTrigger.create({
+                trigger: counterEl,
+                start: 'top 88%',
+                once: true,
+                onEnter: () => {
+                  gsap.to(proxy, {
+                    val: target,
+                    duration: 1.25,
+                    ease: 'power3.out',
+                    onUpdate: () => {
+                      let formatted = decimals > 0
+                        ? proxy.val.toFixed(decimals)
+                        : Math.round(proxy.val).toString();
+                      if (useComma) {
+                        formatted = Number(formatted).toLocaleString('en-US');
+                      }
+                      counterEl.textContent = `${prefix}${formatted}${suffix}`;
+                    }
+                  });
+                }
+              });
+            });
+
+            // H. Process Connecting Line Scrub Illumination
+            const progressLine = document.getElementById('process-progress-line');
+            if (progressLine) {
+              gsap.to(progressLine, {
+                width: '100%',
+                ease: 'none',
+                scrollTrigger: {
+                  trigger: '#process',
+                  start: 'top 65%',
+                  end: 'bottom 60%',
+                  scrub: 0.6
+                }
+              });
+            }
+          });
+
+          return () => ctx.revert();
+        });
+      };
+
+      if (typeof gsap !== 'undefined') {
+        initMotion();
+      } else {
+        window.addEventListener('load', initMotion);
+      }
+    });
+  </script>
+</body>
+</html>
