@@ -643,6 +643,11 @@ html[data-theme="light"] .showreel-videos.auto-orient .showreel-item img { borde
 .showreel-videos.mosaic-uniform-horizontal .showreel-item[data-shape="horizontal"] { grid-column: span 1; }
 .showreel-videos.mosaic-uniform-horizontal .showreel-item[data-shape="horizontal"]:only-child { grid-column: 1 / -1; }
 @media (max-width: 570px) { .showreel-videos.mosaic-uniform-horizontal { grid-template-columns: 1fr !important; } }
+/* mixed aspect-ratio galleries use a 6-track grid (2 = 1:1 square, 4 = paired 16:9,
+   3 = paired leftover 16:9s) so rows and 9:16 bands alternate left/right flush */
+.showreel-videos.auto-orient.mosaic-alt,
+.showreel-videos.is-gallery.mosaic-alt,
+.showreel-videos.mosaic-alt { grid-template-columns: repeat(6, 1fr); }
 
 /* Sample Works hover: Spotlight Focus + 3D Tilt + Glass Glare + Video Audio Pulse */
 .showreel-videos { perspective: 900px; }
@@ -3465,8 +3470,15 @@ const openLightbox = (media, { keepPlaylist = false } = {}) => {
     lightboxOpener = document.activeElement;
     const ownerItem = lightboxMediaItem.get(media) || media.closest?.('.showreel-item');
     const gallery = ownerItem?.closest('.showreel-videos');
+    const galleryItems = gallery ? Array.from(gallery.querySelectorAll('.showreel-item')) : [];
+    if (gallery?.classList.contains('mosaic-alt')) {
+      galleryItems.sort((a, b) =>
+        (Number(a.dataset.gridRow) || 0) - (Number(b.dataset.gridRow) || 0)
+        || (Number(a.dataset.gridCol) || 0) - (Number(b.dataset.gridCol) || 0)
+      );
+    }
     lightboxList = gallery
-      ? Array.from(gallery.querySelectorAll('.showreel-item')).map((el) => lightboxItemMedia.get(el)).filter(Boolean)
+      ? galleryItems.map((el) => lightboxItemMedia.get(el)).filter(Boolean)
       : [media];
     const foundIdx = lightboxList.indexOf(media);
     lightboxIndex = foundIdx >= 0 ? foundIdx : 0;
@@ -3790,15 +3802,165 @@ const snapMediaRatio = (media) => {
   if (gallery) layoutMosaicGallery(gallery);
 };
 
+const clearMosaicPlacement = (items) => {
+  items.forEach((el) => {
+    el.style.gridColumn = '';
+    el.style.gridRow = '';
+    delete el.dataset.gridRow;
+    delete el.dataset.gridCol;
+  });
+};
+
+/* pack mixed aspect ratios into a 6-track grid so 16:9 + 1:1 rows and 9:16 + (16:9/1:1)
+   2-row bands alternate edges cleanly instead of locking 16:9s to the left */
+const packAlternatingMosaic = (items) => {
+  const H = [];
+  const S = [];
+  const V = [];
+  items.forEach((el, idx) => {
+    const shape = el.dataset.shape;
+    if (shape === 'horizontal') H.push({ el, idx });
+    else if (shape === 'vertical') V.push({ el, idx });
+    else S.push({ el, idx });
+  });
+
+  const place = (entry, col, colSpan, r, rowSpan) => {
+    entry.el.style.gridColumn = `${col} / span ${colSpan}`;
+    entry.el.style.gridRow = `${r} / span ${rowSpan}`;
+    entry.el.dataset.gridRow = String(r);
+    entry.el.dataset.gridCol = String(col);
+  };
+
+  let row = 1;
+  const firstShape = items[0]?.dataset.shape;
+  let wideSide = (firstShape === 'horizontal')
+    ? 'left'
+    : (firstShape === 'vertical' || (firstShape === 'square' && H.length > 0)) ? 'right' : 'left';
+
+  while (H.length || S.length || V.length) {
+    const wideCol = wideSide === 'left' ? 1 : 3;
+    const narrowCol = wideSide === 'left' ? 5 : 1;
+    const candidates = [H[0], S[0], V[0]].filter(Boolean);
+    const head = candidates.reduce((a, b) => (a.idx <= b.idx ? a : b));
+
+    const placeHSRow = () => {
+      place(H.shift(), wideCol, 4, row, 1);
+      place(S.shift(), narrowCol, 2, row, 1);
+      row += 1;
+      wideSide = wideSide === 'left' ? 'right' : 'left';
+    };
+    const placeVH2Band = () => {
+      place(V.shift(), narrowCol, 2, row, 2);
+      place(H.shift(), wideCol, 4, row, 1);
+      place(H.shift(), wideCol, 4, row + 1, 1);
+      row += 2;
+      wideSide = wideSide === 'left' ? 'right' : 'left';
+    };
+    const placeVHS2Band = () => {
+      place(V.shift(), narrowCol, 2, row, 2);
+      place(H.shift(), wideCol, 4, row, 1);
+      place(S.shift(), wideCol, 2, row + 1, 1);
+      place(S.shift(), wideCol + 2, 2, row + 1, 1);
+      row += 2;
+      wideSide = wideSide === 'left' ? 'right' : 'left';
+    };
+    const placeVS4Band = () => {
+      place(V.shift(), narrowCol, 2, row, 2);
+      place(S.shift(), wideCol, 2, row, 1);
+      place(S.shift(), wideCol + 2, 2, row, 1);
+      place(S.shift(), wideCol, 2, row + 1, 1);
+      place(S.shift(), wideCol + 2, 2, row + 1, 1);
+      row += 2;
+      wideSide = wideSide === 'left' ? 'right' : 'left';
+    };
+    const placeV2S2Band = () => {
+      place(V.shift(), wideCol, 2, row, 2);
+      place(V.shift(), wideCol + 2, 2, row, 2);
+      place(S.shift(), narrowCol, 2, row, 1);
+      place(S.shift(), narrowCol, 2, row + 1, 1);
+      row += 2;
+      wideSide = wideSide === 'left' ? 'right' : 'left';
+    };
+    const placeVPartialBand = () => {
+      place(V.shift(), narrowCol, 2, row, 2);
+      if (H.length >= 1) {
+        place(H.shift(), wideCol, 4, row, 1);
+        for (let i = 0; i < 2 && S.length; i += 1) {
+          place(S.shift(), wideCol + i * 2, 2, row + 1, 1);
+        }
+      } else if (V.length >= 1) {
+        place(V.shift(), wideCol, 2, row, 2);
+        for (let i = 0; i < 2 && S.length; i += 1) {
+          place(S.shift(), wideCol + 2, 2, row + i, 1);
+        }
+      } else {
+        const slots = [[wideCol, row], [wideCol + 2, row], [wideCol, row + 1]];
+        for (let i = 0; i < slots.length && S.length; i += 1) {
+          place(S.shift(), slots[i][0], 2, slots[i][1], 1);
+        }
+      }
+      row += 2;
+      wideSide = wideSide === 'left' ? 'right' : 'left';
+    };
+
+    if (head === H[0]) {
+      if (H.length === 1 && V.length >= 1 && S.length >= 2) placeVHS2Band();
+      else if (S.length >= 1) placeHSRow();
+      else if (H.length >= 2 && V.length >= 1) placeVH2Band();
+      else if (V.length >= 1) placeVPartialBand();
+      else if (H.length >= 2) {
+        place(H.shift(), 1, 3, row, 1);
+        place(H.shift(), 4, 3, row, 1);
+        row += 1;
+      } else {
+        place(H.shift(), wideCol, 4, row, 1);
+        row += 1;
+        wideSide = wideSide === 'left' ? 'right' : 'left';
+      }
+    } else if (head === V[0]) {
+      if (H.length >= 2 && (S.length < 2 || H[1].idx < S[0].idx)) placeVH2Band();
+      else if (H.length >= 1 && S.length >= 2) placeVHS2Band();
+      else if (H.length >= 2) placeVH2Band();
+      else if (S.length >= 4) placeVS4Band();
+      else if (V.length >= 2 && S.length >= 2 && H.length === 0) placeV2S2Band();
+      else if (V.length >= 3 && H.length === 0 && S.length < 2) {
+        place(V.shift(), 1, 2, row, 2);
+        place(V.shift(), 3, 2, row, 2);
+        place(V.shift(), 5, 2, row, 2);
+        row += 2;
+      } else placeVPartialBand();
+    } else {
+      if (H.length === 1 && V.length >= 1 && S.length >= 2) placeVHS2Band();
+      else if (H.length >= 1) placeHSRow();
+      else if (V.length >= 1) {
+        if (S.length >= 4) placeVS4Band();
+        else if (V.length >= 2 && S.length >= 2) placeV2S2Band();
+        else placeVPartialBand();
+      } else {
+        for (let col = 1; col <= 5 && S.length; col += 2) {
+          place(S.shift(), col, 2, row, 1);
+        }
+        row += 1;
+      }
+    }
+  }
+};
+
 /* size the mosaic rows so 1 row = 1 square cell (keeps every tile flush) */
 const layoutMosaicGallery = (gallery) => {
   if (!gallery) return;
-  if (!gallery.querySelector('.showreel-item[data-shape]')) { gallery.style.gridAutoRows = ''; gallery.classList.remove('mosaic-uniform-horizontal'); return; }
+  const shapedItems = Array.from(gallery.querySelectorAll('.showreel-item[data-shape]'));
+  if (!shapedItems.length) {
+    gallery.style.gridAutoRows = '';
+    gallery.classList.remove('mosaic-uniform-horizontal', 'mosaic-alt');
+    return;
+  }
   /* detect uniform orientation: when every shaped item is horizontal, switch to a
      centred 2-column layout so the span-2 tiles fill each row neatly */
-  const shapedItems = gallery.querySelectorAll('.showreel-item[data-shape]');
-  const allHorizontal = shapedItems.length > 0 && Array.from(shapedItems).every((el) => el.dataset.shape === 'horizontal');
+  const allHorizontal = shapedItems.every((el) => el.dataset.shape === 'horizontal');
   gallery.classList.toggle('mosaic-uniform-horizontal', allHorizontal);
+  gallery.classList.remove('mosaic-alt');
+  clearMosaicPlacement(shapedItems);
   const style = getComputedStyle(gallery);
   const tracks = style.gridTemplateColumns.split(' ').filter(Boolean).length;
   if (!tracks) return;
@@ -3810,6 +3972,11 @@ const layoutMosaicGallery = (gallery) => {
   const cell = Number.isFinite(firstTrack) && firstTrack > 0
     ? firstTrack
     : Math.max(60, (gallery.clientWidth - padding - gap * (tracks - 1)) / tracks);
+  const isMixed = !allHorizontal && new Set(shapedItems.map((el) => el.dataset.shape)).size > 1;
+  if (isMixed && tracks === 3) {
+    gallery.classList.add('mosaic-alt');
+    packAlternatingMosaic(shapedItems);
+  }
   const hasWebPreview = Boolean(gallery.querySelector('.showreel-web'));
   const rowHeight = allHorizontal ? cell * (9 / 16) * (hasWebPreview ? 1.5 : 1) : cell;
   gallery.style.gridAutoRows = `${rowHeight.toFixed(2)}px`;
