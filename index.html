@@ -2534,7 +2534,7 @@ const applyTheme = (mode, persist = true) => {
   themeToggle?.setAttribute('aria-pressed', String(mode === 'light'));
   document.querySelectorAll('[data-theme-icon]').forEach((el) => { el.textContent = mode === 'light' ? '☀' : '☾'; });
   document.querySelectorAll('[data-theme-label]').forEach((el) => { el.textContent = mode === 'light' ? 'LIGHT MODE' : 'DARK MODE'; });
-  if (window.$crisp) { window.$crisp.push(['config', 'color:theme', [mode === 'light' ? 'green' : 'light_green']]); }
+  if (window.$crisp && typeof window.$crisp.is === 'function') { window.$crisp.push(['config', 'color:theme', [mode === 'light' ? 'green' : 'light_green']]); }
   if (persist) { try { localStorage.setItem('jl-theme', mode); } catch (error) { /* private browsing: choice stays per-visit */ } }
 };
 let savedTheme = null;
@@ -7411,16 +7411,6 @@ if (!reducedMotion && !isEmbeddedFrame) {
 })();
 </script>
     <!-- Self-contained export: portrait, résumé, CSS, and JavaScript are embedded. -->
-    <script type="text/javascript">
-      window.$crisp = window.$crisp || [];
-      window.CRISP_WEBSITE_ID = "9be0d2f4-70bf-4a55-bcd3-ac79e73bc7fb";
-      window.$crisp.push(["config", "color:theme", [document.documentElement.dataset.theme === "light" ? "green" : "light_green"]]);
-      (function () {
-        var d = document, s = d.createElement("script");
-        s.src = "https://client.crisp.chat/l.js";
-        s.async = 1;
-        d.getElementsByTagName("head")[0].appendChild(s);
-      })();
-    </script>
+    <script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="9be0d2f4-70bf-4a55-bcd3-ac79e73bc7fb";window.CRISP_READY_TRIGGER=function(){window.$crisp.push(["config","color:theme",[document.documentElement.dataset.theme==="light"?"green":"light_green"]]);};(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>
   </body>
 </html>
